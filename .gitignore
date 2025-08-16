@@ -21,3 +21,7 @@ wheels/
 logs/
 
 qwen3-finetuned/
+
+demo_logs/
+
+data/processed_dataset/

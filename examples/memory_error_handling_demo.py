@@ -35,7 +35,7 @@ def demo_custom_exceptions():
     try:
         raise OutOfMemoryError(
             "GPU内存不足",
-            current_usage_gb=12.5,
+            current_usage_gb=13,
             required_gb=2.0,
             available_gb=0.5
         )

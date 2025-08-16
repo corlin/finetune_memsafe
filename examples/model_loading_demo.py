@@ -46,7 +46,7 @@ def demo_model_loading_and_lora():
         
         # 4. 加载模型（使用较小的模型进行演示）
         logger.info("=== 加载模型 ===")
-        model_name = "Qwen/Qwen2.5-0.5B"  # 使用较小的模型进行演示
+        model_name = "Qwen/Qwen3-4B-Thinking-2507"  # 使用较小的模型进行演示
         
         try:
             model, tokenizer = model_manager.load_model_with_quantization(model_name)

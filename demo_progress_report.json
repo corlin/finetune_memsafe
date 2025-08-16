@@ -1,73 +1,73 @@
 {
   "summary": {
     "training_summary": {
-      "start_time": "2025-08-14T21:21:11.262498",
-      "end_time": "2025-08-14T21:21:16.282696",
-      "total_duration": "0:00:05.020198",
+      "start_time": "2025-08-16T11:25:04.123069",
+      "end_time": "2025-08-16T11:25:09.143709",
+      "total_duration": "0:00:05.020640",
       "total_steps": 50,
       "final_epoch": 10.0,
-      "final_loss": 2.034857311346262,
+      "final_loss": 1.993456767515433,
       "final_learning_rate": 4.9500000000000004e-05
     },
     "performance_metrics": {
-      "avg_steps_per_second": 9.959766527136978,
-      "avg_samples_per_second": 9.959766527136978,
-      "peak_memory_gb": 9.349043443153567,
-      "avg_memory_gb": 9.123186650066677,
-      "memory_efficiency": 0.5701991656291673,
-      "training_stability": 0.970489297648207,
-      "total_training_time": "0:00:05.020198"
+      "avg_steps_per_second": 9.958889703304758,
+      "avg_samples_per_second": 9.958889703304758,
+      "peak_memory_gb": 9.031233657341279,
+      "avg_memory_gb": 8.748264665894592,
+      "memory_efficiency": 0.546766541618412,
+      "training_stability": 0.9696132565775321,
+      "total_training_time": "0:00:05.020640"
     },
     "memory_summary": {
-      "peak_memory_gb": 9.349043443153567,
-      "min_memory_gb": 8.897329856979786,
-      "avg_memory_gb": 9.123186650066677,
-      "median_memory_gb": 9.123186650066677,
-      "memory_std_gb": 0.31940973993757465,
+      "peak_memory_gb": 9.031233657341279,
+      "min_memory_gb": 8.465295674447903,
+      "avg_memory_gb": 8.748264665894592,
+      "median_memory_gb": 8.748264665894592,
+      "memory_std_gb": 0.4001785854349421,
       "total_memory_reports": 2,
       "memory_warnings": 0
     },
     "progress_statistics": {
       "total_snapshots": 2,
-      "monitoring_duration": "0:00:05.000800",
+      "monitoring_duration": "0:00:05.013196",
       "avg_update_interval": 5.0,
       "loss_trend": "stable",
-      "step_consistency": 0.8277561123061457
+      "step_consistency": 0.8280124654641439
     }
   },
   "progress_history": [
     {
-      "timestamp": "2025-08-14T21:21:11.262995",
+      "timestamp": "2025-08-16T11:25:04.123824",
       "epoch": 0.0,
       "step": 0,
       "total_steps": 50,
       "loss": 0.0,
       "learning_rate": 0.0,
       "memory_status": {
-        "allocated_gb": 9.349043443153567,
-        "cached_gb": 2.80471303294607,
+        "allocated_gb": 8.465295674447903,
+        "cached_gb": 2.539588702334371,
         "total_gb": 16.0,
-        "available_gb": 6.650956556846433,
+        "available_gb": 7.534704325552097,
         "is_safe": true,
-        "timestamp": "2025-08-14T21:21:11.262995"
+        "timestamp": "2025-08-16T11:25:04.123824"
       },
-      "elapsed_time": "0:00:00.000497",
+      "elapsed_time": "0:00:00.000755",
       "estimated_remaining": null
     },
     {
-      "timestamp": "2025-08-14T21:21:16.263795",
+      "timestamp": "2025-08-16T11:25:09.137020",
       "epoch": 10.0,
       "step": 50,
       "total_steps": 50,
-      "loss": 2.034857311346262,
+      "loss": 1.993456767515433,
       "learning_rate": 4.9500000000000004e-05,
       "memory_status": {
-        "allocated_gb": 8.897329856979786,
-        "cached_gb": 2.669198957093936,
+        "allocated_gb": 9.031233657341279,
+        "cached_gb": 2.7093700972023833,
         "total_gb": 16.0,
-        "available_gb": 7.102670143020214,
+        "available_gb": 6.968766342658721,
         "is_safe": true,
-        "timestamp": "2025-08-14T21:21:16.263795"
+        "timestamp": "2025-08-16T11:25:09.137020"
       },
-      "elapsed_time": "0:00:05.001297",
+      "elapsed_time": "0:00:05.013951",
       "estimated_remaining": 
