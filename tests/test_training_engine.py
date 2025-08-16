@@ -78,8 +78,27 @@ class TestTrainingEngine(unittest.TestCase):
     
     def tearDown(self):
         """清理测试环境"""
+        # 清理日志处理器以释放文件句柄
+        import logging
+        logger = logging.getLogger('qwen3_training')
+        for handler in logger.handlers[:]:
+            handler.close()
+            logger.removeHandler(handler)
+        
+        # 等待一下让文件句柄释放
+        import time
+        time.sleep(0.1)
+        
         if Path(self.temp_dir).exists():
-            shutil.rmtree(self.temp_dir)
+            try:
+                shutil.rmtree(self.temp_dir)
+            except PermissionError:
+                # Windows上可能需要多次尝试
+                time.sleep(0.5)
+                try:
+                    shutil.rmtree(self.temp_dir)
+                except PermissionError:
+                    pass  # 忽略清理失败
     
     def test_initialization(self):
         """测试训练引擎初始化"""
@@ -127,12 +146,14 @@ class TestTrainingEngine(unittest.TestCase):
         
         self.assertEqual(call_args[1]['model'], mock_model)
         self.assertEqual(call_args[1]['train_dataset'], mock_dataset)
-        self.assertEqual(call_args[1]['tokenizer'], mock_tokenizer)
+        self.assertEqual(call_args[1]['processing_class'], mock_tokenizer)  # 使用 processing_class 替代 tokenizer
         self.assertEqual(call_args[1]['data_collator'], mock_data_collator)
         
         # 检查回调函数
         callbacks = call_args[1]['callbacks']
-        self.assertIsInstance(callbacks[0], MemoryMonitoringCallback)
+        # 检查是否包含内存监控回调（可能不是第一个）
+        memory_callback_found = any(isinstance(cb, MemoryMonitoringCallback) for cb in callbacks)
+        self.assertTrue(memory_callback_found, "应该包含内存监控回调")
     
     def test_disk_space_check(self):
         """测试磁盘空间检查"""

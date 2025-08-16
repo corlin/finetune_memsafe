@@ -45,14 +45,32 @@ class ProgressSnapshot:
     
     def to_dict(self) -> Dict[str, Any]:
         """转换为字典格式"""
-        data = asdict(self)
-        data['timestamp'] = self.timestamp.isoformat()
-        data['elapsed_time'] = str(self.elapsed_time)
-        if self.estimated_remaining:
-            data['estimated_remaining'] = str(self.estimated_remaining)
-        data['memory_status'] = asdict(self.memory_status)
-        data['memory_status']['timestamp'] = self.memory_status.timestamp.isoformat()
-        return data
+        try:
+            data = asdict(self)
+            data['timestamp'] = self.timestamp.isoformat()
+            data['elapsed_time'] = str(self.elapsed_time) if self.elapsed_time else "0:00:00"
+            data['estimated_remaining'] = str(self.estimated_remaining) if self.estimated_remaining else None
+            
+            # 安全处理memory_status
+            if hasattr(self, 'memory_status') and self.memory_status:
+                data['memory_status'] = asdict(self.memory_status)
+                if hasattr(self.memory_status, 'timestamp'):
+                    data['memory_status']['timestamp'] = self.memory_status.timestamp.isoformat()
+            
+            return data
+        except Exception as e:
+            # 如果转换失败，返回基本信息
+            return {
+                'timestamp': self.timestamp.isoformat() if hasattr(self, 'timestamp') else datetime.now().isoformat(),
+                'epoch': float(self.epoch) if hasattr(self, 'epoch') and self.epoch is not None else 0.0,
+                'step': int(self.step) if hasattr(self, 'step') and self.step is not None else 0,
+                'total_steps': int(self.total_steps) if hasattr(self, 'total_steps') and self.total_steps is not None else 0,
+                'loss': float(self.loss) if hasattr(self, 'loss') and self.loss is not None else 0.0,
+                'learning_rate': float(self.learning_rate) if hasattr(self, 'learning_rate') and self.learning_rate is not None else 0.0,
+                'elapsed_time': "0:00:00",
+                'estimated_remaining': None,
+                'error': str(e)
+            }
 
 
 @dataclass
@@ -151,16 +169,24 @@ class ProgressMonitor:
     
     def stop_monitoring(self) -> None:
         """停止监控"""
-        self.stop_monitoring_event.set()
-        
-        if self.monitoring_thread:
-            self.monitoring_thread.join(timeout=2.0)
-        
-        if self.live_display:
-            self.live_display.stop()
-        
-        if self.logging_system:
-            self.logging_system.info("进度监控已停止", "PROGRESS_MONITOR")
+        try:
+            self.stop_monitoring_event.set()
+            
+            if self.monitoring_thread:
+                self.monitoring_thread.join(timeout=2.0)
+            
+            if self.live_display:
+                try:
+                    self.live_display.stop()
+                except Exception as e:
+                    if self.logging_system:
+                        self.logging_system.warning(f"停止Rich显示时出错: {e}", "PROGRESS_MONITOR")
+            
+            if self.logging_system:
+                self.logging_system.info("进度监控已停止", "PROGRESS_MONITOR")
+        except Exception as e:
+            if self.logging_system:
+                self.logging_system.error(f"停止监控时出错: {e}", "PROGRESS_MONITOR")
     
     def update_progress(self, epoch: float, step: int, loss: float, learning_rate: float) -> None:
         """
@@ -188,37 +214,29 @@ class ProgressMonitor:
         # 记录损失历史
         self.loss_history.append(loss)
         
-        # 更新Rich进度条
-        if self.progress_bar and self.task_id is not None:
-            self.progress_bar.update(self.task_id, completed=step)
+        # 简化的进度显示 - 不使用Rich进度条
+        if step is not None and step > 0:
+            # 每10步或每轮结束时输出进度信息
+            if step % 10 == 0 or (hasattr(self, 'total_steps') and self.total_steps and step >= self.total_steps):
+                progress_msg = f"训练进度: 步骤 {step}"
+                if hasattr(self, 'total_steps') and self.total_steps:
+                    progress_pct = (step / self.total_steps) * 100
+                    progress_msg += f"/{self.total_steps} ({progress_pct:.1f}%)"
+                if loss is not None:
+                    progress_msg += f", 损失: {loss:.4f}"
+                
+                if self.logging_system:
+                    self.logging_system.info(progress_msg, "PROGRESS_MONITOR")
     
     def _setup_rich_display(self) -> None:
-        """设置Rich显示"""
-        if not self.console:
-            return
+        """设置Rich显示 - 完全禁用Rich避免内部错误"""
+        # 完全禁用Rich显示，使用简单的文本输出
+        self.progress_bar = None
+        self.live_display = None
+        self.task_id = None
         
-        # 创建进度条
-        self.progress_bar = Progress(
-            TextColumn("[bold blue]{task.description}"),
-            BarColumn(),
-            "[progress.percentage]{task.percentage:>3.0f}%",
-            "•",
-            TextColumn("[bold green]{task.completed}/{task.total}"),
-            "•",
-            TimeRemainingColumn(),
-            console=self.console
-        )
-        
-        self.task_id = self.progress_bar.add_task(
-            "训练进度", 
-            total=self.total_steps,
-            completed=0
-        )
-        
-        # 创建实时显示
-        layout = self._create_layout()
-        self.live_display = Live(layout, console=self.console, refresh_per_second=1)
-        self.live_display.start()
+        if hasattr(self, 'logging_system') and self.logging_system:
+            self.logging_system.info("使用简化进度显示模式", "PROGRESS_MONITOR")
     
     def _create_layout(self) -> Layout:
         """创建显示布局"""
@@ -265,12 +283,26 @@ class ProgressMonitor:
         now = datetime.now()
         elapsed = now - self.start_time if self.start_time else timedelta(0)
         
-        # 估算剩余时间
+        # 估算剩余时间 - 添加安全检查
         estimated_remaining = None
-        if self.current_step > 0 and self.total_steps > 0:
-            avg_step_time = elapsed.total_seconds() / self.current_step
-            remaining_steps = self.total_steps - self.current_step
-            estimated_remaining = timedelta(seconds=avg_step_time * remaining_steps)
+        try:
+            if (self.current_step and self.current_step > 0 and 
+                self.total_steps and self.total_steps > 0 and 
+                elapsed and elapsed.total_seconds() > 0):
+                
+                avg_step_time = elapsed.total_seconds() / self.current_step
+                remaining_steps = self.total_steps - self.current_step
+                
+                # 确保计算结果是有效的
+                if avg_step_time > 0 and remaining_steps > 0:
+                    estimated_seconds = avg_step_time * remaining_steps
+                    # 限制最大预估时间，避免异常值
+                    if estimated_seconds < 86400:  # 小于24小时
+                        estimated_remaining = timedelta(seconds=estimated_seconds)
+        except Exception as e:
+            # 如果时间计算失败，记录但不中断
+            if hasattr(self, 'logging_system') and self.logging_system:
+                self.logging_system.warning(f"时间估算计算失败: {e}", "PROGRESS_MONITOR")
         
         # 获取内存状态
         memory_status = self.memory_optimizer.get_memory_status()
@@ -449,9 +481,14 @@ class ProgressMonitor:
     
     def _calculate_performance_metrics(self, total_time: timedelta) -> PerformanceMetrics:
         """计算性能指标"""
+        # 安全地处理total_time，确保不为None
+        if total_time is None:
+            total_time = timedelta(0)
+        
         # 计算步骤速度
         total_seconds = total_time.total_seconds()
-        avg_steps_per_second = self.current_step / total_seconds if total_seconds > 0 else 0
+        current_step = self.current_step if self.current_step is not None else 0
+        avg_steps_per_second = current_step / total_seconds if total_seconds > 0 else 0
         
         # 假设每步处理一个样本（可以根据实际批次大小调整）
         avg_samples_per_second = avg_steps_per_second  # 简化假设
@@ -464,19 +501,25 @@ class ProgressMonitor:
             peak_memory_gb = avg_memory_gb = 0.0
         
         # 内存效率（使用的内存与总内存的比例）
-        total_memory = self.memory_optimizer.get_memory_status().total_gb
-        memory_efficiency = avg_memory_gb / total_memory if total_memory > 0 else 0.0
+        try:
+            total_memory = self.memory_optimizer.get_memory_status().total_gb
+            memory_efficiency = avg_memory_gb / total_memory if total_memory > 0 else 0.0
+        except:
+            memory_efficiency = 0.0
         
         # 训练稳定性（基于损失变化的标准差）
         training_stability = 1.0
         if len(self.loss_history) > 10:
             recent_losses = self.loss_history[-50:]  # 最近50步
             if len(recent_losses) > 1:
-                import statistics
-                loss_std = statistics.stdev(recent_losses)
-                loss_mean = statistics.mean(recent_losses)
-                # 稳定性 = 1 - (标准差/均值)，限制在0-1之间
-                training_stability = max(0.0, min(1.0, 1.0 - (loss_std / loss_mean if loss_mean > 0 else 1.0)))
+                try:
+                    import statistics
+                    loss_std = statistics.stdev(recent_losses)
+                    loss_mean = statistics.mean(recent_losses)
+                    # 稳定性 = 1 - (标准差/均值)，限制在0-1之间
+                    training_stability = max(0.0, min(1.0, 1.0 - (loss_std / loss_mean if loss_mean > 0 else 1.0)))
+                except:
+                    training_stability = 1.0
         
         return PerformanceMetrics(
             avg_steps_per_second=avg_steps_per_second,
@@ -523,30 +566,46 @@ class ProgressMonitor:
         if len(self.loss_history) < 10:
             return "insufficient_data"
         
-        recent_losses = self.loss_history[-20:]
-        early_avg = sum(recent_losses[:10]) / 10
-        late_avg = sum(recent_losses[-10:]) / 10
+        # 安全地过滤None值
+        valid_losses = [x for x in self.loss_history if x is not None]
+        if len(valid_losses) < 10:
+            return "insufficient_data"
         
-        if late_avg < early_avg * 0.95:
-            return "decreasing"
-        elif late_avg > early_avg * 1.05:
-            return "increasing"
-        else:
-            return "stable"
+        recent_losses = valid_losses[-20:]
+        try:
+            early_avg = sum(recent_losses[:10]) / 10
+            late_avg = sum(recent_losses[-10:]) / 10
+            
+            if late_avg < early_avg * 0.95:
+                return "decreasing"
+            elif late_avg > early_avg * 1.05:
+                return "increasing"
+            else:
+                return "stable"
+        except (TypeError, ZeroDivisionError):
+            return "insufficient_data"
     
     def _calculate_step_consistency(self) -> float:
         """计算步骤一致性（基于步骤时间的变异系数）"""
         if len(self.step_times) < 10:
             return 1.0
         
-        import statistics
-        recent_times = self.step_times[-50:]  # 最近50步
-        if len(recent_times) > 1:
-            mean_time = statistics.mean(recent_times)
-            std_time = statistics.stdev(recent_times)
-            # 一致性 = 1 - 变异系数
-            consistency = max(0.0, min(1.0, 1.0 - (std_time / mean_time if mean_time > 0 else 1.0)))
-            return consistency
+        # 安全地过滤None值
+        valid_times = [x for x in self.step_times if x is not None]
+        if len(valid_times) < 2:
+            return 1.0
+        
+        try:
+            import statistics
+            recent_times = valid_times[-50:]  # 最近50步
+            if len(recent_times) > 1:
+                mean_time = statistics.mean(recent_times)
+                std_time = statistics.stdev(recent_times)
+                # 一致性 = 1 - 变异系数
+                consistency = max(0.0, min(1.0, 1.0 - (std_time / mean_time if mean_time > 0 else 1.0)))
+                return consistency
+        except (TypeError, statistics.StatisticsError):
+            return 1.0
         
         return 1.0
     
@@ -560,20 +619,70 @@ class ProgressMonitor:
         try:
             summary = self.generate_training_summary()
             
+            # 安全地处理进度历史
+            progress_history = []
+            for snapshot in self.progress_history:
+                try:
+                    progress_history.append(snapshot.to_dict())
+                except Exception as e:
+                    # 如果单个快照转换失败，记录错误但继续
+                    if self.logging_system:
+                        self.logging_system.warning(f"跳过损坏的进度快照: {e}", "PROGRESS_MONITOR")
+                    continue
+            
+            # 安全地处理其他数据
+            safe_memory_reports = []
+            for report in self.memory_reports:
+                try:
+                    if isinstance(report, dict):
+                        safe_memory_reports.append(report)
+                    else:
+                        safe_memory_reports.append(str(report))
+                except:
+                    continue
+            
+            # 安全地处理数值列表
+            def safe_float_convert(x):
+                """安全地将值转换为浮点数"""
+                if x is None:
+                    return 0.0
+                try:
+                    return float(x)
+                except (ValueError, TypeError):
+                    return 0.0
+            
+            safe_loss_history = [safe_float_convert(x) for x in self.loss_history]
+            safe_memory_history = [safe_float_convert(x) for x in self.memory_usage_history]
+            
             # 添加详细的历史数据
             detailed_report = {
                 "summary": summary,
-                "progress_history": [snapshot.to_dict() for snapshot in self.progress_history],
-                "memory_reports": self.memory_reports,
-                "loss_history": self.loss_history,
-                "memory_usage_history": self.memory_usage_history
+                "progress_history": progress_history,
+                "memory_reports": safe_memory_reports,
+                "loss_history": safe_loss_history,
+                "memory_usage_history": safe_memory_history,
+                "report_generated_at": datetime.now().isoformat()
             }
             
             output_file = Path(output_path)
             output_file.parent.mkdir(parents=True, exist_ok=True)
             
+            # 使用自定义JSON编码器处理datetime对象
+            def json_serializer(obj):
+                """JSON序列化器，处理datetime和其他特殊对象"""
+                if isinstance(obj, datetime):
+                    return obj.isoformat()
+                elif isinstance(obj, timedelta):
+                    return str(obj)
+                elif hasattr(obj, 'isoformat'):  # 其他日期时间对象
+                    return obj.isoformat()
+                elif hasattr(obj, '__dict__'):  # 自定义对象
+                    return obj.__dict__
+                else:
+                    return str(obj)
+            
             with open(output_file, 'w', encoding='utf-8') as f:
-                json.dump(detailed_report, f, indent=2, ensure_ascii=False)
+                json.dump(detailed_report, f, indent=2, ensure_ascii=False, default=json_serializer)
             
             if self.logging_system:
                 self.logging_system.info(f"进度报告已保存到 {output_path}", "PROGRESS_MONITOR")
@@ -581,7 +690,20 @@ class ProgressMonitor:
         except Exception as e:
             if self.logging_system:
                 self.logging_system.error(f"保存进度报告失败: {e}", "PROGRESS_MONITOR")
-            raise
+            # 不再抛出异常，避免中断训练
+            try:
+                # 尝试保存一个最小的报告
+                minimal_report = {
+                    "error": str(e),
+                    "timestamp": datetime.now().isoformat(),
+                    "status": "report_generation_failed"
+                }
+                output_file = Path(output_path)
+                output_file.parent.mkdir(parents=True, exist_ok=True)
+                with open(output_file, 'w', encoding='utf-8') as f:
+                    json.dump(minimal_report, f, indent=2, ensure_ascii=False)
+            except:
+                pass  # 如果连最小报告都无法保存，就放弃
     
     def get_current_status(self) -> Dict[str, Any]:
         """获取当前状态"""

@@ -15,7 +15,7 @@ from pathlib import Path
 from typing import Optional, Dict, Any
 from dataclasses import dataclass, asdict
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
 
 # 添加src目录到Python路径
 sys.path.insert(0, str(Path(__file__).parent / "src"))
@@ -471,10 +471,24 @@ class QwenFineTuningApplication:
                 "generated_at": datetime.now().isoformat()
             }
             
+            # 使用自定义JSON编码器处理datetime对象
+            def json_serializer(obj):
+                """JSON序列化器，处理datetime和其他特殊对象"""
+                if isinstance(obj, datetime):
+                    return obj.isoformat()
+                elif isinstance(obj, timedelta):
+                    return str(obj)
+                elif hasattr(obj, 'isoformat'):  # 其他日期时间对象
+                    return obj.isoformat()
+                elif hasattr(obj, '__dict__'):  # 自定义对象
+                    return obj.__dict__
+                else:
+                    return str(obj)
+            
             # 保存报告
             report_path = Path(self.config.output_dir) / "final_application_report.json"
             with open(report_path, 'w', encoding='utf-8') as f:
-                json.dump(app_report, f, indent=2, ensure_ascii=False)
+                json.dump(app_report, f, indent=2, ensure_ascii=False, default=json_serializer)
             
             self.logger.info(f"最终报告已生成: {report_path}")
             self.logging_system.info(f"最终报告已生成: {report_path}", "APPLICATION")

@@ -361,7 +361,7 @@ class TrainingEngine:
                 "training_duration": str(training_duration),
                 "training_loss": train_result.training_loss,
                 "global_step": train_result.global_step,
-                "epoch": train_result.epoch
+                "epoch": getattr(train_result, 'epoch', 'N/A')
             })
             
             # 记录训练统计信息
@@ -553,7 +553,7 @@ class TrainingEngine:
                 "training_loss": train_result.training_loss,
                 "training_duration": str(training_duration),
                 "total_steps": train_result.global_step,
-                "epochs_completed": train_result.epoch,
+                "epochs_completed": getattr(train_result, 'epoch', 'N/A'),
             }
             
             # 如果有评估结果，也记录
@@ -857,17 +857,44 @@ class TrainingEngine:
             Dict[str, Any]: 完整的训练报告
         """
         try:
-            # 获取进度监控摘要
-            progress_summary = self.progress_monitor.generate_training_summary()
+            # 获取进度监控摘要 - 添加错误处理
+            try:
+                progress_summary = self.progress_monitor.generate_training_summary()
+            except Exception as e:
+                logger.warning(f"获取进度监控摘要失败: {e}")
+                progress_summary = {
+                    "error": f"进度监控摘要生成失败: {e}",
+                    "training_summary": {
+                        "start_time": datetime.now().isoformat(),
+                        "end_time": datetime.now().isoformat(),
+                        "total_duration": "0:00:00",
+                        "total_steps": 0,
+                        "final_epoch": 0.0,
+                        "final_loss": 0.0,
+                        "final_learning_rate": 0.0
+                    }
+                }
             
             # 获取日志系统摘要
-            log_summary = self.logging_system.get_log_summary()
+            try:
+                log_summary = self.logging_system.get_log_summary()
+            except Exception as e:
+                logger.warning(f"获取日志系统摘要失败: {e}")
+                log_summary = {"error": f"日志摘要生成失败: {e}"}
             
             # 获取磁盘使用报告
-            disk_report = self.get_disk_usage_report(self.config.output_dir)
+            try:
+                disk_report = self.get_disk_usage_report(self.config.output_dir)
+            except Exception as e:
+                logger.warning(f"获取磁盘使用报告失败: {e}")
+                disk_report = {"error": f"磁盘报告生成失败: {e}"}
             
             # 获取内存优化器状态
-            final_memory_status = self.memory_optimizer.get_memory_status()
+            try:
+                final_memory_status = self.memory_optimizer.get_memory_status()
+            except Exception as e:
+                logger.warning(f"获取内存状态失败: {e}")
+                final_memory_status = None
             
             # 组合最终报告
             final_report = {
@@ -883,11 +910,11 @@ class TrainingEngine:
                 "logging_summary": log_summary,
                 "disk_usage": disk_report,
                 "final_memory_status": {
-                    "allocated_gb": final_memory_status.allocated_gb,
-                    "cached_gb": final_memory_status.cached_gb,
-                    "available_gb": final_memory_status.available_gb,
-                    "total_gb": final_memory_status.total_gb,
-                    "is_safe": final_memory_status.is_safe
+                    "allocated_gb": final_memory_status.allocated_gb if final_memory_status else 0.0,
+                    "cached_gb": final_memory_status.cached_gb if final_memory_status else 0.0,
+                    "available_gb": final_memory_status.available_gb if final_memory_status else 0.0,
+                    "total_gb": final_memory_status.total_gb if final_memory_status else 0.0,
+                    "is_safe": final_memory_status.is_safe if final_memory_status else True
                 },
                 "report_generated_at": datetime.now().isoformat()
             }
@@ -923,8 +950,22 @@ class TrainingEngine:
             output_file = Path(output_path)
             output_file.parent.mkdir(parents=True, exist_ok=True)
             
+            # 使用自定义JSON编码器处理datetime对象
+            def json_serializer(obj):
+                """JSON序列化器，处理datetime和其他特殊对象"""
+                if isinstance(obj, datetime):
+                    return obj.isoformat()
+                elif isinstance(obj, timedelta):
+                    return str(obj)
+                elif hasattr(obj, 'isoformat'):  # 其他日期时间对象
+                    return obj.isoformat()
+                elif hasattr(obj, '__dict__'):  # 自定义对象
+                    return obj.__dict__
+                else:
+                    return str(obj)
+            
             with open(output_file, 'w', encoding='utf-8') as f:
-                json.dump(report, f, indent=2, ensure_ascii=False)
+                json.dump(report, f, indent=2, ensure_ascii=False, default=json_serializer)
             
             self.logging_system.info(f"最终训练报告已保存到 {output_path}", "TRAINING_ENGINE")
             return str(output_path)

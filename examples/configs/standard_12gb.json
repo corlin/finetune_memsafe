@@ -1,0 +1,19 @@
+{
+  "model_name": "Qwen/Qwen3-4B-Thinking-2507",
+  "output_dir": "./qwen3-finetuned-12gb",
+  "max_memory_gb": 11.5,
+  "batch_size": 2,
+  "gradient_accumulation_steps": 32,
+  "learning_rate": 5e-5,
+  "num_epochs": 75,
+  "max_sequence_length": 256,
+  "lora_r": 6,
+  "lora_alpha": 12,
+  "lora_dropout": 0.1,
+  "data_dir": "data/raw",
+  "log_dir": "./logs",
+  "enable_tensorboard": true,
+  "enable_inference_test": true,
+  "verify_environment": true,
+  "auto_install_deps": false
+}

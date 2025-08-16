@@ -276,6 +276,12 @@ print(response)
    python main.py --max-memory-gb 20 --batch-size 8 --gradient-accumulation-steps 8
    ```
 
+## 文档
+
+- [安装指南](docs/INSTALLATION.md) - 详细的安装说明和环境配置
+- [配置指南](docs/CONFIGURATION.md) - 不同硬件设置的配置选项
+- [故障排除](docs/TROUBLESHOOTING.md) - 常见问题解决方案
+
 ## 贡献
 
 欢迎提交Issue和Pull Request来改进这个项目。
