@@ -1,0 +1,108 @@
+{
+  "summary": {
+    "training_summary": {
+      "start_time": "2025-08-14T21:21:16.287695",
+      "end_time": "2025-08-14T21:21:19.304919",
+      "total_duration": "0:00:03.017224",
+      "total_steps": 30,
+      "final_epoch": 10.0,
+      "final_loss": 2.068429070123736,
+      "final_learning_rate": 4.969939718308492e-05
+    },
+    "performance_metrics": {
+      "avg_steps_per_second": 9.942914414044168,
+      "avg_samples_per_second": 9.942914414044168,
+      "peak_memory_gb": 10.066631944322374,
+      "avg_memory_gb": 10.066631944322374,
+      "memory_efficiency": 0.6291644965201484,
+      "training_stability": 0.9700723082272644,
+      "total_training_time": "0:00:03.017224"
+    },
+    "memory_summary": {
+      "peak_memory_gb": 10.066631944322374,
+      "min_memory_gb": 10.066631944322374,
+      "avg_memory_gb": 10.066631944322374,
+      "median_memory_gb": 10.066631944322374,
+      "memory_std_gb": 0.0,
+      "total_memory_reports": 1,
+      "memory_warnings": 0
+    },
+    "progress_statistics": {
+      "total_snapshots": 1,
+      "monitoring_duration": "0:00:00",
+      "avg_update_interval": 5.0,
+      "loss_trend": "stable",
+      "step_consistency": 0.7862051267256631
+    }
+  },
+  "progress_history": [
+    {
+      "timestamp": "2025-08-14T21:21:16.287695",
+      "epoch": 0.0,
+      "step": 0,
+      "total_steps": 30,
+      "loss": 0.0,
+      "learning_rate": 0.0,
+      "memory_status": {
+        "allocated_gb": 10.066631944322374,
+        "cached_gb": 3.019989583296712,
+        "total_gb": 16.0,
+        "available_gb": 5.933368055677626,
+        "is_safe": true,
+        "timestamp": "2025-08-14T21:21:16.287695"
+      },
+      "elapsed_time": "0:00:00",
+      "estimated_remaining": null
+    }
+  ],
+  "memory_reports": [
+    {
+      "timestamp": "2025-08-14T21:21:16.287695",
+      "current_memory_gb": 9.603861851301101,
+      "cached_memory_gb": 2.8811585553903303,
+      "available_memory_gb": 6.396138148698899,
+      "total_memory_gb": 16.0,
+      "is_safe": true,
+      "avg_memory_gb": 10.066631944322374,
+      "peak_memory_gb": 10.066631944322374,
+      "min_memory_gb": 10.066631944322374,
+      "memory_usage_percent": 60.02413657063188,
+      "step": 0
+    }
+  ],
+  "loss_history": [
+    2.055486917674692,
+    2.0616619841303243,
+    1.9444108087438645,
+    2.0238462585329815,
+    1.9802839230218556,
+    1.9731283247012403,
+    2.075180019462701,
+    2.0003121094181053,
+    1.896645440445923,
+    2.0517467876634896,
+    2.0361744559578794,
+    2.009654863335222,
+    1.9569191057280049,
+    2.082054663285205,
+    2.043305914716381,
+    2.054137429119241,
+    1.8939092231537307,
+    1.949662457162371,
+    1.9652948239335983,
+    2.0383864616406533,
+    1.915759739513832,
+    1.9970723614249641,
+    1.901874641371913,
+    2.054301008376059,
+    2.030416889559096,
+    2.0265324571717196,
+    2.0542034807333005,
+    2.0588006006582473,
+    1.8987835076207071,
+    2.068429070123736
+  ],
+  "memory_usage_history": [
+    10.066631944322374
+  ]
+}

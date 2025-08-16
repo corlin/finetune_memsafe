@@ -1,0 +1,73 @@
+{
+  "summary": {
+    "training_summary": {
+      "start_time": "2025-08-14T21:21:11.262498",
+      "end_time": "2025-08-14T21:21:16.282696",
+      "total_duration": "0:00:05.020198",
+      "total_steps": 50,
+      "final_epoch": 10.0,
+      "final_loss": 2.034857311346262,
+      "final_learning_rate": 4.9500000000000004e-05
+    },
+    "performance_metrics": {
+      "avg_steps_per_second": 9.959766527136978,
+      "avg_samples_per_second": 9.959766527136978,
+      "peak_memory_gb": 9.349043443153567,
+      "avg_memory_gb": 9.123186650066677,
+      "memory_efficiency": 0.5701991656291673,
+      "training_stability": 0.970489297648207,
+      "total_training_time": "0:00:05.020198"
+    },
+    "memory_summary": {
+      "peak_memory_gb": 9.349043443153567,
+      "min_memory_gb": 8.897329856979786,
+      "avg_memory_gb": 9.123186650066677,
+      "median_memory_gb": 9.123186650066677,
+      "memory_std_gb": 0.31940973993757465,
+      "total_memory_reports": 2,
+      "memory_warnings": 0
+    },
+    "progress_statistics": {
+      "total_snapshots": 2,
+      "monitoring_duration": "0:00:05.000800",
+      "avg_update_interval": 5.0,
+      "loss_trend": "stable",
+      "step_consistency": 0.8277561123061457
+    }
+  },
+  "progress_history": [
+    {
+      "timestamp": "2025-08-14T21:21:11.262995",
+      "epoch": 0.0,
+      "step": 0,
+      "total_steps": 50,
+      "loss": 0.0,
+      "learning_rate": 0.0,
+      "memory_status": {
+        "allocated_gb": 9.349043443153567,
+        "cached_gb": 2.80471303294607,
+        "total_gb": 16.0,
+        "available_gb": 6.650956556846433,
+        "is_safe": true,
+        "timestamp": "2025-08-14T21:21:11.262995"
+      },
+      "elapsed_time": "0:00:00.000497",
+      "estimated_remaining": null
+    },
+    {
+      "timestamp": "2025-08-14T21:21:16.263795",
+      "epoch": 10.0,
+      "step": 50,
+      "total_steps": 50,
+      "loss": 2.034857311346262,
+      "learning_rate": 4.9500000000000004e-05,
+      "memory_status": {
+        "allocated_gb": 8.897329856979786,
+        "cached_gb": 2.669198957093936,
+        "total_gb": 16.0,
+        "available_gb": 7.102670143020214,
+        "is_safe": true,
+        "timestamp": "2025-08-14T21:21:16.263795"
+      },
+      "elapsed_time": "0:00:05.001297",
+      "estimated_remaining": 

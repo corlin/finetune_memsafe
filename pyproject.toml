@@ -1,0 +1,35 @@
+[project]
+name = "16gfin"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "bitsandbytes>=0.47.0",
+    "datasets>=4.0.0",
+    "peft>=0.17.0",
+    "rich>=14.1.0",
+    "tensorboard>=2.20.0",
+    # 修正后的PyTorch依赖声明
+    "torch>=2.8.0",
+    "transformers>=4.55.2",
+]
+
+[tool.uv]
+dev-dependencies = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0"
+]
+
+[tool.uv.sources]
+torch = [
+  { index = "pytorch-cu129" },
+]
+torchvision = [
+  { index = "pytorch-cu129"},
+]
+
+[[tool.uv.index]]
+name = "pytorch-cu129"
+url = "https://download.pytorch.org/whl/cu129"
+explicit = true
