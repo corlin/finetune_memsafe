@@ -29,7 +29,7 @@ def main():
         sys.exit(1)
     
     # 检查checkpoint
-    checkpoint_path = Path("qwen3-finetuned/checkpoint-30")
+    checkpoint_path = Path("qwen3-finetuned/checkpoint-300")
     if not checkpoint_path.exists():
         print(f"❌ 错误: Checkpoint目录不存在: {checkpoint_path}")
         sys.exit(1)
@@ -46,7 +46,7 @@ def main():
         # 运行导出脚本
         print("\n🔄 开始轻量级模型导出...")
         print("基座模型: Qwen/Qwen3-4B-Thinking-2507")
-        print("Checkpoint: qwen3-finetuned/checkpoint-30")
+        print("Checkpoint: qwen3-finetuned/checkpoint-300")
         print("优化: 跳过权重压缩以节省内存")
         print("-" * 50)
         
@@ -80,15 +80,15 @@ logging.basicConfig(
 
 # 创建轻量级导出配置
 config = ExportConfiguration(
-    checkpoint_path="./qwen3-finetuned/checkpoint-30",
+    checkpoint_path="./qwen3-finetuned/checkpoint-300",
     base_model_name="Qwen/Qwen3-4B-Thinking-2507",
     output_directory="./exported_models/qwen3_merged_lightweight",
-    quantization_level="int4",  # 使用FP16而不是INT8，更快但文件稍大
+    quantization_level="none",  # 使用FP16而不是INT8，更快但文件稍大
     #"none", "fp16", "int8", "int4"
     remove_training_artifacts=True,
     compress_weights=False,  # 完全跳过权重压缩以节省内存
     export_pytorch=True,
-    export_onnx=True,  # 完全跳过ONNX导出以节省内存
+    export_onnx=False,  # 完全跳过ONNX导出以节省内存
     export_tensorrt=False,
     onnx_opset_version=20,  # 使用ONNX opset版本20
     onnx_optimize_graph=True,
