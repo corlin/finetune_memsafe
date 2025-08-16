@@ -1,0 +1,31 @@
+export:
+  base_model:
+    load_in_4bit: false
+    name: Qwen/Qwen3-4B-Thinking-2507
+  checkpoint:
+    auto_detect_latest: true
+    path: qwen3-finetuned
+  formats:
+    onnx:
+      enabled: true
+      opset_version: 14
+      optimize_graph: true
+    pytorch:
+      enabled: true
+      save_tokenizer: true
+    tensorrt:
+      enabled: false
+  monitoring:
+    log_level: INFO
+    max_memory_gb: 16.0
+  optimization:
+    compress_weights: true
+    quantization: int8
+    remove_artifacts: true
+  output:
+    directory: exported_models
+    naming_pattern: '{model_name}_{timestamp}'
+  validation:
+    benchmark_performance: true
+    enabled: true
+    test_samples: 5

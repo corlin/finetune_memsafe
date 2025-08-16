@@ -1,0 +1,103 @@
+{
+  "framework_validation_summary": {
+    "start_time": "2025-08-16T17:37:59.254021",
+    "end_time": "2025-08-16T17:38:03.280661",
+    "total_duration_seconds": 4.02664,
+    "total_tests": 5,
+    "passed_tests": 5,
+    "warning_tests": 0,
+    "failed_tests": 0,
+    "success_rate_percentage": 100.0
+  },
+  "test_results": {
+    "checkpoint_detection": {
+      "status": "PASSED",
+      "checkpoint_path": "qwen3-finetuned",
+      "checkpoint_exists": true,
+      "required_files": [
+        "adapter_config.json",
+        "adapter_model.safetensors",
+        "tokenizer.json",
+        "tokenizer_config.json"
+      ],
+      "found_files": [
+        "adapter_config.json",
+        "adapter_model.safetensors",
+        "tokenizer.json",
+        "tokenizer_config.json"
+      ],
+      "completeness": 1.0
+    },
+    "system_requirements": {
+      "status": "PASSED",
+      "system_info": {
+        "platform": "Windows-10-10.0.19045-SP0",
+        "python_version": "3.12.7",
+        "architecture": [
+          "64bit",
+          "WindowsPE"
+        ],
+        "processor": "Intel64 Family 6 Model 158 Stepping 9, GenuineIntel",
+        "memory_gb": 47.929176330566406
+      },
+      "packages": {
+        "torch": "AVAILABLE",
+        "transformers": "AVAILABLE",
+        "onnx": "AVAILABLE",
+        "onnxruntime": "AVAILABLE",
+        "psutil": "AVAILABLE",
+        "numpy": "AVAILABLE",
+        "json": "AVAILABLE",
+        "tempfile": "AVAILABLE"
+      },
+      "critical_packages_available": true
+    },
+    "file_operations": {
+      "status": "PASSED",
+      "file_operations": {
+        "write_success": true,
+        "read_success": true,
+        "file_size": 40,
+        "unicode_support": true
+      },
+      "directory_operations": {
+        "create_success": true
+      },
+      "json_operations": {
+        "write_success": true,
+        "read_success": true,
+        "unicode_support": true
+      }
+    },
+    "performance_monitoring": {
+      "status": "PASSED",
+      "timing": {
+        "work_duration": 0.0019989013671875,
+        "measurement_successful": true
+      },
+      "memory_monitoring": {
+        "initial_available_gb": 29.343326568603516,
+        "final_available_gb": 29.343326568603516,
+        "monitoring_successful": true
+      },
+      "cpu_monitoring": {
+        "initial_cpu_percent": 23.4,
+        "final_cpu_percent": 37.5,
+        "monitoring_successful": true
+      }
+    },
+    "error_handling": {
+      "status": "PASSED",
+      "error_scenarios": {
+        "file_not_found": "HANDLED",
+        "import_error": "HANDLED",
+        "json_error": "HANDLED"
+      },
+      "all_errors_handled": true
+    }
+  },
+  "framework_status": "READY",
+  "recommendations": [
+    "Framework validation completed successfully - ready for full integration testing"
+  ]
+}

@@ -1,0 +1,259 @@
+{
+  "execution_summary": {
+    "start_time": "2025-08-16T17:35:55.487993",
+    "end_time": "2025-08-16T17:36:00.995816",
+    "total_duration_seconds": 5.507823,
+    "total_benchmarks": 5,
+    "passed_benchmarks": 4,
+    "failed_benchmarks": 1,
+    "success_rate": 80.0
+  },
+  "system_information": {
+    "platform": "Windows-10-10.0.19045-SP0",
+    "processor": "Intel64 Family 6 Model 158 Stepping 9, GenuineIntel",
+    "architecture": [
+      "64bit",
+      "WindowsPE"
+    ],
+    "python_version": "3.12.7",
+    "torch_version": "2.8.0+cu129",
+    "cuda_available": true,
+    "cuda_device_count": 1,
+    "cuda_version": "12.9",
+    "total_memory_gb": 47.929176330566406,
+    "available_memory_gb": 29.510108947753906,
+    "cpu_count": 8,
+    "cpu_freq": {
+      "current": 4200.0,
+      "min": 0.0,
+      "max": 4200.0
+    }
+  },
+  "benchmark_results": {
+    "memory_usage": {
+      "status": "PASSED",
+      "baseline_memory_mb": 426.625,
+      "peak_memory_mb": 465.2734375,
+      "memory_increase_mb": 38.6484375,
+      "cleanup_effective": false,
+      "memory_snapshots": [
+        {
+          "stage": "baseline",
+          "system_memory_used_gb": 18.419071197509766,
+          "process_memory_mb": 426.625,
+          "timestamp": 1755336955.4926028
+        },
+        {
+          "stage": "allocation_0",
+          "system_memory_used_gb": 18.420257568359375,
+          "process_memory_mb": 430.8515625,
+          "timestamp": 1755336955.5026119
+        },
+        {
+          "stage": "allocation_1",
+          "system_memory_used_gb": 18.43228530883789,
+          "process_memory_mb": 434.67578125,
+          "timestamp": 1755336955.5126102
+        },
+        {
+          "stage": "allocation_2",
+          "system_memory_used_gb": 18.435951232910156,
+          "process_memory_mb": 438.49609375,
+          "timestamp": 1755336955.5246115
+        },
+        {
+          "stage": "allocation_3",
+          "system_memory_used_gb": 18.435638427734375,
+          "process_memory_mb": 442.3203125,
+          "timestamp": 1755336955.5346107
+        },
+        {
+          "stage": "allocation_4",
+          "system_memory_used_gb": 18.436481475830078,
+          "process_memory_mb": 446.140625,
+          "timestamp": 1755336955.544611
+        },
+        {
+          "stage": "allocation_5",
+          "system_memory_used_gb": 18.444522857666016,
+          "process_memory_mb": 449.96484375,
+          "timestamp": 1755336955.5546143
+        },
+        {
+          "stage": "allocation_6",
+          "system_memory_used_gb": 18.452239990234375,
+          "process_memory_mb": 453.78515625,
+          "timestamp": 1755336955.5651119
+        },
+        {
+          "stage": "allocation_7",
+          "system_memory_used_gb": 18.4520263671875,
+          "process_memory_mb": 457.61328125,
+          "timestamp": 1755336955.5751107
+        },
+        {
+          "stage": "allocation_8",
+          "system_memory_used_gb": 18.458866119384766,
+          "process_memory_mb": 461.4375,
+          "timestamp": 1755336955.585613
+        },
+        {
+          "stage": "allocation_9",
+          "system_memory_used_gb": 18.461589813232422,
+          "process_memory_mb": 465.2578125,
+          "timestamp": 1755336955.5956118
+        },
+        {
+          "stage": "peak",
+          "system_memory_used_gb": 18.461589813232422,
+          "process_memory_mb": 465.2578125,
+          "timestamp": 1755336955.5991113
+        },
+        {
+          "stage": "cleanup",
+          "system_memory_used_gb": 18.461605072021484,
+          "process_memory_mb": 465.2734375,
+          "timestamp": 1755336955.6031106
+        }
+      ],
+      "system_info": {
+        "platform": "Windows-10-10.0.19045-SP0",
+        "processor": "Intel64 Family 6 Model 158 Stepping 9, GenuineIntel",
+        "architecture": [
+          "64bit",
+          "WindowsPE"
+        ],
+        "python_version": "3.12.7",
+        "torch_version": "2.8.0+cu129",
+        "cuda_available": true,
+        "cuda_device_count": 1,
+        "cuda_version": "12.9",
+        "total_memory_gb": 47.929176330566406,
+        "available_memory_gb": 29.510108947753906,
+        "cpu_count": 8,
+        "cpu_freq": {
+          "current": 4200.0,
+          "min": 0.0,
+          "max": 4200.0
+        }
+      }
+    },
+    "cpu_performance": {
+      "status": "PASSED",
+      "matrix_computations": {
+        "matrix_100x100": {
+          "average_time": 0.004839340845743815,
+          "min_time": 0.0004985332489013672,
+          "max_time": 0.013510704040527344,
+          "std_time": 0.0061315811456075595
+        },
+        "matrix_200x200": {
+          "average_time": 0.0020024776458740234,
+          "min_time": 0.002000093460083008,
+          "max_time": 0.0020062923431396484,
+          "std_time": 2.725351365325013e-06
+        },
+        "matrix_500x500": {
+          "average_time": 0.011999130249023438,
+          "min_time": 0.010999441146850586,
+          "max_time": 0.012998342514038086,
+          "std_time": 0.0008160481356171218
+        },
+        "matrix_1000x1000": {
+          "average_time": 0.05016716321309408,
+          "min_time": 0.048502206802368164,
+          "max_time": 0.05249929428100586,
+          "std_time": 0.001698630545540314
+        }
+      },
+      "threading_performance": {
+        "single_threaded_time": 0.006499528884887695,
+        "multi_threaded_time": 0.008000373840332031,
+        "efficiency_ratio": 0.8124031469781857
+      },
+      "cpu_info": {
+        "cpu_count": 8,
+        "cpu_freq": {
+          "current": 4200.0,
+          "min": 0.0,
+          "max": 4200.0
+        }
+      }
+    },
+    "io_performance": {
+      "status": "PASSED",
+      "file_operations": {
+        "1mb_file": {
+          "write_time": 0.0004999637603759766,
+          "read_time": 0.0,
+          "write_speed_mbps": 2000.144969003338,
+          "read_speed_mbps": 0,
+          "data_integrity": true
+        },
+        "10mb_file": {
+          "write_time": 0.0034990310668945312,
+          "read_time": 0.0029997825622558594,
+          "write_speed_mbps": 2857.93404197329,
+          "read_speed_mbps": 3333.574948338897,
+          "data_integrity": true
+        },
+        "100mb_file": {
+          "write_time": 0.0904991626739502,
+          "read_time": 0.029500961303710938,
+          "write_speed_mbps": 1104.982599234419,
+          "read_speed_mbps": 3389.720049136872,
+          "data_integrity": true
+        }
+      },
+      "directory_operations": {
+        "create_100_dirs_time": 0.019972562789916992,
+        "delete_100_dirs_time": 0.009500265121459961,
+        "create_rate_per_sec": 5006.868725453916,
+        "delete_rate_per_sec": 10526.022034281124
+      }
+    },
+    "torch_operations": {
+      "status": "PASSED",
+      "cpu_operations": {
+        "tensor_1000x1000": {
+          "creation_time": 0.009984970092773438,
+          "matmul_time": 0.015001058578491211,
+          "elementwise_time": 0.004001617431640625,
+          "total_elements": 1000000
+        },
+        "tensor_2000x2000": {
+          "creation_time": 0.05499839782714844,
+          "matmul_time": 0.06900143623352051,
+          "elementwise_time": 0.007497549057006836,
+          "total_elements": 4000000
+        },
+        "tensor_5000x5000": {
+          "creation_time": 0.3340003490447998,
+          "matmul_time": 0.7550020217895508,
+          "elementwise_time": 0.045998573303222656,
+          "total_elements": 25000000
+        }
+      },
+      "cuda_operations": {
+        "cuda_1000x1000": {
+          "transfer_to_gpu_time": 0.1334993839263916,
+          "gpu_compute_time": 0.07299923896789551,
+          "transfer_to_cpu_time": 0.010499238967895508,
+          "total_gpu_time": 0.21699786186218262
+        },
+        "cuda_2000x2000": {
+          "transfer_to_gpu_time": 0.004000186920166016,
+          "gpu_compute_time": 0.0004999637603759766,
+          "transfer_to_cpu_time": 0.005001068115234375,
+          "total_gpu_time": 0.009501218795776367
+        }
+      },
+      "cuda_available": true,
+      "torch_version": "2.8.0+cu129"
+    },
+    "concurrent_operations": {
+      "status": "FAILED",
+      "error": "Can't get local object 'PerformanceBenchmark.benchmark_concurrent_operations.<locals>.compute_task'"
+    }
+  }
+}

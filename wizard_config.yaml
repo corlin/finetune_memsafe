@@ -1,0 +1,7 @@
+base_model_name: Qwen/Qwen3-4B-Thinking-2507
+checkpoint_path: qwen3-finetuned
+export_onnx: true
+export_pytorch: true
+output_directory: exported_models
+quantization_level: int8
+run_validation_tests: true
