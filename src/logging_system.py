@@ -18,7 +18,10 @@ from queue import Queue, Empty
 import torch
 from torch.utils.tensorboard import SummaryWriter
 
-from .memory_optimizer import MemoryStatus
+try:
+    from .memory_optimizer import MemoryStatus
+except ImportError:
+    from memory_optimizer import MemoryStatus
 
 
 @dataclass

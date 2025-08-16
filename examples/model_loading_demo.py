@@ -4,12 +4,21 @@
 
 import sys
 import os
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'src'))
-
-from model_manager import ModelManager
-from lora_adapter import LoRAAdapter
-from memory_optimizer import MemoryOptimizer
 import logging
+
+# 添加项目根目录到Python路径
+project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, project_root)
+
+# 现在可以正确导入src模块
+try:
+    from src.model_manager import ModelManager
+    from src.lora_adapter import LoRAAdapter
+    from src.memory_optimizer import MemoryOptimizer
+except ImportError as e:
+    print(f"导入错误: {e}")
+    print("请确保从项目根目录运行此脚本，或使用 'uv run examples/model_loading_demo.py'")
+    sys.exit(1)
 
 # 设置日志
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')

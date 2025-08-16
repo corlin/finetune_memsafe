@@ -26,9 +26,14 @@ from transformers import (
 from datasets import Dataset
 from peft import PeftModel
 
-from .memory_optimizer import MemoryOptimizer, MemoryStatus
-from .logging_system import LoggingSystem, TrainingMetrics
-from .progress_monitor import ProgressMonitor
+try:
+    from .memory_optimizer import MemoryOptimizer, MemoryStatus
+    from .logging_system import LoggingSystem, TrainingMetrics
+    from .progress_monitor import ProgressMonitor
+except ImportError:
+    from memory_optimizer import MemoryOptimizer, MemoryStatus
+    from logging_system import LoggingSystem, TrainingMetrics
+    from progress_monitor import ProgressMonitor
 
 logger = logging.getLogger(__name__)
 
@@ -276,7 +281,10 @@ class TrainingEngine:
         """
         try:
             # 尝试导入增强的数据处理功能
-            from .data_pipeline import create_safe_data_collator
+            try:
+                from .data_pipeline import create_safe_data_collator
+            except ImportError:
+                from data_pipeline import create_safe_data_collator
             
             logger.info("使用增强的安全数据整理器")
             return create_safe_data_collator(

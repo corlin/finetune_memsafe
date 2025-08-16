@@ -22,8 +22,12 @@ from rich.layout import Layout
 from rich.panel import Panel
 from rich.text import Text
 
-from .memory_optimizer import MemoryOptimizer, MemoryStatus
-from .logging_system import LoggingSystem
+try:
+    from .memory_optimizer import MemoryOptimizer, MemoryStatus
+    from .logging_system import LoggingSystem
+except ImportError:
+    from memory_optimizer import MemoryOptimizer, MemoryStatus
+    from logging_system import LoggingSystem
 
 
 @dataclass

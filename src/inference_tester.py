@@ -11,7 +11,10 @@ from pathlib import Path
 import json
 import time
 from dataclasses import dataclass
-from .memory_optimizer import MemoryOptimizer
+try:
+    from .memory_optimizer import MemoryOptimizer
+except ImportError:
+    from memory_optimizer import MemoryOptimizer
 
 logger = logging.getLogger(__name__)
 

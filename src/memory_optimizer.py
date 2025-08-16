@@ -11,12 +11,35 @@ import logging
 from typing import Tuple, Optional
 from dataclasses import dataclass
 from datetime import datetime
-from .memory_exceptions import (
-    OutOfMemoryError, 
-    InsufficientMemoryError, 
-    MemoryLeakError,
-    MemoryErrorHandler
-)
+try:
+    from .memory_exceptions import (
+        OutOfMemoryError, 
+        InsufficientMemoryError, 
+        MemoryLeakError,
+        MemoryErrorHandler
+    )
+except ImportError:
+    # 如果相对导入失败，尝试绝对导入
+    try:
+        from memory_exceptions import (
+            OutOfMemoryError, 
+            InsufficientMemoryError, 
+            MemoryLeakError,
+            MemoryErrorHandler
+        )
+    except ImportError:
+        # 如果都失败了，定义基本的异常类
+        class OutOfMemoryError(Exception):
+            pass
+        class InsufficientMemoryError(Exception):
+            pass
+        class MemoryLeakError(Exception):
+            pass
+        class MemoryErrorHandler:
+            @staticmethod
+            def handle_memory_error(error, context=""):
+                logging.error(f"Memory error in {context}: {error}")
+                return False
 
 
 @dataclass
