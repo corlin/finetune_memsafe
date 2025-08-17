@@ -27,3 +27,5 @@ demo_logs/
 data/processed_dataset/
 
 exported_models/
+
+llama.cpp/

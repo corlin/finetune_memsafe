@@ -37,8 +37,8 @@ def main():
         logger.info(f"模型已加载到设备: {device}")
         
         # 问题
-        question = "什么是秘钥管理？请简要说明其概念和重要性。"
-        prompt = f"问题：{question}\n回答："
+        question = "北京有啥好玩的"
+        prompt = f"北京有啥好玩的?"#问题：{question}\n回答："
         
         logger.info("正在生成回答...")
         inputs = tokenizer(prompt, return_tensors="pt").to(device)
@@ -46,7 +46,7 @@ def main():
         with torch.no_grad():
             outputs = model.generate(
                 inputs.input_ids,
-                max_new_tokens=300,
+                max_new_tokens=3000,
                 temperature=0.7,
                 do_sample=True,
                 top_p=0.9,
@@ -56,7 +56,7 @@ def main():
         
         # 提取回答
         generated_tokens = outputs[0][len(inputs.input_ids[0]):]
-        response = tokenizer.decode(generated_tokens, skip_special_tokens=True)
+        response = tokenizer.decode(generated_tokens, skip_special_tokens=False)
         
         print("\n" + "="*60)
         print("问题:", question)
