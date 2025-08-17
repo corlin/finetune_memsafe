@@ -1,0 +1,130 @@
+# Qwen3微调系统 - 数据拆分和评估配置文件
+
+# 数据拆分配置
+data_split:
+  train_ratio: 0.7          # 训练集比例
+  val_ratio: 0.15           # 验证集比例
+  test_ratio: 0.15          # 测试集比例
+  stratify_by: null         # 分层字段（如 "source" 或 null）
+  random_seed: 42           # 随机种子
+  min_samples_per_split: 1  # 每个拆分的最小样本数
+
+# 评估配置
+evaluation:
+  # 评估任务列表
+  tasks:
+    - "text_generation"     # 文本生成
+    - "question_answering"  # 问答
+    - "classification"      # 分类
+  
+  # 评估指标列表
+  metrics:
+    - "bleu"               # BLEU分数
+    - "rouge"              # ROUGE分数
+    - "bertscore"          # BERTScore
+    - "perplexity"         # 困惑度
+    - "accuracy"           # 准确率
+    - "f1"                 # F1分数
+  
+  # 推理参数
+  batch_size: 8            # 批次大小
+  max_length: 512          # 最大序列长度
+  temperature: 0.7         # 生成温度
+  top_p: 0.9              # Top-p采样
+  num_samples: 100         # 每个任务的样本数
+  
+  # 功能开关
+  enable_efficiency_metrics: true   # 启用效率指标测量
+  enable_quality_analysis: true     # 启用质量分析
+
+# 基准测试配置
+benchmarks:
+  # CLUE基准测试
+  clue:
+    name: "CLUE"
+    dataset_path: "benchmarks/clue"
+    tasks:
+      - "tnews"            # 今日头条中文新闻（短文本）分类
+      - "afqmc"            # 蚂蚁金融语义相似度
+      - "cmnli"            # 中文自然语言推理
+      - "ocnli"            # 原创中文自然语言推理
+      - "wsc"              # 威诺格拉德模式挑战
+      - "csl"              # 中科院科学文献数据集
+    evaluation_protocol: "official"
+    metrics: ["accuracy", "f1"]
+  
+  # FewCLUE基准测试
+  few_clue:
+    name: "FewCLUE"
+    dataset_path: "benchmarks/few_clue"
+    tasks:
+      - "tnews"
+      - "afqmc"
+      - "cmnli"
+    evaluation_protocol: "few_shot"
+    metrics: ["accuracy", "f1"]
+    max_samples: 1000      # 限制样本数量
+  
+  # C-Eval基准测试
+  c_eval:
+    name: "C-Eval"
+    dataset_path: "benchmarks/c_eval"
+    tasks:
+      - "high_school_physics"
+      - "high_school_chemistry"
+      - "high_school_biology"
+      - "computer_science"
+    evaluation_protocol: "multiple_choice"
+    metrics: ["accuracy"]
+
+# 实验跟踪配置
+experiment_tracking:
+  enabled: true                    # 启用实验跟踪
+  experiment_dir: "./experiments"  # 实验结果目录
+  auto_compare: true               # 自动对比实验
+  leaderboard_metric: "overall_score"  # 排行榜指标
+  save_predictions: true           # 保存预测结果
+  save_model_outputs: false       # 保存模型原始输出
+  
+  # 报告格式
+  report_formats:
+    - "json"                       # JSON格式
+    - "csv"                        # CSV格式
+    - "html"                       # HTML报告
+
+# 质量分析配置
+quality_analysis:
+  enable_duplicate_detection: true    # 启用重复检测
+  enable_length_analysis: true        # 启用长度分析
+  enable_vocabulary_analysis: true    # 启用词汇分析
+  length_outlier_threshold: 3.0       # 长度异常值阈值（标准差倍数）
+  min_length: 5                       # 最小长度
+  max_length: 2048                    # 最大长度
+  
+  # 质量检查项
+  quality_checks:
+    - "empty_content"                 # 空内容检查
+    - "encoding_errors"               # 编码错误检查
+    - "format_consistency"            # 格式一致性检查
+    - "language_detection"            # 语言检测
+
+# 性能优化配置
+performance:
+  enable_caching: true                # 启用结果缓存
+  cache_dir: "./cache"                # 缓存目录
+  parallel_evaluation: true          # 并行评估
+  max_workers: 4                      # 最大工作进程数
+  memory_limit_gb: 16                 # 内存限制
+
+# 可视化配置
+visualization:
+  enable_plots: true                  # 启用图表生成
+  plot_formats: ["png", "pdf"]       # 图表格式
+  plot_dpi: 300                       # 图表分辨率
+  
+  # 图表类型
+  plot_types:
+    - "metric_comparison"             # 指标对比图
+    - "training_curves"               # 训练曲线
+    - "distribution_analysis"         # 分布分析图
+    - "efficiency_analysis"           # 效率分析图

@@ -1,0 +1,49 @@
+# 基础配置示例
+# 适用于简单的分类任务评估
+
+# 数据拆分配置
+data_split:
+  train_ratio: 0.7      # 训练集比例
+  val_ratio: 0.15       # 验证集比例
+  test_ratio: 0.15      # 测试集比例
+  random_seed: 42       # 随机种子，确保可重现性
+  stratify_by: "label"  # 按标签分层抽样
+  min_samples_per_split: 10  # 每个拆分的最小样本数
+
+# 评估配置
+evaluation:
+  # 评估任务列表
+  tasks:
+    - "classification"
+  
+  # 评估指标列表
+  metrics:
+    - "accuracy"
+    - "precision"
+    - "recall"
+    - "f1"
+  
+  # 推理参数
+  batch_size: 8         # 批次大小
+  max_length: 512       # 最大序列长度
+  num_samples: null     # 评估样本数，null表示使用全部数据
+  
+  # 设备配置
+  device: "cpu"         # 计算设备
+  memory_optimization: false  # 是否启用内存优化
+
+# 实验跟踪配置
+experiment_tracking:
+  enabled: true                    # 是否启用实验跟踪
+  experiment_dir: "./experiments"  # 实验记录目录
+  auto_save: true                  # 是否自动保存
+  max_history: 1000               # 最大历史记录数
+
+# 报告生成配置
+reporting:
+  output_dir: "./reports"  # 报告输出目录
+  include_plots: true      # 是否包含图表
+  language: "zh"          # 报告语言
+  formats:                # 支持的报告格式
+    - "html"
+    - "json"

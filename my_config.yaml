@@ -1,0 +1,63 @@
+benchmarks:
+  clue:
+    dataset_path: benchmarks/clue
+    evaluation_protocol: official
+    metrics:
+    - accuracy
+    - f1
+    name: CLUE
+    tasks:
+    - tnews
+    - afqmc
+    - cmnli
+    - ocnli
+    - wsc
+    - csl
+  few_clue:
+    dataset_path: benchmarks/few_clue
+    evaluation_protocol: few_shot
+    metrics:
+    - accuracy
+    - f1
+    name: FewCLUE
+    tasks:
+    - tnews
+    - afqmc
+    - cmnli
+data_split:
+  min_samples_per_split: 10
+  random_seed: 42
+  stratify_by: null
+  test_ratio: 0.15
+  train_ratio: 0.7
+  val_ratio: 0.15
+evaluation:
+  batch_size: 8
+  enable_efficiency_metrics: true
+  enable_quality_analysis: true
+  max_length: 512
+  metrics:
+  - bleu
+  - rouge
+  - bertscore
+  - perplexity
+  num_samples: 100
+  tasks:
+  - text_generation
+  - question_answering
+  temperature: 0.7
+  top_p: 0.9
+experiment_tracking:
+  auto_compare: true
+  enabled: true
+  experiment_dir: ./experiments
+  leaderboard_metric: overall_score
+  save_model_outputs: false
+  save_predictions: true
+quality_analysis:
+  enable_duplicate_detection: true
+  enable_length_analysis: true
+  enable_vocabulary_analysis: true
+  length_outlier_threshold: 3.0
+  max_length: 2048
+  min_length: 5

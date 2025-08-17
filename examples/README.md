@@ -1,269 +1,387 @@
-# 示例配置和数据集
+# 示例代码
 
-本目录包含了Qwen3优化微调系统的示例配置文件、数据集和性能基准测试脚本。
+本目录包含了数据拆分和评估系统的各种使用示例。
 
 ## 目录结构
 
 ```
 examples/
-├── configs/                    # 配置文件示例
-│   ├── low_memory_8gb.json    # 低内存8GB配置
-│   ├── standard_12gb.json     # 标准12GB配置
-│   ├── high_performance_16gb.json # 高性能16GB配置
-│   └── quick_test.json        # 快速测试配置
-├── datasets/                   # 示例数据集
-│   ├── programming_qa.md      # 编程问答数据集
-│   ├── ai_ml_qa.md           # AI/ML问答数据集
-│   └── general_knowledge_qa.md # 通用知识问答数据集
-├── benchmark_performance.py    # 性能基准测试脚本
-└── README.md                  # 本文件
+├── README.md                    # 本文件
+├── basic_usage.py              # 基本使用示例
+├── advanced_evaluation.py      # 高级评估示例
+├── config_examples/            # 配置文件示例
+│   ├── basic_config.yaml       # 基础配置
+│   └── advanced_config.yaml    # 高级配置
+├── benchmark_examples/         # 基准测试示例
+├── custom_tasks/              # 自定义任务示例
+└── integration_examples/      # 集成示例
 ```
 
-## 配置文件说明
+## 快速开始
 
-### 1. 低内存8GB配置 (`low_memory_8gb.json`)
+### 1. 基本使用示例
 
-适用于显存较少的GPU（如RTX 3070, RTX 4060 Ti等）：
-
-- **最大内存**: 7.5GB
-- **批次大小**: 1
-- **梯度累积**: 64步
-- **序列长度**: 128
-- **LoRA参数**: r=4, alpha=8
-
-**使用方法**:
-```bash
-uv run python main.py --config examples/configs/low_memory_8gb.json
-```
-
-### 2. 标准12GB配置 (`standard_12gb.json`)
-
-适用于中等显存的GPU（如RTX 3080 Ti, RTX 4070 Ti等）：
-
-- **最大内存**: 11.5GB
-- **批次大小**: 2
-- **梯度累积**: 32步
-- **序列长度**: 256
-- **LoRA参数**: r=6, alpha=12
-
-**使用方法**:
-```bash
-uv run python main.py --config examples/configs/standard_12gb.json
-```
-
-### 3. 高性能16GB配置 (`high_performance_16gb.json`)
-
-适用于高显存的GPU（如RTX 4090, RTX 3090等）：
-
-- **最大内存**: 15.0GB
-- **批次大小**: 4
-- **梯度累积**: 16步
-- **序列长度**: 512
-- **LoRA参数**: r=8, alpha=16
-
-**使用方法**:
-```bash
-uv run python main.py --config examples/configs/high_performance_16gb.json
-```
-
-### 4. 快速测试配置 (`quick_test.json`)
-
-适用于快速验证和测试：
-
-- **训练轮数**: 5轮
-- **序列长度**: 128
-- **学习率**: 1e-4（较高，快速收敛）
-- **LoRA参数**: r=4, alpha=8（较小，快速训练）
-
-**使用方法**:
-```bash
-uv run python main.py --config examples/configs/quick_test.json
-```
-
-## 示例数据集
-
-### 1. 编程问答数据集 (`programming_qa.md`)
-
-包含Python编程、数据结构与算法相关的问答对，适用于：
-- 编程助手训练
-- 技术问答系统
-- 代码解释和教学
-
-**数据格式**:
-```markdown
-### Q1: 如何在Python中创建虚拟环境？
-A1: 可以使用venv模块创建虚拟环境：`python -m venv myenv`...
-```
-
-### 2. AI/ML问答数据集 (`ai_ml_qa.md`)
-
-包含机器学习、深度学习、自然语言处理相关的问答对，适用于：
-- AI教育助手
-- 技术咨询系统
-- 学术问答
-
-**数据格式**:
-```markdown
-Q1: 什么是过拟合？如何避免？
-A1: 过拟合是指模型在训练数据上表现很好，但在新数据上表现差的现象...
-```
-
-### 3. 通用知识问答数据集 (`general_knowledge_qa.md`)
-
-包含科学技术、历史文化、地理环境等通用知识问答对，适用于：
-- 通用问答系统
-- 教育助手
-- 知识问答机器人
-
-**数据格式**:
-```markdown
-### Q1: 什么是量子计算？
-A1: 量子计算利用量子力学原理进行信息处理，使用量子比特(qubit)作为基本单位...
-```
-
-## 性能基准测试
-
-### 运行基准测试
+最简单的使用方式，演示核心功能：
 
 ```bash
-# 运行所有配置的基准测试
-uv run python examples/benchmark_performance.py
+# 使用uv运行
+uv run python examples/basic_usage.py
 
-# 运行单个配置的基准测试
-uv run python examples/benchmark_performance.py --config examples/configs/quick_test.json --name "快速测试"
-
-# 指定输出文件
-uv run python examples/benchmark_performance.py --output my_benchmark.json --report my_report.md
+# 或使用python直接运行
+python examples/basic_usage.py
 ```
 
-### 基准测试内容
+**功能演示:**
+- 数据拆分
+- 模型评估
+- 实验跟踪
+- 报告生成
 
-基准测试会评估以下指标：
+### 2. 高级评估示例
 
-1. **训练时间**: 完成训练所需的总时间
-2. **内存使用**: 系统内存和GPU内存的峰值使用量
-3. **训练指标**: 最终训练损失、收敛情况等
-4. **推理测试**: 训练后模型的推理能力验证
-5. **系统兼容性**: 不同硬件配置下的表现
+展示系统的高级功能：
 
-### 基准测试报告
-
-测试完成后会生成详细的Markdown报告，包含：
-
-- 系统信息汇总
-- 各配置的性能对比表格
-- 详细的测试结果
-- 针对您硬件的优化建议
-
-## 自定义配置
-
-### 创建自定义配置
-
-1. 复制现有配置文件：
 ```bash
-cp examples/configs/standard_12gb.json my_config.json
+uv run python examples/advanced_evaluation.py
 ```
 
-2. 根据需要修改参数：
-```json
-{
-  "model_name": "Qwen/Qwen3-4B-Thinking-2507",
-  "max_memory_gb": 10.0,
-  "batch_size": 2,
-  "num_epochs": 50,
-  "learning_rate": 3e-5
-}
+**功能演示:**
+- 多模型对比评估
+- 质量分析
+- 基准测试
+- 高级报告生成
+- 性能分析
+
+## 配置文件示例
+
+### 基础配置 (basic_config.yaml)
+
+适用于简单的分类任务：
+
+```yaml
+data_split:
+  train_ratio: 0.7
+  val_ratio: 0.15
+  test_ratio: 0.15
+
+evaluation:
+  tasks: ["classification"]
+  metrics: ["accuracy", "f1"]
+  batch_size: 8
 ```
 
-3. 使用自定义配置：
-```bash
-uv run python main.py --config my_config.json
+使用方法：
+```python
+from evaluation.config_manager import ConfigManager
+
+config_manager = ConfigManager()
+config = config_manager.load_config("examples/config_examples/basic_config.yaml")
 ```
 
-### 配置参数说明
+### 高级配置 (advanced_config.yaml)
 
-#### 内存相关
-- `max_memory_gb`: GPU内存限制
-- `batch_size`: 批次大小
-- `gradient_accumulation_steps`: 梯度累积步数
-- `max_sequence_length`: 最大序列长度
+适用于复杂的多任务评估：
 
-#### 训练相关
-- `learning_rate`: 学习率
-- `num_epochs`: 训练轮数
-- `warmup_ratio`: 预热比例
-- `weight_decay`: 权重衰减
-
-#### LoRA相关
-- `lora_r`: LoRA秩
-- `lora_alpha`: LoRA缩放因子
-- `lora_dropout`: LoRA dropout率
-
-## 自定义数据集
-
-### 数据格式要求
-
-支持两种QA格式：
-
-1. **简单格式**:
-```markdown
-Q1: 问题内容？
-A1: 答案内容。
-
-Q2: 问题内容？
-A2: 答案内容。
+```yaml
+evaluation:
+  tasks: ["text_generation", "classification", "question_answering"]
+  metrics: ["bleu", "rouge", "accuracy", "f1", "bertscore"]
+  batch_size: 16
+  device: "cuda"
+  memory_optimization: true
 ```
 
-2. **标题格式**:
-```markdown
-### Q1: 问题内容？
-A1: 答案内容。
+## 自定义示例
 
-### Q2: 问题内容？
-A2: 答案内容。
+### 创建自定义评估任务
+
+```python
+from evaluation.task_evaluators import CustomTaskEvaluator
+
+class MyCustomEvaluator(CustomTaskEvaluator):
+    def evaluate(self, predictions, references, **kwargs):
+        # 实现自定义评估逻辑
+        custom_score = self.calculate_custom_metric(predictions, references)
+        return {"custom_metric": custom_score}
+    
+    def calculate_custom_metric(self, predictions, references):
+        # 自定义指标计算
+        return 0.85
+
+# 注册自定义评估器
+engine.register_task_evaluator("custom_task", MyCustomEvaluator())
 ```
 
-### 数据准备建议
+### 自定义数据拆分策略
 
-1. **数据质量**: 确保问答对准确、相关、格式一致
-2. **数据量**: 建议至少100个问答对，更多数据通常效果更好
-3. **数据多样性**: 包含不同类型和难度的问题
-4. **编码格式**: 使用UTF-8编码保存文件
+```python
+from evaluation import DataSplitter
 
-### 使用自定义数据集
+class CustomDataSplitter(DataSplitter):
+    def custom_split_strategy(self, dataset):
+        # 实现自定义拆分逻辑
+        pass
 
-1. 将数据文件放在 `data/raw/` 目录下
-2. 确保文件名以 `.md` 结尾
-3. 运行训练时系统会自动加载所有数据文件
+splitter = CustomDataSplitter()
+```
+
+## 基准测试示例
+
+### 运行CLUE基准测试
+
+```python
+from evaluation import BenchmarkManager
+
+benchmark_manager = BenchmarkManager()
+
+# 运行CLUE评估
+clue_result = benchmark_manager.run_clue_evaluation(
+    model=model,
+    tokenizer=tokenizer,
+    model_name="my_model"
+)
+
+print(f"CLUE总分: {clue_result.overall_score:.3f}")
+```
+
+### 自定义基准测试
+
+```python
+from evaluation.data_models import BenchmarkConfig
+
+custom_config = BenchmarkConfig(
+    name="my_benchmark",
+    dataset_path="path/to/data.json",
+    tasks=["custom_task"],
+    evaluation_protocol="standard",
+    metrics=["accuracy", "f1"]
+)
+
+result = benchmark_manager.run_custom_benchmark(
+    config=custom_config,
+    model=model,
+    tokenizer=tokenizer,
+    model_name="my_model"
+)
+```
+
+## 集成示例
+
+### 与训练流程集成
+
+```python
+from evaluation import EvaluationEngine, DataSplitter
+
+# 在训练过程中集成评估
+class TrainingWithEvaluation:
+    def __init__(self, model, tokenizer, eval_config):
+        self.model = model
+        self.tokenizer = tokenizer
+        self.eval_engine = EvaluationEngine(eval_config)
+    
+    def train_epoch(self, train_data):
+        # 训练逻辑
+        pass
+    
+    def evaluate_epoch(self, val_data):
+        # 每个epoch后评估
+        result = self.eval_engine.evaluate_model(
+            self.model, self.tokenizer, 
+            {"validation": val_data}, 
+            "training_model"
+        )
+        return result
+```
+
+### 与数据管道集成
+
+```python
+from evaluation import DataSplitter, QualityAnalyzer
+
+class DataPipelineWithEvaluation:
+    def __init__(self):
+        self.splitter = DataSplitter()
+        self.quality_analyzer = QualityAnalyzer()
+    
+    def process_data(self, raw_data):
+        # 质量分析
+        quality_report = self.quality_analyzer.analyze_data_quality(raw_data)
+        
+        # 数据拆分
+        split_result = self.splitter.split_data(raw_data, "data/splits")
+        
+        return split_result, quality_report
+```
+
+## 性能优化示例
+
+### 批处理优化
+
+```python
+# 使用较大的批次大小提高吞吐量
+config = EvaluationConfig(
+    batch_size=32,  # 增大批次
+    memory_optimization=True,
+    device="cuda"
+)
+```
+
+### 并行处理
+
+```python
+# 启用并行评估
+engine = EvaluationEngine(config, max_workers=4)
+
+# 并行评估多个模型
+results = engine.evaluate_multiple_models(models_info, datasets)
+```
+
+### 内存优化
+
+```python
+# 启用内存优化选项
+config = EvaluationConfig(
+    memory_optimization=True,
+    gradient_checkpointing=True,
+    mixed_precision=True
+)
+```
+
+## 错误处理示例
+
+### 基本错误处理
+
+```python
+from evaluation.exceptions import EvaluationError, DataSplitError
+
+try:
+    split_result = splitter.split_data(dataset, "output")
+except DataSplitError as e:
+    print(f"数据拆分失败: {e}")
+    # 处理错误
+except EvaluationError as e:
+    print(f"评估系统错误: {e}")
+```
+
+### 自定义错误处理
+
+```python
+class CustomErrorHandler:
+    def handle_evaluation_error(self, error, context):
+        # 记录错误
+        self.log_error(error, context)
+        
+        # 尝试恢复
+        if self.can_recover(error):
+            return self.recover_from_error(error, context)
+        else:
+            raise error
+```
+
+## 调试技巧
+
+### 启用详细日志
+
+```python
+import logging
+from evaluation.logging_system import setup_logging
+
+# 设置详细日志
+setup_logging(level="DEBUG")
+```
+
+### 使用小数据集测试
+
+```python
+# 使用小数据集快速测试
+test_dataset = dataset.select(range(10))
+config = EvaluationConfig(num_samples=5)
+```
+
+### 分步调试
+
+```python
+# 分别测试各个组件
+print("测试数据拆分...")
+split_result = splitter.split_data(small_dataset, "debug")
+
+print("测试评估引擎...")
+result = engine.evaluate_model(model, tokenizer, {"task": small_dataset})
+
+print("测试报告生成...")
+report = generator.generate_evaluation_report(result)
+```
 
 ## 最佳实践
 
-### 选择合适的配置
+### 1. 配置管理
 
-1. **GPU内存 < 10GB**: 使用 `low_memory_8gb.json`
-2. **GPU内存 10-14GB**: 使用 `standard_12gb.json`
-3. **GPU内存 > 14GB**: 使用 `high_performance_16gb.json`
-4. **快速测试**: 使用 `quick_test.json`
+- 使用配置文件而不是硬编码参数
+- 为不同环境创建不同的配置文件
+- 使用环境变量处理敏感信息
 
-### 优化训练效果
+### 2. 实验管理
 
-1. **数据质量优先**: 高质量的小数据集比低质量的大数据集效果更好
-2. **逐步调优**: 先用快速配置验证，再用完整配置训练
-3. **监控内存**: 使用TensorBoard监控训练过程
-4. **多次实验**: 尝试不同的学习率和LoRA参数
+- 为每个实验添加描述性标签
+- 定期备份实验数据
+- 使用版本控制管理配置文件
 
-### 故障排除
+### 3. 性能优化
 
-1. **内存不足**: 减少批次大小或序列长度
-2. **训练慢**: 增加批次大小或减少梯度累积步数
-3. **效果差**: 增加训练轮数或调整学习率
-4. **数据错误**: 检查数据格式和编码
+- 根据硬件资源调整批次大小
+- 使用GPU加速计算密集型任务
+- 启用内存优化选项
 
-## 技术支持
+### 4. 错误处理
 
-如果在使用示例配置和数据集时遇到问题，请：
+- 实现完善的错误处理机制
+- 记录详细的错误信息
+- 提供错误恢复策略
 
-1. 查看 [故障排除文档](../docs/TROUBLESHOOTING.md)
-2. 运行基准测试诊断系统性能
-3. 检查系统日志和错误信息
-4. 尝试使用快速测试配置验证环境
+## 常见问题
+
+### Q: 如何处理大数据集？
+
+A: 使用以下策略：
+- 增大批次大小
+- 启用内存优化
+- 使用数据流处理
+- 分批处理数据
+
+### Q: 如何自定义评估指标？
+
+A: 继承相应的基类：
+```python
+from evaluation.metrics_calculator import MetricsCalculator
+
+class CustomMetricsCalculator(MetricsCalculator):
+    def calculate_custom_metric(self, predictions, references):
+        # 实现自定义指标
+        pass
+```
+
+### Q: 如何集成到现有系统？
+
+A: 使用模块化设计：
+- 单独使用各个组件
+- 通过配置文件集成
+- 使用API接口集成
+
+## 更多资源
+
+- [用户指南](../docs/EVALUATION_USER_GUIDE.md)
+- [API参考](../docs/API_REFERENCE.md)
+- [配置指南](../docs/CONFIGURATION_GUIDE.md)
+- [故障排除](../docs/TROUBLESHOOTING_GUIDE.md)
+
+## 贡献
+
+欢迎提交新的示例代码！请确保：
+1. 代码可以正常运行
+2. 包含适当的注释
+3. 提供使用说明
+4. 遵循代码风格规范
+
+---
+
+*示例代码持续更新中，如有问题请参考最新版本。*

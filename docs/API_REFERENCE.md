@@ -1,625 +1,936 @@
 # API参考文档
 
-## 概述
+本文档提供了数据拆分和评估系统所有公共API的详细说明。
 
-模型导出优化系统提供了一套完整的API，用于将训练完成的LoRA checkpoint与基座模型合并，并导出为多种优化格式。本文档详细介绍了所有可用的API接口和使用方法。
+## 目录
 
-## 核心组件API
+1. [数据拆分API](#数据拆分api)
+2. [评估引擎API](#评估引擎api)
+3. [指标计算API](#指标计算api)
+4. [质量分析API](#质量分析api)
+5. [基准管理API](#基准管理api)
+6. [实验跟踪API](#实验跟踪api)
+7. [报告生成API](#报告生成api)
+8. [配置管理API](#配置管理api)
+9. [数据模型](#数据模型)
 
-### CheckpointDetector
+## 数据拆分API
 
-检测和验证训练checkpoint的组件。
+### DataSplitter
 
-#### 类定义
+数据拆分器，用于将数据集拆分为训练集、验证集和测试集。
 
-```python
-from src.checkpoint_detector import CheckpointDetector
-
-detector = CheckpointDetector()
-```
-
-#### 方法
-
-##### `detect_latest_checkpoint(checkpoint_dir: str) -> str`
-
-自动检测指定目录中最新的checkpoint。
-
-**参数:**
-- `checkpoint_dir` (str): checkpoint目录路径
-
-**返回值:**
-- str: 最新checkpoint的完整路径
-
-**示例:**
-```python
-latest_checkpoint = detector.detect_latest_checkpoint("./qwen3-finetuned")
-print(f"最新checkpoint: {latest_checkpoint}")
-```
-
-##### `validate_checkpoint_integrity(checkpoint_path: str) -> bool`
-
-验证checkpoint文件的完整性。
-
-**参数:**
-- `checkpoint_path` (str): checkpoint路径
-
-**返回值:**
-- bool: 验证结果，True表示完整
-
-**示例:**
-```python
-is_valid = detector.validate_checkpoint_integrity("./qwen3-finetuned/checkpoint-30")
-if not is_valid:
-    print("Checkpoint文件不完整或损坏")
-```
-
-##### `get_checkpoint_metadata(checkpoint_path: str) -> dict`
-
-获取checkpoint的元数据信息。
-
-**参数:**
-- `checkpoint_path` (str): checkpoint路径
-
-**返回值:**
-- dict: 包含训练步数、损失值等元数据
-
-**示例:**
-```python
-metadata = detector.get_checkpoint_metadata("./qwen3-finetuned/checkpoint-30")
-print(f"训练步数: {metadata.get('step', 'N/A')}")
-print(f"损失值: {metadata.get('loss', 'N/A')}")
-```
-
-### ModelMerger
-
-合并LoRA适配器与基座模型的组件。
-
-#### 类定义
+#### 构造函数
 
 ```python
-from src.model_merger import ModelMerger
-
-merger = ModelMerger()
-```
-
-#### 方法
-
-##### `load_base_model(model_name: str, **kwargs) -> AutoModelForCausalLM`
-
-加载基座模型。
-
-**参数:**
-- `model_name` (str): 模型名称或路径
-- `**kwargs`: 额外的模型加载参数
-
-**返回值:**
-- AutoModelForCausalLM: 加载的基座模型
-
-**示例:**
-```python
-base_model = merger.load_base_model(
-    "Qwen/Qwen3-4B-Thinking-2507",
-    torch_dtype=torch.float16,
-    device_map="auto"
+DataSplitter(
+    train_ratio: float = 0.7,
+    val_ratio: float = 0.15,
+    test_ratio: float = 0.15,
+    stratify_by: Optional[str] = None,
+    random_seed: int = 42,
+    min_samples_per_split: int = 10,
+    enable_quality_analysis: bool = False,
+    remove_duplicates: bool = False,
+    balance_classes: bool = False
 )
 ```
 
-##### `merge_lora_weights(base_model: AutoModelForCausalLM, adapter_path: str) -> AutoModelForCausalLM`
-
-将LoRA适配器权重合并到基座模型。
-
 **参数:**
-- `base_model` (AutoModelForCausalLM): 基座模型
-- `adapter_path` (str): LoRA适配器路径
-
-**返回值:**
-- AutoModelForCausalLM: 合并后的模型
-
-**示例:**
-```python
-merged_model = merger.merge_lora_weights(base_model, "./qwen3-finetuned")
-```
-
-##### `save_merged_model(model: AutoModelForCausalLM, tokenizer: AutoTokenizer, output_path: str) -> None`
-
-保存合并后的模型。
-
-**参数:**
-- `model` (AutoModelForCausalLM): 要保存的模型
-- `tokenizer` (AutoTokenizer): 对应的tokenizer
-- `output_path` (str): 输出路径
-
-**示例:**
-```python
-merger.save_merged_model(merged_model, tokenizer, "./output/merged_model")
-```
-
-### OptimizationProcessor
-
-模型优化处理组件。
-
-#### 类定义
-
-```python
-from src.optimization_processor import OptimizationProcessor
-
-processor = OptimizationProcessor()
-```
+- `train_ratio`: 训练集比例 (0-1)
+- `val_ratio`: 验证集比例 (0-1)
+- `test_ratio`: 测试集比例 (0-1)
+- `stratify_by`: 分层抽样的字段名
+- `random_seed`: 随机种子
+- `min_samples_per_split`: 每个拆分的最小样本数
+- `enable_quality_analysis`: 是否启用质量分析
+- `remove_duplicates`: 是否移除重复样本
+- `balance_classes`: 是否平衡类别分布
 
 #### 方法
 
-##### `apply_quantization(model: AutoModelForCausalLM, quant_config: dict) -> AutoModelForCausalLM`
+##### split_data()
 
-应用量化优化。
+```python
+def split_data(
+    self,
+    dataset: Dataset,
+    output_dir: Optional[str] = None
+) -> DataSplitResult
+```
+
+拆分数据集。
 
 **参数:**
-- `model` (AutoModelForCausalLM): 要量化的模型
-- `quant_config` (dict): 量化配置
+- `dataset`: 要拆分的数据集
+- `output_dir`: 输出目录路径
 
-**返回值:**
-- AutoModelForCausalLM: 量化后的模型
+**返回:** `DataSplitResult` 对象
 
 **示例:**
 ```python
-quant_config = {
-    "quantization_level": "int8",
-    "calibration_dataset": None
-}
-quantized_model = processor.apply_quantization(model, quant_config)
+splitter = DataSplitter(train_ratio=0.8, val_ratio=0.1, test_ratio=0.1)
+result = splitter.split_data(dataset, "output/splits")
 ```
 
-##### `remove_training_artifacts(model: AutoModelForCausalLM) -> AutoModelForCausalLM`
+##### load_splits()
 
-移除训练相关的冗余参数。
+```python
+@staticmethod
+def load_splits(split_dir: str) -> DataSplitResult
+```
+
+加载已保存的数据拆分。
 
 **参数:**
-- `model` (AutoModelForCausalLM): 要清理的模型
+- `split_dir`: 拆分数据目录
 
-**返回值:**
-- AutoModelForCausalLM: 清理后的模型
+**返回:** `DataSplitResult` 对象
 
-**示例:**
+##### analyze_distribution()
+
 ```python
-cleaned_model = processor.remove_training_artifacts(model)
+def analyze_distribution(
+    self,
+    train_dataset: Dataset,
+    val_dataset: Dataset,
+    test_dataset: Dataset
+) -> Dict[str, Any]
 ```
 
-### FormatExporter
+分析数据分布一致性。
 
-多格式模型导出组件。
+**返回:** 包含分布分析结果的字典
 
-#### 类定义
+## 评估引擎API
 
-```python
-from src.format_exporter import FormatExporter
+### EvaluationEngine
 
-exporter = FormatExporter()
-```
+模型评估引擎，支持多任务、多指标评估。
 
-#### 方法
-
-##### `export_pytorch_model(model: AutoModelForCausalLM, tokenizer: AutoTokenizer, output_path: str) -> str`
-
-导出PyTorch格式模型。
-
-**参数:**
-- `model` (AutoModelForCausalLM): 要导出的模型
-- `tokenizer` (AutoTokenizer): 对应的tokenizer
-- `output_path` (str): 输出路径
-
-**返回值:**
-- str: 导出模型的路径
-
-**示例:**
-```python
-pytorch_path = exporter.export_pytorch_model(model, tokenizer, "./output/pytorch_model")
-```
-
-##### `export_onnx_model(model: AutoModelForCausalLM, tokenizer: AutoTokenizer, output_path: str, onnx_config: dict) -> str`
-
-导出ONNX格式模型。
-
-**参数:**
-- `model` (AutoModelForCausalLM): 要导出的模型
-- `tokenizer` (AutoTokenizer): 对应的tokenizer
-- `output_path` (str): 输出路径
-- `onnx_config` (dict): ONNX导出配置
-
-**返回值:**
-- str: 导出ONNX模型的路径
-
-**示例:**
-```python
-onnx_config = {
-    "opset_version": 14,
-    "dynamic_axes": {
-        "input_ids": {0: "batch_size", 1: "sequence_length"},
-        "attention_mask": {0: "batch_size", 1: "sequence_length"}
-    }
-}
-onnx_path = exporter.export_onnx_model(model, tokenizer, "./output/onnx_model", onnx_config)
-```
-
-### ValidationTester
-
-模型验证测试组件。
-
-#### 类定义
+#### 构造函数
 
 ```python
-from src.validation_tester import ValidationTester
-
-tester = ValidationTester()
-```
-
-#### 方法
-
-##### `test_model_functionality(model_path: str, test_inputs: List[str]) -> dict`
-
-测试模型基本功能。
-
-**参数:**
-- `model_path` (str): 模型路径
-- `test_inputs` (List[str]): 测试输入样本
-
-**返回值:**
-- dict: 测试结果
-
-**示例:**
-```python
-test_inputs = ["你好，请介绍一下自己", "什么是人工智能？"]
-results = tester.test_model_functionality("./output/pytorch_model", test_inputs)
-```
-
-##### `compare_model_outputs(model1_path: str, model2_path: str, test_inputs: List[str]) -> dict`
-
-比较两个模型的输出一致性。
-
-**参数:**
-- `model1_path` (str): 第一个模型路径
-- `model2_path` (str): 第二个模型路径
-- `test_inputs` (List[str]): 测试输入样本
-
-**返回值:**
-- dict: 比较结果
-
-**示例:**
-```python
-comparison = tester.compare_model_outputs(
-    "./output/pytorch_model",
-    "./output/onnx_model",
-    test_inputs
+EvaluationEngine(
+    config: EvaluationConfig,
+    device: str = "cpu",
+    max_workers: int = 4
 )
 ```
 
-### ModelExportController
+**参数:**
+- `config`: 评估配置对象
+- `device`: 计算设备 ("cpu" 或 "cuda")
+- `max_workers`: 最大并行工作线程数
 
-主导出控制器，整合所有组件。
+#### 方法
 
-#### 类定义
+##### evaluate_model()
 
 ```python
-from src.model_export_controller import ModelExportController
+def evaluate_model(
+    self,
+    model: Any,
+    tokenizer: Any,
+    datasets: Dict[str, Dataset],
+    model_name: str
+) -> EvaluationResult
+```
 
-controller = ModelExportController()
+评估单个模型。
+
+**参数:**
+- `model`: 要评估的模型
+- `tokenizer`: 分词器
+- `datasets`: 任务名到数据集的映射
+- `model_name`: 模型名称
+
+**返回:** `EvaluationResult` 对象
+
+##### evaluate_multiple_models()
+
+```python
+def evaluate_multiple_models(
+    self,
+    models_info: List[Dict[str, Any]],
+    datasets: Dict[str, Dataset]
+) -> List[EvaluationResult]
+```
+
+批量评估多个模型。
+
+**参数:**
+- `models_info`: 模型信息列表，每个包含 "model", "tokenizer", "name"
+- `datasets`: 任务数据集
+
+**返回:** 评估结果列表
+
+##### save_evaluation_result()
+
+```python
+def save_evaluation_result(
+    self,
+    result: EvaluationResult,
+    output_path: str
+) -> None
+```
+
+保存评估结果。
+
+## 指标计算API
+
+### MetricsCalculator
+
+各种评估指标的计算器。
+
+#### 构造函数
+
+```python
+MetricsCalculator(
+    language: str = "zh",
+    device: str = "cpu",
+    cache_dir: Optional[str] = None
+)
 ```
 
 #### 方法
 
-##### `export_model(config: ExportConfiguration) -> ExportResult`
+##### calculate_bleu()
 
-执行完整的模型导出流程。
-
-**参数:**
-- `config` (ExportConfiguration): 导出配置
-
-**返回值:**
-- ExportResult: 导出结果
-
-**示例:**
 ```python
-from src.export_config import ExportConfiguration
-
-config = ExportConfiguration(
-    checkpoint_path="./qwen3-finetuned",
-    base_model_name="Qwen/Qwen3-4B-Thinking-2507",
-    output_directory="./exported_models",
-    quantization_level="int8",
-    export_pytorch=True,
-    export_onnx=True
-)
-
-result = controller.export_model(config)
-print(f"导出成功: {result.success}")
-print(f"PyTorch模型路径: {result.pytorch_model_path}")
-print(f"ONNX模型路径: {result.onnx_model_path}")
+def calculate_bleu(
+    self,
+    predictions: List[str],
+    references: List[str],
+    max_order: int = 4
+) -> Dict[str, float]
 ```
 
-## 配置类API
+计算BLEU分数。
 
-### ExportConfiguration
+**返回:** 包含BLEU分数和统计信息的字典
 
-导出配置数据类。
+##### calculate_rouge()
 
-#### 属性
+```python
+def calculate_rouge(
+    self,
+    predictions: List[str],
+    references: List[str]
+) -> Dict[str, float]
+```
+
+计算ROUGE分数。
+
+##### calculate_classification_metrics()
+
+```python
+def calculate_classification_metrics(
+    self,
+    predictions: List[str],
+    references: List[str]
+) -> Dict[str, float]
+```
+
+计算分类指标（准确率、精确率、召回率、F1分数）。
+
+##### calculate_semantic_similarity()
+
+```python
+def calculate_semantic_similarity(
+    self,
+    text1_list: List[str],
+    text2_list: List[str],
+    method: str = "cosine"
+) -> Dict[str, float]
+```
+
+计算语义相似度。
+
+**参数:**
+- `method`: 相似度计算方法 ("cosine", "jaccard")
+
+## 质量分析API
+
+### QualityAnalyzer
+
+数据和响应质量分析器。
+
+#### 构造函数
+
+```python
+QualityAnalyzer(
+    min_length: int = 5,
+    max_length: int = 2048,
+    length_outlier_threshold: float = 3.0,
+    vocab_diversity_threshold: float = 0.5,
+    language: str = "zh"
+)
+```
+
+#### 方法
+
+##### analyze_data_quality()
+
+```python
+def analyze_data_quality(
+    self,
+    dataset: Dataset,
+    text_field: str = "text"
+) -> DataQualityReport
+```
+
+分析数据集质量。
+
+##### analyze_response_quality()
+
+```python
+def analyze_response_quality(
+    self,
+    responses: List[str],
+    references: Optional[List[str]] = None
+) -> ResponseQualityReport
+```
+
+分析响应质量。
+
+##### suggest_improvements()
+
+```python
+def suggest_improvements(
+    self,
+    quality_report: DataQualityReport
+) -> List[str]
+```
+
+基于质量报告提供改进建议。
+
+##### generate_quality_report()
+
+```python
+def generate_quality_report(
+    self,
+    quality_report: DataQualityReport,
+    output_path: str,
+    format: str = "html"
+) -> None
+```
+
+生成质量分析报告。
+
+## 基准管理API
+
+### BenchmarkManager
+
+基准数据集管理和评估。
+
+#### 构造函数
+
+```python
+BenchmarkManager(
+    benchmark_dir: str = "benchmarks",
+    cache_dir: str = ".benchmark_cache",
+    download_timeout: int = 300
+)
+```
+
+#### 方法
+
+##### list_available_benchmarks()
+
+```python
+def list_available_benchmarks(self) -> List[str]
+```
+
+列出所有可用的基准数据集。
+
+##### load_benchmark()
+
+```python
+def load_benchmark(self, benchmark_name: str) -> BenchmarkDataset
+```
+
+加载基准数据集。
+
+##### run_clue_evaluation()
+
+```python
+def run_clue_evaluation(
+    self,
+    model: Any,
+    tokenizer: Any,
+    model_name: str
+) -> BenchmarkResult
+```
+
+运行CLUE基准评估。
+
+##### run_few_clue_evaluation()
+
+```python
+def run_few_clue_evaluation(
+    self,
+    model: Any,
+    tokenizer: Any,
+    model_name: str,
+    few_shot_examples: int = 5
+) -> BenchmarkResult
+```
+
+运行FewCLUE少样本评估。
+
+##### run_custom_benchmark()
+
+```python
+def run_custom_benchmark(
+    self,
+    config: BenchmarkConfig,
+    model: Any,
+    tokenizer: Any,
+    model_name: str
+) -> BenchmarkResult
+```
+
+运行自定义基准测试。
+
+##### compare_benchmark_results()
+
+```python
+def compare_benchmark_results(
+    self,
+    results: List[BenchmarkResult]
+) -> Dict[str, Any]
+```
+
+对比基准测试结果。
+
+## 实验跟踪API
+
+### ExperimentTracker
+
+实验跟踪和管理。
+
+#### 构造函数
+
+```python
+ExperimentTracker(
+    experiment_dir: str = "experiments",
+    auto_save: bool = True,
+    max_history: int = 1000
+)
+```
+
+#### 方法
+
+##### track_experiment()
+
+```python
+def track_experiment(
+    self,
+    config: ExperimentConfig,
+    result: EvaluationResult
+) -> str
+```
+
+跟踪实验。
+
+**返回:** 实验ID
+
+##### get_experiment()
+
+```python
+def get_experiment(self, experiment_id: str) -> Dict[str, Any]
+```
+
+获取实验详情。
+
+##### list_experiments()
+
+```python
+def list_experiments(
+    self,
+    filters: Optional[Dict[str, Any]] = None,
+    sort_by: str = "timestamp",
+    limit: Optional[int] = None
+) -> List[Dict[str, Any]]
+```
+
+列出实验。
+
+##### compare_experiments()
+
+```python
+def compare_experiments(
+    self,
+    experiment_ids: List[str]
+) -> Dict[str, Any]
+```
+
+对比实验。
+
+##### generate_leaderboard()
+
+```python
+def generate_leaderboard(
+    self,
+    metric: str = "overall_score",
+    limit: int = 10
+) -> List[Dict[str, Any]]
+```
+
+生成排行榜。
+
+##### export_results()
+
+```python
+def export_results(
+    self,
+    output_path: str,
+    format: str = "csv",
+    filters: Optional[Dict[str, Any]] = None
+) -> str
+```
+
+导出实验结果。
+
+## 报告生成API
+
+### ReportGenerator
+
+报告生成器。
+
+#### 构造函数
+
+```python
+ReportGenerator(
+    template_dir: str = "templates",
+    output_dir: str = "reports",
+    include_plots: bool = True,
+    language: str = "zh"
+)
+```
+
+#### 方法
+
+##### generate_evaluation_report()
+
+```python
+def generate_evaluation_report(
+    self,
+    result: EvaluationResult,
+    format: str = "html"
+) -> str
+```
+
+生成评估报告。
+
+**参数:**
+- `format`: 报告格式 ("html", "json", "pdf")
+
+##### generate_comparison_report()
+
+```python
+def generate_comparison_report(
+    self,
+    results: List[EvaluationResult],
+    format: str = "html"
+) -> str
+```
+
+生成对比报告。
+
+##### generate_benchmark_report()
+
+```python
+def generate_benchmark_report(
+    self,
+    result: BenchmarkResult,
+    format: str = "html"
+) -> str
+```
+
+生成基准测试报告。
+
+##### generate_training_report()
+
+```python
+def generate_training_report(
+    self,
+    training_history: Dict[str, List],
+    training_config: Dict[str, Any],
+    format: str = "html"
+) -> str
+```
+
+生成训练报告。
+
+##### generate_latex_table()
+
+```python
+def generate_latex_table(
+    self,
+    results: List[EvaluationResult],
+    metrics: List[str]
+) -> str
+```
+
+生成LaTeX表格。
+
+##### generate_csv_export()
+
+```python
+def generate_csv_export(
+    self,
+    results: List[EvaluationResult]
+) -> str
+```
+
+生成CSV导出。
+
+## 配置管理API
+
+### ConfigManager
+
+配置文件管理。
+
+#### 构造函数
+
+```python
+ConfigManager(
+    config_dir: str = "configs",
+    default_config_file: str = "default_config.yaml",
+    validate_on_load: bool = True
+)
+```
+
+#### 方法
+
+##### load_config()
+
+```python
+def load_config(
+    self,
+    config_path: str,
+    substitute_env_vars: bool = False,
+    resolve_inheritance: bool = True
+) -> Dict[str, Any]
+```
+
+加载配置文件。
+
+##### save_config()
+
+```python
+def save_config(
+    self,
+    config: Dict[str, Any],
+    config_path: str,
+    format: str = "yaml"
+) -> None
+```
+
+保存配置文件。
+
+##### validate_config()
+
+```python
+def validate_config(self, config: Dict[str, Any]) -> bool
+```
+
+验证配置。
+
+##### merge_configs()
+
+```python
+def merge_configs(
+    self,
+    base_config: Dict[str, Any],
+    override_config: Dict[str, Any]
+) -> Dict[str, Any]
+```
+
+合并配置。
+
+##### create_evaluation_config()
+
+```python
+def create_evaluation_config(
+    self,
+    config_dict: Dict[str, Any]
+) -> EvaluationConfig
+```
+
+从字典创建评估配置对象。
+
+## 数据模型
+
+### EvaluationConfig
+
+评估配置数据类。
 
 ```python
 @dataclass
-class ExportConfiguration:
-    # 必需参数
-    checkpoint_path: str              # checkpoint路径
-    base_model_name: str             # 基座模型名称
-    output_directory: str            # 输出目录
-    
-    # 优化配置
-    quantization_level: str = "int8"          # 量化级别: "none", "fp16", "int8", "int4"
-    remove_training_artifacts: bool = True    # 是否移除训练artifacts
-    compress_weights: bool = True             # 是否压缩权重
-    
-    # 导出格式
-    export_pytorch: bool = True      # 是否导出PyTorch格式
-    export_onnx: bool = True        # 是否导出ONNX格式
-    export_tensorrt: bool = False   # 是否导出TensorRT格式
-    
-    # ONNX配置
-    onnx_dynamic_axes: dict = None          # ONNX动态轴配置
-    onnx_opset_version: int = 14           # ONNX操作集版本
-    onnx_optimize_graph: bool = True       # 是否优化ONNX图
-    
-    # 验证配置
-    run_validation_tests: bool = True       # 是否运行验证测试
-    test_input_samples: List[str] = None   # 测试输入样本
-    
-    # 监控配置
-    enable_progress_monitoring: bool = True # 是否启用进度监控
-    log_level: str = "INFO"                # 日志级别
+class EvaluationConfig:
+    tasks: List[str]
+    metrics: List[str]
+    batch_size: int = 8
+    max_length: int = 512
+    temperature: float = 0.7
+    top_p: float = 0.9
+    num_samples: Optional[int] = None
+    device: str = "cpu"
+    memory_optimization: bool = False
 ```
 
-#### 示例
+### DataSplitResult
 
-```python
-# 基本配置
-config = ExportConfiguration(
-    checkpoint_path="./qwen3-finetuned",
-    base_model_name="Qwen/Qwen3-4B-Thinking-2507",
-    output_directory="./exported_models"
-)
-
-# 高级配置
-advanced_config = ExportConfiguration(
-    checkpoint_path="./qwen3-finetuned",
-    base_model_name="Qwen/Qwen3-4B-Thinking-2507",
-    output_directory="./exported_models",
-    quantization_level="int4",
-    export_pytorch=True,
-    export_onnx=True,
-    export_tensorrt=True,
-    onnx_dynamic_axes={
-        "input_ids": {0: "batch_size", 1: "sequence_length"},
-        "attention_mask": {0: "batch_size", 1: "sequence_length"}
-    },
-    test_input_samples=["测试输入1", "测试输入2"],
-    log_level="DEBUG"
-)
-```
-
-### ExportResult
-
-导出结果数据类。
-
-#### 属性
+数据拆分结果。
 
 ```python
 @dataclass
-class ExportResult:
-    # 基本信息
-    export_id: str                    # 导出ID
-    timestamp: datetime               # 导出时间戳
-    success: bool                     # 是否成功
-    
-    # 输出路径
-    pytorch_model_path: Optional[str] = None    # PyTorch模型路径
-    onnx_model_path: Optional[str] = None       # ONNX模型路径
-    tensorrt_model_path: Optional[str] = None   # TensorRT模型路径
-    
-    # 优化统计
-    original_size_mb: float           # 原始模型大小(MB)
-    optimized_size_mb: float          # 优化后模型大小(MB)
-    size_reduction_percentage: float  # 大小减少百分比
-    
-    # 性能指标
-    inference_speed_ms: Optional[float] = None  # 推理速度(毫秒)
-    memory_usage_mb: Optional[float] = None     # 内存使用(MB)
-    
-    # 验证结果
-    validation_passed: bool = False             # 验证是否通过
-    validation_report_path: Optional[str] = None # 验证报告路径
-    
-    # 错误信息
-    error_message: Optional[str] = None         # 错误消息
-    warnings: List[str] = field(default_factory=list) # 警告信息
+class DataSplitResult:
+    train_dataset: Dataset
+    val_dataset: Dataset
+    test_dataset: Dataset
+    split_info: Dict[str, Any]
+    distribution_analysis: Dict[str, Any]
+    created_at: datetime
 ```
 
-## 异常处理API
+### EvaluationResult
 
-### 异常类层次结构
+评估结果。
 
 ```python
-class ModelExportException(Exception):
-    """模型导出相关异常的基类"""
-    pass
+@dataclass
+class EvaluationResult:
+    model_name: str
+    evaluation_time: datetime
+    metrics: Dict[str, float]
+    task_results: Dict[str, TaskResult]
+    efficiency_metrics: EfficiencyMetrics
+    quality_scores: QualityScores
+    config: EvaluationConfig
+```
 
-class CheckpointValidationError(ModelExportException):
-    """Checkpoint验证错误"""
-    pass
+### TaskResult
 
-class ModelMergeError(ModelExportException):
-    """模型合并错误"""
-    pass
+单个任务的评估结果。
 
-class FormatExportError(ModelExportException):
-    """格式导出错误"""
-    pass
+```python
+@dataclass
+class TaskResult:
+    task_name: str
+    predictions: List[str]
+    references: List[str]
+    metrics: Dict[str, float]
+    samples: List[EvaluationSample]
+    execution_time: float
+```
 
-class ValidationError(ModelExportException):
-    """验证测试错误"""
+### EfficiencyMetrics
+
+效率指标。
+
+```python
+@dataclass
+class EfficiencyMetrics:
+    inference_latency: float  # ms
+    throughput: float  # tokens/s
+    memory_usage: float  # GB
+    model_size: float  # MB
+    flops: Optional[int] = None
+```
+
+### QualityScores
+
+质量分数。
+
+```python
+@dataclass
+class QualityScores:
+    fluency: float
+    coherence: float
+    relevance: float
+    factuality: float
+    overall: float
+```
+
+### BenchmarkResult
+
+基准测试结果。
+
+```python
+@dataclass
+class BenchmarkResult:
+    benchmark_name: str
+    model_name: str
+    task_results: Dict[str, Dict[str, float]]
+    overall_score: float
+    metadata: Dict[str, Any]
+    evaluation_time: datetime
+```
+
+### ExperimentConfig
+
+实验配置。
+
+```python
+@dataclass
+class ExperimentConfig:
+    model_name: str
+    dataset_name: str
+    hyperparameters: Dict[str, Any]
+    tags: List[str] = field(default_factory=list)
+    description: str = ""
+    created_at: datetime = field(default_factory=datetime.now)
+```
+
+### DataQualityReport
+
+数据质量报告。
+
+```python
+@dataclass
+class DataQualityReport:
+    total_samples: int
+    length_stats: Dict[str, float]
+    vocab_diversity: Dict[str, float]
+    class_distribution: Dict[str, Any]
+    quality_issues: List[Dict[str, Any]]
+    quality_score: float
+    recommendations: List[str]
+```
+
+### ResponseQualityReport
+
+响应质量报告。
+
+```python
+@dataclass
+class ResponseQualityReport:
+    fluency_score: float
+    coherence_score: float
+    relevance_score: float
+    factuality_score: float
+    overall_score: float
+    detailed_analysis: Dict[str, Any]
+```
+
+## 异常类
+
+### EvaluationError
+
+评估相关的基础异常类。
+
+```python
+class EvaluationError(Exception):
+    """评估系统基础异常"""
     pass
 ```
 
-### 异常处理示例
+### DataSplitError
+
+数据拆分异常。
 
 ```python
-try:
-    result = controller.export_model(config)
-except CheckpointValidationError as e:
-    print(f"Checkpoint验证失败: {e}")
-except ModelMergeError as e:
-    print(f"模型合并失败: {e}")
-except FormatExportError as e:
-    print(f"格式导出失败: {e}")
-except ValidationError as e:
-    print(f"验证测试失败: {e}")
-except ModelExportException as e:
-    print(f"导出过程出错: {e}")
+class DataSplitError(EvaluationError):
+    """数据拆分异常"""
+    pass
 ```
 
-## 完整使用示例
+### MetricsCalculationError
 
-### 基本使用流程
+指标计算异常。
 
 ```python
-from src.model_export_controller import ModelExportController
-from src.export_config import ExportConfiguration
+class MetricsCalculationError(EvaluationError):
+    """指标计算异常"""
+    pass
+```
 
-# 1. 创建配置
-config = ExportConfiguration(
-    checkpoint_path="./qwen3-finetuned",
-    base_model_name="Qwen/Qwen3-4B-Thinking-2507",
-    output_directory="./exported_models",
-    quantization_level="int8",
-    export_pytorch=True,
-    export_onnx=True
+### BenchmarkError
+
+基准测试异常。
+
+```python
+class BenchmarkError(EvaluationError):
+    """基准测试异常"""
+    pass
+```
+
+### ConfigurationError
+
+配置异常。
+
+```python
+class ConfigurationError(EvaluationError):
+    """配置异常"""
+    pass
+```
+
+## 使用示例
+
+### 完整的评估流程
+
+```python
+from evaluation import (
+    DataSplitter, EvaluationEngine, EvaluationConfig,
+    ExperimentTracker, ReportGenerator
 )
 
-# 2. 创建控制器并执行导出
-controller = ModelExportController()
-try:
-    result = controller.export_model(config)
-    
-    if result.success:
-        print("模型导出成功！")
-        print(f"PyTorch模型: {result.pytorch_model_path}")
-        print(f"ONNX模型: {result.onnx_model_path}")
-        print(f"模型大小减少: {result.size_reduction_percentage:.1f}%")
-    else:
-        print(f"导出失败: {result.error_message}")
-        
-except Exception as e:
-    print(f"导出过程出错: {e}")
-```
+# 1. 数据拆分
+splitter = DataSplitter(train_ratio=0.7, val_ratio=0.15, test_ratio=0.15)
+split_result = splitter.split_data(dataset, "data/splits")
 
-### 高级使用示例
-
-```python
-import logging
-from src.model_export_controller import ModelExportController
-from src.export_config import ExportConfiguration
-
-# 配置日志
-logging.basicConfig(level=logging.INFO)
-
-# 创建高级配置
-config = ExportConfiguration(
-    checkpoint_path="./qwen3-finetuned",
-    base_model_name="Qwen/Qwen3-4B-Thinking-2507",
-    output_directory="./exported_models",
-    
-    # 优化配置
-    quantization_level="int4",
-    remove_training_artifacts=True,
-    compress_weights=True,
-    
-    # 多格式导出
-    export_pytorch=True,
-    export_onnx=True,
-    export_tensorrt=False,
-    
-    # ONNX优化
-    onnx_dynamic_axes={
-        "input_ids": {0: "batch_size", 1: "sequence_length"},
-        "attention_mask": {0: "batch_size", 1: "sequence_length"}
-    },
-    onnx_optimize_graph=True,
-    
-    # 验证配置
-    run_validation_tests=True,
-    test_input_samples=[
-        "你好，请介绍一下自己",
-        "什么是人工智能？",
-        "请解释深度学习的基本概念"
-    ],
-    
-    # 监控配置
-    enable_progress_monitoring=True,
-    log_level="DEBUG"
+# 2. 配置评估
+config = EvaluationConfig(
+    tasks=["classification"],
+    metrics=["accuracy", "f1"],
+    batch_size=8
 )
 
-# 执行导出
-controller = ModelExportController()
-result = controller.export_model(config)
+# 3. 运行评估
+engine = EvaluationEngine(config)
+result = engine.evaluate_model(
+    model=model,
+    tokenizer=tokenizer,
+    datasets={"classification": split_result.test_dataset},
+    model_name="my_model"
+)
 
-# 处理结果
-if result.success:
-    print("=== 导出成功 ===")
-    print(f"导出ID: {result.export_id}")
-    print(f"导出时间: {result.timestamp}")
-    
-    if result.pytorch_model_path:
-        print(f"PyTorch模型: {result.pytorch_model_path}")
-    if result.onnx_model_path:
-        print(f"ONNX模型: {result.onnx_model_path}")
-    
-    print(f"\n=== 优化统计 ===")
-    print(f"原始大小: {result.original_size_mb:.1f} MB")
-    print(f"优化后大小: {result.optimized_size_mb:.1f} MB")
-    print(f"大小减少: {result.size_reduction_percentage:.1f}%")
-    
-    if result.inference_speed_ms:
-        print(f"推理速度: {result.inference_speed_ms:.2f} ms")
-    if result.memory_usage_mb:
-        print(f"内存使用: {result.memory_usage_mb:.1f} MB")
-    
-    print(f"\n=== 验证结果 ===")
-    print(f"验证通过: {result.validation_passed}")
-    if result.validation_report_path:
-        print(f"验证报告: {result.validation_report_path}")
-    
-    if result.warnings:
-        print(f"\n=== 警告信息 ===")
-        for warning in result.warnings:
-            print(f"- {warning}")
-else:
-    print("=== 导出失败 ===")
-    print(f"错误信息: {result.error_message}")
-    if result.warnings:
-        print("警告信息:")
-        for warning in result.warnings:
-            print(f"- {warning}")
+# 4. 跟踪实验
+tracker = ExperimentTracker()
+experiment_id = tracker.track_experiment(experiment_config, result)
+
+# 5. 生成报告
+generator = ReportGenerator()
+report_path = generator.generate_evaluation_report(result)
 ```
-
-## 注意事项
-
-1. **内存管理**: 处理大型模型时，确保有足够的GPU内存和系统内存
-2. **路径处理**: 所有路径参数支持相对路径和绝对路径
-3. **错误处理**: 建议使用try-catch块处理可能的异常
-4. **日志配置**: 可以通过配置日志级别来控制输出详细程度
-5. **并发限制**: 避免同时运行多个导出任务，可能导致内存不足
 
 ## 版本兼容性
 
-- Python: >= 3.8
-- PyTorch: >= 1.12.0
-- Transformers: >= 4.21.0
-- ONNX: >= 1.12.0
-- ONNX Runtime: >= 1.12.0
+- Python 3.8+
+- PyTorch 1.12+
+- Transformers 4.20+
+- Datasets 2.0+
 
-更多详细信息请参考[配置参数说明](CONFIGURATION_GUIDE.md)和[故障排除指南](TROUBLESHOOTING_GUIDE.md)。
+## 更新日志
+
+### v1.0.0
+- 初始版本发布
+- 支持基本的数据拆分和模型评估功能
+
+### v1.1.0
+- 添加基准测试支持
+- 增强实验跟踪功能
+- 改进报告生成
+
+### v1.2.0
+- 添加质量分析功能
+- 支持自定义评估任务
+- 优化性能和内存使用
+
+---
+
+*本API文档会随着系统更新而持续维护。*

@@ -1,0 +1,183 @@
+# 高级配置示例
+# 适用于多任务、多指标的复杂评估场景
+
+# 数据拆分配置
+data_split:
+  train_ratio: 0.8
+  val_ratio: 0.1
+  test_ratio: 0.1
+  random_seed: 42
+  stratify_by: "label"
+  min_samples_per_split: 50
+  enable_quality_analysis: true    # 启用质量分析
+  remove_duplicates: true          # 移除重复样本
+  balance_classes: true            # 平衡类别分布
+  min_samples_per_class: 10        # 每个类别的最小样本数
+
+# 评估配置
+evaluation:
+  # 多任务评估
+  tasks:
+    - "text_generation"
+    - "classification"
+    - "question_answering"
+    - "semantic_similarity"
+  
+  # 全面的评估指标
+  metrics:
+    # 生成任务指标
+    - "bleu"
+    - "rouge"
+    - "meteor"
+    - "bertscore"
+    
+    # 分类任务指标
+    - "accuracy"
+    - "precision"
+    - "recall"
+    - "f1"
+    - "auc"
+    
+    # 语义任务指标
+    - "semantic_similarity"
+    - "coherence"
+    - "fluency"
+  
+  # 推理参数
+  batch_size: 16
+  max_length: 1024
+  temperature: 0.7
+  top_p: 0.9
+  top_k: 50
+  num_samples: 500        # 每个任务的评估样本数
+  
+  # 设备和优化
+  device: "cuda"          # 使用GPU
+  memory_optimization: true
+  gradient_checkpointing: true
+  mixed_precision: true
+  
+  # 并行处理
+  max_workers: 4          # 最大并行工作线程
+  parallel_tasks: true    # 并行执行任务
+
+# 质量分析配置
+quality_analysis:
+  enabled: true
+  min_length: 10
+  max_length: 2048
+  length_outlier_threshold: 3.0
+  vocab_diversity_threshold: 0.6
+  detect_repetition: true
+  analyze_coherence: true
+  language: "zh"
+
+# 基准测试配置
+benchmarks:
+  enabled: true
+  benchmark_dir: "./benchmarks"
+  
+  # 标准基准测试
+  standard_benchmarks:
+    - name: "clue"
+      enabled: true
+      tasks: ["tnews", "afqmc", "cmnli"]
+    
+    - name: "few_clue"
+      enabled: true
+      few_shot_examples: 5
+    
+    - name: "c_eval"
+      enabled: true
+      subjects: ["computer_science", "mathematics"]
+  
+  # 自定义基准测试
+  custom_benchmarks:
+    - name: "domain_specific"
+      dataset_path: "./data/domain_benchmark.json"
+      tasks: ["domain_classification"]
+      metrics: ["accuracy", "f1"]
+
+# 实验跟踪配置
+experiment_tracking:
+  enabled: true
+  experiment_dir: "./experiments"
+  auto_save: true
+  max_history: 5000
+  
+  # 自动标签
+  auto_tags:
+    - "model_name"
+    - "dataset_name"
+    - "timestamp"
+  
+  # 备份配置
+  backup:
+    enabled: true
+    interval: 100        # 每100个实验备份一次
+    backup_dir: "./backups"
+
+# 报告生成配置
+reporting:
+  output_dir: "./reports"
+  include_plots: true
+  language: "zh"
+  
+  # 支持的格式
+  formats:
+    - "html"
+    - "json"
+    - "csv"
+    - "excel"
+    - "latex"
+    - "pdf"
+  
+  # 图表配置
+  plots:
+    style: "seaborn"
+    dpi: 300
+    format: "png"
+    include_training_curves: true
+    include_comparison_charts: true
+  
+  # 模板配置
+  templates:
+    evaluation_report: "evaluation_template.html"
+    comparison_report: "comparison_template.html"
+    benchmark_report: "benchmark_template.html"
+
+# 效率分析配置
+efficiency_analysis:
+  enabled: true
+  measure_latency: true
+  measure_throughput: true
+  measure_memory: true
+  measure_flops: true
+  
+  # 性能基准
+  performance_targets:
+    max_latency: 100      # 最大延迟(ms)
+    min_throughput: 50    # 最小吞吐量(tokens/s)
+    max_memory: 8000      # 最大内存使用(MB)
+
+# 日志配置
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file: "./logs/evaluation.log"
+  max_size: "100MB"
+  backup_count: 5
+
+# 缓存配置
+cache:
+  enabled: true
+  cache_dir: "./.cache"
+  max_size: "10GB"
+  ttl: 86400            # 缓存过期时间(秒)
+
+# 环境变量配置
+environment:
+  model_path: ${MODEL_PATH}
+  data_path: ${DATA_PATH}
+  output_path: ${OUTPUT_PATH:./outputs}
+  gpu_memory_fraction: ${GPU_MEMORY_FRACTION:0.8}

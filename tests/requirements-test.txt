@@ -1,0 +1,52 @@
+# 测试依赖包 - 使用uv管理
+
+# 核心测试框架
+pytest>=7.0.0
+pytest-cov>=4.0.0
+pytest-html>=3.1.0
+pytest-xdist>=3.0.0  # 并行测试
+pytest-timeout>=2.1.0  # 测试超时
+pytest-mock>=3.10.0  # 模拟对象
+
+# 数据处理
+datasets>=2.0.0
+pandas>=1.5.0
+numpy>=1.21.0
+
+# 性能监控
+psutil>=5.9.0
+memory-profiler>=0.60.0
+
+# 配置管理
+PyYAML>=6.0
+jsonschema>=4.0.0
+
+# 可视化（用于报告生成测试）
+matplotlib>=3.5.0
+seaborn>=0.11.0
+
+# 文本处理（用于指标计算测试）
+nltk>=3.7
+jieba>=0.42.1
+
+# 机器学习（用于模拟模型）
+scikit-learn>=1.1.0
+torch>=1.12.0  # 可选，用于模拟深度学习模型
+
+# 网络请求（用于基准数据集下载测试）
+requests>=2.28.0
+
+# Excel支持（用于报告生成测试）
+openpyxl>=3.0.0
+
+# 模板引擎（用于报告生成测试）
+jinja2>=3.1.0
+
+# 统计分析
+scipy>=1.9.0
+
+# 进度条
+tqdm>=4.64.0
+
+# 日期时间处理
+python-dateutil>=2.8.0

@@ -29,3 +29,7 @@ data/processed_dataset/
 exported_models/
 
 llama.cpp/
+
+data/splits/
+
+*.log
