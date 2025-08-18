@@ -8,7 +8,7 @@ import yaml
 import json
 import logging
 from pathlib import Path
-from typing import Dict, Any, Optional, Union
+from typing import Dict, Any, Optional, Union, List
 from dataclasses import asdict
 
 from .data_models import EvaluationConfig, BenchmarkConfig, ExperimentConfig
@@ -298,9 +298,7 @@ class ConfigManager:
         logger.info(f"配置模板已创建: {output_path}")
 
 
-# 全局配置管理器实例
-config_manager = ConfigManager()    def c
-reate_advanced_config_template(self, output_path: Union[str, Path], 
+    def create_advanced_config_template(self, output_path: Union[str, Path], 
                                        config_type: str = "evaluation") -> None:
         """
         创建高级配置文件模板
@@ -786,3 +784,7 @@ reate_advanced_config_template(self, output_path: Union[str, Path],
         
         logger.info(f"配置文件已备份: {backup_path}")
         return str(backup_path)
+
+
+# 全局配置管理器实例
+config_manager = ConfigManager()

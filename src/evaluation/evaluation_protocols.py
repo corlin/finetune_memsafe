@@ -342,7 +342,7 @@ class CLUEProtocol(BaseEvaluationProtocol):
             span1_text = target.get("span1_text", "")
             span2_text = target.get("span2_text", "")
             
-            input_text = f"在以下句子中，"{span1_text}"指代的是"{span2_text}"吗？\n句子：{text}\n请回答：是 或 否"
+            input_text = f'在以下句子中，"{span1_text}"指代的是"{span2_text}"吗？\n句子：{text}\n请回答：是 或 否'
             inputs.append(input_text)
             
             # 执行推理

@@ -1,0 +1,82 @@
+[
+  {
+    "test_name": "快速测试",
+    "config_path": "examples/configs/quick_test.json",
+    "success": true,
+    "training_time_seconds": 518.4423851966858,
+    "memory_usage_gb": -0.3886260986328125,
+    "gpu_memory_peak_gb": 0.0,
+    "training_metrics": {},
+    "error_message": null,
+    "system_info": {
+      "cpu_count": 8,
+      "memory_total_gb": 47.929176330566406,
+      "python_version": "3.12.7 (main, Oct 16 2024, 00:21:24) [MSC v.1929 64 bit (AMD64)]",
+      "gpu_count": 1,
+      "gpu_name": "NVIDIA GeForce RTX 5060 Ti",
+      "gpu_memory_gb": 15.92816162109375,
+      "cuda_version": "12.9",
+      "pytorch_version": "2.8.0+cu129"
+    }
+  },
+  {
+    "test_name": "低内存8GB",
+    "config_path": "examples/configs/low_memory_8gb.json",
+    "success": true,
+    "training_time_seconds": 533.9666032791138,
+    "memory_usage_gb": 1.6112327575683594,
+    "gpu_memory_peak_gb": 0.0,
+    "training_metrics": {},
+    "error_message": null,
+    "system_info": {
+      "cpu_count": 8,
+      "memory_total_gb": 47.929176330566406,
+      "python_version": "3.12.7 (main, Oct 16 2024, 00:21:24) [MSC v.1929 64 bit (AMD64)]",
+      "gpu_count": 1,
+      "gpu_name": "NVIDIA GeForce RTX 5060 Ti",
+      "gpu_memory_gb": 15.92816162109375,
+      "cuda_version": "12.9",
+      "pytorch_version": "2.8.0+cu129"
+    }
+  },
+  {
+    "test_name": "标准12GB",
+    "config_path": "examples/configs/standard_12gb.json",
+    "success": true,
+    "training_time_seconds": 542.7973306179047,
+    "memory_usage_gb": 1.6810798645019531,
+    "gpu_memory_peak_gb": 0.0,
+    "training_metrics": {},
+    "error_message": null,
+    "system_info": {
+      "cpu_count": 8,
+      "memory_total_gb": 47.929176330566406,
+      "python_version": "3.12.7 (main, Oct 16 2024, 00:21:24) [MSC v.1929 64 bit (AMD64)]",
+      "gpu_count": 1,
+      "gpu_name": "NVIDIA GeForce RTX 5060 Ti",
+      "gpu_memory_gb": 15.92816162109375,
+      "cuda_version": "12.9",
+      "pytorch_version": "2.8.0+cu129"
+    }
+  },
+  {
+    "test_name": "高性能16GB",
+    "config_path": "examples/configs/high_performance_16gb.json",
+    "success": true,
+    "training_time_seconds": 604.5826954841614,
+    "memory_usage_gb": -0.6049537658691406,
+    "gpu_memory_peak_gb": 0.0,
+    "training_metrics": {},
+    "error_message": null,
+    "system_info": {
+      "cpu_count": 8,
+      "memory_total_gb": 47.929176330566406,
+      "python_version": "3.12.7 (main, Oct 16 2024, 00:21:24) [MSC v.1929 64 bit (AMD64)]",
+      "gpu_count": 1,
+      "gpu_name": "NVIDIA GeForce RTX 5060 Ti",
+      "gpu_memory_gb": 15.92816162109375,
+      "cuda_version": "12.9",
+      "pytorch_version": "2.8.0+cu129"
+    }
+  }
+]

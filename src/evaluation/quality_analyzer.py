@@ -589,7 +589,7 @@ class QualityAnalyzer:
         recommendations = []
         
         # 基于问题的建议
-        issue_types = [issue.issue_type for issue in issues]
+        issue_types = [issue.issue_type if hasattr(issue, 'issue_type') else issue.get('issue_type', '') for issue in issues]
         
         if DataIssueType.EMPTY_CONTENT in issue_types:
             recommendations.append("移除或填充空内容，确保数据完整性")

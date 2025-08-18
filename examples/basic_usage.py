@@ -110,7 +110,7 @@ def main():
     print(f"训练集大小: {len(split_result.train_dataset)}")
     print(f"验证集大小: {len(split_result.val_dataset)}")
     print(f"测试集大小: {len(split_result.test_dataset)}")
-    print(f"数据分布一致性分数: {split_result.distribution_analysis.get('consistency_score', 'N/A')}")
+    print(f"数据分布一致性分数: {split_result.distribution_analysis.consistency_score}")
     
     # 3. 创建模拟模型
     print("\n🤖 创建模拟模型和分词器...")
@@ -160,11 +160,19 @@ def main():
     tracker = ExperimentTracker(experiment_dir="output/basic_example_experiments")
     
     experiment_config = ExperimentConfig(
-        model_name="basic_example_model",
-        dataset_name="sample_sentiment_data",
-        hyperparameters={
+        experiment_name="basic_usage_example",
+        model_config={
+            "model_name": "basic_example_model",
+            "model_type": "mock_model"
+        },
+        training_config={
             "batch_size": config.batch_size,
             "num_samples": config.num_samples
+        },
+        evaluation_config=config,
+        data_config={
+            "dataset_name": "sample_sentiment_data",
+            "data_size": len(dataset)
         },
         tags=["example", "basic_usage"],
         description="基本使用示例实验"
@@ -176,17 +184,15 @@ def main():
     # 7. 生成报告
     print("\n📊 生成评估报告...")
     generator = ReportGenerator(
-        output_dir="output/basic_example_reports",
-        include_plots=True,
-        language="zh"
+        output_dir="output/basic_example_reports"
     )
     
     # 生成HTML报告
-    html_report = generator.generate_evaluation_report(result, format="html")
+    html_report = generator.generate_evaluation_report(result, format_type="html")
     print(f"HTML报告: {html_report}")
     
     # 生成JSON报告
-    json_report = generator.generate_evaluation_report(result, format="json")
+    json_report = generator.generate_evaluation_report(result, format_type="json")
     print(f"JSON报告: {json_report}")
     
     # 8. 查看实验历史
@@ -196,7 +202,13 @@ def main():
     
     if experiments:
         latest_exp = experiments[0]
-        print(f"最新实验: {latest_exp['config']['model_name']}")
+        # 获取完整的实验信息以访问metadata
+        full_exp = tracker.get_experiment(latest_exp['id'])
+        if full_exp and 'metadata' in full_exp:
+            model_name = full_exp['metadata'].get('model_config', {}).get('model_name', '未知模型')
+        else:
+            model_name = '未知模型'
+        print(f"最新实验: {model_name}")
         print(f"实验时间: {latest_exp['created_at']}")
     
     # 9. 导出结果

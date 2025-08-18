@@ -582,7 +582,7 @@ class DataSplitter:
             info = json.load(f)
         
         # 重建DistributionAnalysis对象
-        dist_analysis = DistributionAnalysis(**info["distribution_analysis"])
+        dist_analysis = DistributionAnalysis.from_dict(info["distribution_analysis"])
         
         result = DataSplitResult(
             train_dataset=train_dataset,

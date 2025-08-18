@@ -33,3 +33,5 @@ llama.cpp/
 data/splits/
 
 *.log
+
+output/

@@ -425,8 +425,9 @@ class ReportGenerator:
             # 写入任务结果
             writer.writerow(["任务名称", "主要指标", "分数"])
             for task_name, task_result in result.task_results.items():
-                main_metric = "accuracy" if "accuracy" in task_result.metrics else list(task_result.metrics.keys())[0]
-                score = task_result.metrics.get(main_metric, 0)
+                # task_result 是字典，直接访问
+                main_metric = "accuracy" if "accuracy" in task_result else list(task_result.keys())[0]
+                score = task_result.get(main_metric, 0)
                 writer.writerow([task_name, main_metric, score])
         
         return str(output_path)
@@ -924,8 +925,9 @@ class ReportGenerator:
 '''
         
         for task_name, task_result in result.task_results.items():
-            main_metric = "accuracy" if "accuracy" in task_result.metrics else list(task_result.metrics.keys())[0]
-            score = task_result.metrics.get(main_metric, 0)
+            # task_result 是字典，直接访问
+            main_metric = "accuracy" if "accuracy" in task_result else list(task_result.keys())[0]
+            score = task_result.get(main_metric, 0)
             latex += f"{task_name} & {score:.4f} \\\\\n"
         
         latex += f'''\\hline
@@ -1109,8 +1111,14 @@ class ReportGenerator:
                 
                 for task_name, task_result in result.task_results.items():
                     task_names.append(task_name)
-                    main_metric = "accuracy" if "accuracy" in task_result.metrics else list(task_result.metrics.keys())[0]
-                    scores.append(task_result.metrics.get(main_metric, 0))
+                    # task_result 是 TaskResult 对象，访问其 metrics 属性
+                    if hasattr(task_result, 'metrics'):
+                        main_metric = "accuracy" if "accuracy" in task_result.metrics else list(task_result.metrics.keys())[0] if task_result.metrics else "score"
+                        scores.append(task_result.metrics.get(main_metric, 0))
+                    else:
+                        # 如果是字典格式的兼容处理
+                        main_metric = "accuracy" if "accuracy" in task_result else list(task_result.keys())[0]
+                        scores.append(task_result.get(main_metric, 0))
                 
                 plt.bar(task_names, scores)
                 plt.title(f'{result.benchmark_name} 基准测试结果')
@@ -1159,8 +1167,9 @@ class ReportGenerator:
         # 任务分数
         task_data = []
         for task_name, task_result in result.task_results.items():
-            main_metric = "accuracy" if "accuracy" in task_result.metrics else list(task_result.metrics.keys())[0]
-            score = task_result.metrics.get(main_metric, 0)
+            # task_result 是字典，直接访问
+            main_metric = "accuracy" if "accuracy" in task_result else list(task_result.keys())[0]
+            score = task_result.get(main_metric, 0)
             task_data.append([task_name, main_metric, score])
         
         task_df = pd.DataFrame(task_data, columns=["任务", "主要指标", "分数"])

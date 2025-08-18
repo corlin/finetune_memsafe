@@ -169,6 +169,33 @@ class ExperimentTracker:
             logger.error(f"创建实验失败: {e}")
             raise
     
+    def track_experiment(self, 
+                        config: ExperimentConfig,
+                        result: Union[EvaluationResult, BenchmarkResult]) -> str:
+        """
+        跟踪实验和结果
+        
+        Args:
+            config: 实验配置
+            result: 实验结果
+            
+        Returns:
+            实验ID
+        """
+        # 创建实验
+        experiment_id = self.create_experiment(
+            name=config.experiment_name,
+            config=config,
+            description=config.description,
+            tags=config.tags
+        )
+        
+        # 记录结果
+        result_type = "evaluation" if isinstance(result, EvaluationResult) else "benchmark"
+        self.log_result(experiment_id, result, result_type)
+        
+        return experiment_id
+
     def log_result(self, 
                   experiment_id: str,
                   result: Union[EvaluationResult, BenchmarkResult],
@@ -753,6 +780,186 @@ class ExperimentTracker:
         except Exception as e:
             logger.warning(f"更新实验状态失败: {e}")
     
+    def export_results(self, 
+                      output_path: str,
+                      format: str = "csv") -> str:
+        """
+        导出结果
+        
+        Args:
+            output_path: 输出路径
+            format: 导出格式
+            
+        Returns:
+            导出文件路径
+        """
+        try:
+            # 获取所有实验
+            experiments = self.list_experiments()
+            
+            if format.lower() == "csv":
+                return self._export_to_csv(experiments, output_path)
+            elif format.lower() == "json":
+                return self._export_to_json(experiments, output_path)
+            else:
+                raise ValueError(f"不支持的导出格式: {format}")
+                
+        except Exception as e:
+            logger.error(f"导出结果失败: {e}")
+            return ""
+    
+    def _export_to_csv(self, experiments: List[Dict[str, Any]], output_path: str) -> str:
+        """导出为CSV格式"""
+        import csv
+        
+        with open(output_path, 'w', newline='', encoding='utf-8') as f:
+            writer = csv.writer(f)
+            
+            # 写入表头
+            writer.writerow([
+                "实验ID", "实验名称", "状态", "创建时间", 
+                "标签", "描述", "结果类型", "指标数量", "主要指标"
+            ])
+            
+            # 写入数据
+            for exp in experiments:
+                full_exp = self.get_experiment(exp['id'])
+                if full_exp:
+                    results = full_exp.get("results", [])
+                    if results:
+                        latest_result = results[0]
+                        result_type = latest_result.get("result_type", "")
+                        metrics = latest_result.get("metrics", {})
+                        num_metrics = len(metrics)
+                        main_metric = list(metrics.keys())[0] if metrics else ""
+                        main_value = metrics.get(main_metric, "") if main_metric else ""
+                    else:
+                        result_type = ""
+                        num_metrics = 0
+                        main_metric = ""
+                        main_value = ""
+                    
+                    writer.writerow([
+                        full_exp["id"],
+                        full_exp["name"],
+                        full_exp["status"],
+                        full_exp["created_at"],
+                        ";".join(full_exp.get("tags", [])),
+                        full_exp.get("description", ""),
+                        result_type,
+                        num_metrics,
+                        f"{main_metric}: {main_value}" if main_metric else ""
+                    ])
+        
+        logger.info(f"CSV导出完成: {output_path}")
+        return output_path
+    
+    def _export_to_json(self, experiments: List[Dict[str, Any]], output_path: str) -> str:
+        """导出为JSON格式"""
+        # 获取完整的实验数据
+        full_experiments = []
+        for exp in experiments:
+            full_exp = self.get_experiment(exp['id'])
+            if full_exp:
+                full_experiments.append(full_exp)
+        
+        export_data = {
+            "export_time": datetime.now().isoformat(),
+            "total_experiments": len(full_experiments),
+            "experiments": full_experiments
+        }
+        
+        with open(output_path, 'w', encoding='utf-8') as f:
+            json.dump(convert_numpy_types(export_data), f, indent=2, ensure_ascii=False)
+        
+        logger.info(f"JSON导出完成: {output_path}")
+        return output_path
+
+    def generate_leaderboard(self, metric: str = "overall_score") -> List[Dict[str, Any]]:
+        """
+        生成排行榜
+        
+        Args:
+            metric: 排序指标
+            
+        Returns:
+            排行榜列表
+        """
+        try:
+            with sqlite3.connect(self.db_path) as conn:
+                cursor = conn.cursor()
+                
+                # 获取所有已完成实验的最新结果
+                cursor.execute('''
+                    SELECT e.id, e.name, e.created_at, e.tags, er.result_type, er.metrics, er.created_at as result_time
+                    FROM experiments e
+                    JOIN experiment_results er ON e.id = er.experiment_id
+                    WHERE e.status = 'completed'
+                    ORDER BY er.created_at DESC
+                ''')
+                
+                leaderboard_entries = []
+                
+                # 按实验分组，只保留每个实验的最新结果
+                latest_results = {}
+                for row in cursor.fetchall():
+                    exp_id, name, created_at, tags, result_type, metrics_str, result_time = row
+                    
+                    if exp_id not in latest_results or result_time > latest_results[exp_id]['result_time']:
+                        metrics = json.loads(metrics_str) if metrics_str else {}
+                        latest_results[exp_id] = {
+                            "id": exp_id,
+                            "name": name,
+                            "created_at": created_at,
+                            "tags": json.loads(tags) if tags else [],
+                            "result_type": result_type,
+                            "metrics": metrics,
+                            "result_time": result_time
+                        }
+                
+                # 构建排行榜条目
+                for exp_id, result_data in latest_results.items():
+                    metrics = result_data["metrics"]
+                    
+                    # 查找指定的指标
+                    score = 0.0
+                    if metric in metrics:
+                        score = float(metrics[metric])
+                    elif "overall_score" in metrics:
+                        score = float(metrics["overall_score"])
+                    elif "accuracy" in metrics:
+                        score = float(metrics["accuracy"])
+                    else:
+                        # 如果没有找到指定指标，使用第一个可用的数值指标
+                        for key, value in metrics.items():
+                            if isinstance(value, (int, float)):
+                                score = float(value)
+                                break
+                    
+                    leaderboard_entries.append({
+                        "experiment_id": exp_id,
+                        "model_name": result_data["name"],
+                        "score": score,
+                        "metric": metric,
+                        "created_at": result_data["created_at"],
+                        "tags": result_data["tags"],
+                        "all_metrics": metrics
+                    })
+                
+                # 按分数排序（降序）
+                leaderboard_entries.sort(key=lambda x: x["score"], reverse=True)
+                
+                # 添加排名
+                for i, entry in enumerate(leaderboard_entries, 1):
+                    entry["rank"] = i
+                
+                logger.info(f"生成排行榜成功，指标: {metric}，条目数: {len(leaderboard_entries)}")
+                return leaderboard_entries
+                
+        except Exception as e:
+            logger.error(f"生成排行榜失败: {e}")
+            return []
+
     def get_experiment_statistics(self) -> Dict[str, Any]:
         """
         获取实验统计信息
@@ -792,12 +999,30 @@ class ExperimentTracker:
                 cursor.execute('SELECT SUM(file_size) FROM experiment_files')
                 total_storage = cursor.fetchone()[0] or 0
                 
+                # 计算平均准确率
+                cursor.execute('''
+                    SELECT AVG(CAST(json_extract(metrics, '$.accuracy') AS REAL))
+                    FROM experiment_results
+                    WHERE json_extract(metrics, '$.accuracy') IS NOT NULL
+                ''')
+                avg_accuracy = cursor.fetchone()[0] or 0
+                
+                # 计算最佳准确率
+                cursor.execute('''
+                    SELECT MAX(CAST(json_extract(metrics, '$.accuracy') AS REAL))
+                    FROM experiment_results
+                    WHERE json_extract(metrics, '$.accuracy') IS NOT NULL
+                ''')
+                best_accuracy = cursor.fetchone()[0] or 0
+                
                 return {
                     "total_experiments": total_experiments,
                     "status_distribution": status_counts,
                     "recent_experiments": recent_experiments,
                     "total_storage_bytes": total_storage,
-                    "total_storage_mb": total_storage / (1024 * 1024)
+                    "total_storage_mb": total_storage / (1024 * 1024),
+                    "avg_accuracy": avg_accuracy,
+                    "best_accuracy": best_accuracy
                 }
                 
         except Exception as e:

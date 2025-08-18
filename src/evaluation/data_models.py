@@ -72,6 +72,18 @@ class DistributionAnalysis:
             "statistical_tests": self.statistical_tests,
             "recommendations": self.recommendations
         })
+    
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> 'DistributionAnalysis':
+        """从字典创建对象"""
+        return cls(
+            train_stats=data.get("train_stats", {}),
+            val_stats=data.get("val_stats", {}),
+            test_stats=data.get("test_stats", {}),
+            consistency_score=data.get("consistency_score", 0.0),
+            statistical_tests=data.get("statistical_tests", {}),
+            recommendations=data.get("recommendations", [])
+        )
 
 
 @dataclass
@@ -165,6 +177,25 @@ class EvaluationResult:
                              for name, result in self.task_results.items()},
             "efficiency": self.efficiency_metrics.to_dict(),
             "quality": self.quality_scores.to_dict()
+        })
+    
+    def to_dict(self) -> Dict[str, Any]:
+        """转换为字典格式"""
+        return convert_numpy_types({
+            "model_name": self.model_name,
+            "evaluation_time": self.evaluation_time.isoformat(),
+            "metrics": self.metrics,
+            "task_results": {name: {
+                "task_name": result.task_name,
+                "predictions": result.predictions,
+                "references": result.references,
+                "metrics": result.metrics,
+                "execution_time": result.execution_time,
+                "num_samples": len(result.samples)
+            } for name, result in self.task_results.items()},
+            "efficiency_metrics": self.efficiency_metrics.to_dict(),
+            "quality_scores": self.quality_scores.to_dict(),
+            "config": self.config.to_dict() if hasattr(self.config, 'to_dict') else str(self.config)
         })
 
 

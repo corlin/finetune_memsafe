@@ -194,9 +194,9 @@ class InferenceTesterIntegration:
                     **kwargs
                 )
         
-        return EnhancedInferenceTester    
-  
-  def test_with_evaluation(self, 
+        return EnhancedInferenceTester
+    
+    def test_with_evaluation(self, 
                            inference_tester,
                            model,
                            tokenizer,
