@@ -13,13 +13,25 @@ from .data_models import (
     DataSplitResult, DistributionAnalysis, EvaluationSample, TaskResult,
     EfficiencyMetrics, QualityScores, EvaluationResult, EvaluationConfig,
     BenchmarkConfig, BenchmarkResult, DataQualityReport, ExperimentConfig,
-    ComparisonResult, DataIssue, DataIssueType
+    ComparisonResult, DataIssue, DataIssueType, ValidationResult, 
+    ProcessedBatch, FieldDetectionResult
 )
 
 # Import newly implemented modules
 from .metrics_calculator import MetricsCalculator
 from .efficiency_analyzer import EfficiencyAnalyzer
 from .evaluation_engine import EvaluationEngine
+
+# Import new data processing modules
+from .data_field_detector import DataFieldDetector
+from .batch_data_validator import BatchDataValidator
+from .field_mapper import FieldMapper
+from .error_handling_strategy import ErrorHandlingStrategy
+from .data_preprocessor import DataPreprocessor
+from .diagnostic_logger import DiagnosticLogger
+from .config_validator import ConfigValidator
+from .config_loader import ConfigLoader, load_evaluation_config, validate_config_file
+from .compatibility import EvaluationEngineWrapper, create_enhanced_evaluation_engine, migrate_legacy_evaluation
 from .task_evaluators import (
     TextGenerationEvaluator, QuestionAnsweringEvaluator, 
     SemanticSimilarityEvaluator, ClassificationEvaluator,
@@ -59,10 +71,27 @@ __all__ = [
     "ComparisonResult",
     "DataIssue",
     "DataIssueType",
+    "ValidationResult",
+    "ProcessedBatch", 
+    "FieldDetectionResult",
     # Newly implemented modules
     "MetricsCalculator",
     "EfficiencyAnalyzer",
     "EvaluationEngine",
+    # New data processing modules
+    "DataFieldDetector",
+    "BatchDataValidator", 
+    "FieldMapper",
+    "ErrorHandlingStrategy",
+    "DataPreprocessor",
+    "DiagnosticLogger",
+    "ConfigValidator",
+    "ConfigLoader",
+    "load_evaluation_config",
+    "validate_config_file",
+    "EvaluationEngineWrapper",
+    "create_enhanced_evaluation_engine",
+    "migrate_legacy_evaluation",
     "TextGenerationEvaluator",
     "QuestionAnsweringEvaluator",
     "SemanticSimilarityEvaluator",

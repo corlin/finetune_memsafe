@@ -3,6 +3,14 @@
 增强的Qwen3优化微调系统主应用程序
 
 基于现有main.py程序，集成数据拆分、模型训练和性能评估的完整流程。
+
+新增功能：
+- 增强的数据字段检测：智能识别不同格式的数据字段
+- 批次数据处理修复：解决"批次数据为空"问题
+- 自动错误恢复：多级降级处理机制
+- 数据质量诊断：详细的数据验证和建议
+- 灵活字段映射：支持自定义数据格式
+- 实时处理监控：批次处理统计和性能监控
 """
 
 import os
@@ -12,7 +20,7 @@ import logging
 import traceback
 import warnings
 from pathlib import Path
-from typing import Optional, Dict, Any, Tuple
+from typing import Optional, Dict, Any, Tuple, List
 from dataclasses import asdict
 import json
 from datetime import datetime
@@ -33,7 +41,8 @@ from enhanced_error_recovery import ErrorRecoveryManager, ErrorCategory, ErrorSe
 # 导入评估相关组件
 from src.evaluation import (
     DataSplitter, EvaluationEngine, EvaluationConfig,
-    ExperimentTracker, ReportGenerator
+    ExperimentTracker, ReportGenerator,
+    create_enhanced_evaluation_engine, load_evaluation_config
 )
 from datasets import Dataset
 
@@ -76,6 +85,9 @@ class EnhancedQwenFineTuningApplication(QwenFineTuningApplication):
         
         # 初始化增强组件
         self._initialize_enhanced_components()
+        
+        # 优化评估配置
+        self._optimize_evaluation_config()
     
     def _initialize_enhanced_components(self):
         """初始化增强组件"""
@@ -94,14 +106,47 @@ class EnhancedQwenFineTuningApplication(QwenFineTuningApplication):
                 )
                 self.logger.info("数据拆分器初始化完成")
             
-            # 评估引擎
+            # 评估引擎 - 使用增强的评估引擎
             if self.enhanced_config.enable_comprehensive_evaluation:
-                eval_config = EvaluationConfig(
-                    **self.enhanced_config.get_evaluation_config()
+                eval_config_dict = self.enhanced_config.get_evaluation_config()
+                
+                # 添加增强的数据处理配置
+                eval_config_dict["data_processing"] = {
+                    "field_mapping": {
+                        "text_generation": {
+                            "input_fields": ["text", "input", "prompt", "source", "content"],
+                            "target_fields": ["target", "answer", "output", "response", "label"]
+                        },
+                        "question_answering": {
+                            "input_fields": ["question", "query", "q"],
+                            "context_fields": ["context", "passage", "document", "text"],
+                            "target_fields": ["answer", "target", "a", "response"]
+                        },
+                        "classification": {
+                            "input_fields": ["text", "input", "sentence", "content"],
+                            "target_fields": ["label", "target", "class", "category"]
+                        }
+                    },
+                    "validation": {
+                        "min_valid_samples_ratio": 0.1,
+                        "skip_empty_batches": True,
+                        "enable_data_cleaning": True,
+                        "enable_fallback": True
+                    },
+                    "diagnostics": {
+                        "enable_detailed_logging": False,  # 避免过多日志
+                        "log_batch_statistics": True,
+                        "save_processing_report": True
+                    }
+                }
+                
+                # 使用增强的评估引擎
+                self.evaluation_engine = create_enhanced_evaluation_engine(
+                    config_data=eval_config_dict,
+                    device="auto",
+                    max_workers=4
                 )
-                # 使用自动设备检测，评估时会根据模型设备自动调整
-                self.evaluation_engine = EvaluationEngine(eval_config, device="auto")
-                self.logger.info("评估引擎初始化完成")
+                self.logger.info("增强评估引擎初始化完成")
             
             # 实验跟踪器
             if self.enhanced_config.enable_experiment_tracking:
@@ -131,6 +176,8 @@ class EnhancedQwenFineTuningApplication(QwenFineTuningApplication):
             bool: 是否成功完成
         """
         self.logger.info("开始增强Qwen3微调流程")
+        self._display_enhanced_features_status()
+        
         self.logging_system.info("增强应用程序启动", "APPLICATION", {
             "config": asdict(self.enhanced_config)
         })
@@ -220,6 +267,10 @@ class EnhancedQwenFineTuningApplication(QwenFineTuningApplication):
             # 10. 完成实验跟踪
             if self.experiment_tracker and self.experiment_id:
                 self._complete_experiment_tracking(start_time, True)
+            
+            # 10. 生成数据处理报告
+            self.logger.info("步骤10: 生成数据处理报告")
+            self._generate_data_processing_report()
             
             # 11. 生成最终报告
             self.logger.info("步骤11: 生成最终报告")
@@ -528,7 +579,7 @@ class EnhancedQwenFineTuningApplication(QwenFineTuningApplication):
             self.logger.error(f"验证集评估失败: {e}")
     
     def _comprehensive_evaluation(self) -> bool:
-        """全面模型评估"""
+        """全面模型评估 - 使用增强的数据处理能力"""
         try:
             if not self.evaluation_engine or not self.test_dataset:
                 self.logger.warning("评估引擎或测试集不可用，跳过全面评估")
@@ -536,49 +587,60 @@ class EnhancedQwenFineTuningApplication(QwenFineTuningApplication):
             
             self.logging_system.info("开始全面模型评估", "EVALUATION")
             
-            # 分词测试集
-            test_dataset_tokenized = self.data_pipeline.tokenize_dataset(
-                self.test_dataset, self.tokenizer
-            )
-            
-            # 准备评估数据集字典 - 使用配置的任务名称
+            # 准备原始数据集（不进行分词，让增强评估引擎自动处理）
             eval_datasets = {}
             
             # 为每个配置的评估任务准备数据集
             for task_name in self.enhanced_config.evaluation_tasks:
-                eval_datasets[task_name] = test_dataset_tokenized
-                self.logger.info(f"为任务 {task_name} 准备测试集，样本数: {len(test_dataset_tokenized)}")
+                eval_datasets[task_name] = self.test_dataset
+                self.logger.info(f"为任务 {task_name} 准备测试集，样本数: {len(self.test_dataset)}")
             
             # 如果有验证集，也为每个任务添加验证集
             if self.val_dataset:
-                val_dataset_tokenized = self.data_pipeline.tokenize_dataset(
-                    self.val_dataset, self.tokenizer
-                )
                 # 为验证集创建单独的任务名称
                 for task_name in self.enhanced_config.evaluation_tasks:
                     validation_task_name = f"{task_name}_validation"
-                    eval_datasets[validation_task_name] = val_dataset_tokenized
-                    self.logger.info(f"为任务 {validation_task_name} 准备验证集，样本数: {len(val_dataset_tokenized)}")
+                    eval_datasets[validation_task_name] = self.val_dataset
+                    self.logger.info(f"为任务 {validation_task_name} 准备验证集，样本数: {len(self.val_dataset)}")
             
             self.logger.info(f"准备的评估数据集: {list(eval_datasets.keys())}")
             
-            # 执行全面评估
-            self.evaluation_result = self.evaluation_engine.evaluate_model(
+            # 在评估前诊断数据集
+            self._diagnose_evaluation_datasets(eval_datasets)
+            
+            # 执行增强评估（包含诊断信息）
+            result = self.evaluation_engine.evaluate_model_with_diagnostics(
                 self.model,
                 self.tokenizer,
                 eval_datasets,
-                self.enhanced_config.model_name
+                self.enhanced_config.model_name,
+                save_diagnostics=True
             )
+            
+            self.evaluation_result = result["evaluation_result"]
+            evaluation_diagnostics = result["diagnostics"]
+            processing_stats = result["processing_stats"]
+            
+            # 记录诊断信息
+            self.logger.info("评估诊断信息:")
+            self.logger.info(f"  处理统计: {processing_stats}")
+            
+            if evaluation_diagnostics.get("report_path"):
+                self.logger.info(f"  诊断报告已保存: {evaluation_diagnostics['report_path']}")
             
             # 保存详细评估结果
             self._save_detailed_evaluation_results()
+            
+            # 保存增强评估的诊断信息
+            self._save_evaluation_diagnostics(evaluation_diagnostics, processing_stats)
             
             # 记录评估结果
             self.logging_system.info("全面评估完成", "EVALUATION", {
                 "metrics": self.evaluation_result.metrics,
                 "efficiency": asdict(self.evaluation_result.efficiency_metrics),
                 "quality": asdict(self.evaluation_result.quality_scores),
-                "tasks_evaluated": list(eval_datasets.keys())
+                "tasks_evaluated": list(eval_datasets.keys()),
+                "processing_stats": processing_stats
             })
             
             # 显示评估结果摘要
@@ -590,17 +652,40 @@ class EnhancedQwenFineTuningApplication(QwenFineTuningApplication):
             self.logger.error(f"全面评估失败: {e}")
             self.logging_system.error(f"全面评估失败: {e}", "EVALUATION")
             
-            # 使用错误恢复管理器处理
+            # 尝试使用增强的错误处理
+            context = {
+                "evaluation_tasks": self.enhanced_config.evaluation_tasks,
+                "evaluation_metrics": self.enhanced_config.evaluation_metrics,
+                "batch_size": getattr(self.enhanced_config, 'evaluation_batch_size', 8),
+                "num_samples": getattr(self.enhanced_config, 'evaluation_num_samples', 100),
+                "datasets": eval_datasets if 'eval_datasets' in locals() else {}
+            }
+            
+            if self._handle_evaluation_errors(e, context):
+                self.logger.info("评估错误已通过增强处理修复，重试评估...")
+                try:
+                    # 重试评估
+                    result = self.evaluation_engine.evaluate_model_with_diagnostics(
+                        self.model,
+                        self.tokenizer,
+                        eval_datasets,
+                        self.enhanced_config.model_name,
+                        save_diagnostics=True
+                    )
+                    
+                    self.evaluation_result = result["evaluation_result"]
+                    self.logger.info("重试评估成功")
+                    return True
+                    
+                except Exception as retry_error:
+                    self.logger.error(f"重试评估仍然失败: {retry_error}")
+            
+            # 使用原有的错误恢复管理器作为后备
             if self.error_recovery_manager:
                 can_continue = self.error_recovery_manager.handle_error(
                     ErrorCategory.EVALUATION,
                     e,
-                    context={
-                        "evaluation_tasks": self.enhanced_config.evaluation_tasks,
-                        "evaluation_metrics": self.enhanced_config.evaluation_metrics,
-                        "batch_size": self.enhanced_config.evaluation_batch_size,
-                        "num_samples": self.enhanced_config.evaluation_num_samples
-                    }
+                    context=context
                 )
                 if can_continue:
                     self.logger.warning("评估错误已恢复，继续执行")
@@ -694,6 +779,292 @@ class EnhancedQwenFineTuningApplication(QwenFineTuningApplication):
             
         except Exception as e:
             self.logger.error(f"显示评估摘要失败: {e}")
+    
+    def _diagnose_evaluation_datasets(self, eval_datasets: Dict[str, Dataset]):
+        """诊断评估数据集，提前发现潜在问题"""
+        try:
+            self.logger.info("开始诊断评估数据集...")
+            
+            for task_name, dataset in eval_datasets.items():
+                self.logger.info(f"诊断任务 {task_name} 的数据集:")
+                
+                # 使用增强评估引擎的诊断功能
+                diagnosis = self.evaluation_engine.diagnose_dataset(dataset, task_name)
+                
+                # 记录诊断结果
+                batch_info = diagnosis.get("batch_info", {})
+                self.logger.info(f"  数据集大小: {batch_info.get('total_samples', 0)}")
+                self.logger.info(f"  可用字段: {batch_info.get('available_fields', [])}")
+                
+                # 检查字段映射
+                field_mapping_info = diagnosis.get("field_mapping_info", {})
+                recommended_input = field_mapping_info.get("recommended_input_field")
+                recommended_target = field_mapping_info.get("recommended_target_field")
+                
+                if recommended_input:
+                    self.logger.info(f"  推荐输入字段: {recommended_input}")
+                if recommended_target:
+                    self.logger.info(f"  推荐目标字段: {recommended_target}")
+                
+                # 显示建议
+                recommendations = diagnosis.get("recommendations", [])
+                if recommendations:
+                    self.logger.info(f"  数据处理建议:")
+                    for i, rec in enumerate(recommendations[:3], 1):  # 只显示前3个建议
+                        self.logger.info(f"    {i}. {rec}")
+                
+                # 检查验证结果
+                validation_result = diagnosis.get("validation_result", {})
+                if not validation_result.get("is_valid", True):
+                    issues = validation_result.get("issues", [])
+                    self.logger.warning(f"  数据验证问题: {issues}")
+            
+            self.logger.info("数据集诊断完成")
+            
+        except Exception as e:
+            self.logger.error(f"数据集诊断失败: {e}")
+    
+    def _save_evaluation_diagnostics(self, diagnostics: Dict[str, Any], processing_stats: Dict[str, Any]):
+        """保存评估诊断信息"""
+        try:
+            diagnostics_data = {
+                "timestamp": datetime.now().isoformat(),
+                "model_name": self.enhanced_config.model_name,
+                "evaluation_tasks": self.enhanced_config.evaluation_tasks,
+                "diagnostics": diagnostics,
+                "processing_stats": processing_stats
+            }
+            
+            # 保存诊断信息
+            diagnostics_path = Path(self.enhanced_config.output_dir) / "evaluation_diagnostics.json"
+            with open(diagnostics_path, 'w', encoding='utf-8') as f:
+                json.dump(diagnostics_data, f, indent=2, ensure_ascii=False)
+            
+            self.logger.info(f"评估诊断信息已保存: {diagnostics_path}")
+            
+            # 记录关键统计信息
+            if processing_stats:
+                self.logger.info("数据处理统计:")
+                self.logger.info(f"  成功率: {processing_stats.get('success_rate', 0):.2%}")
+                self.logger.info(f"  有效样本率: {processing_stats.get('valid_sample_rate', 0):.2%}")
+                self.logger.info(f"  处理的批次数: {processing_stats.get('total_batches_processed', 0)}")
+                self.logger.info(f"  处理的样本数: {processing_stats.get('total_samples_processed', 0)}")
+            
+        except Exception as e:
+            self.logger.error(f"保存评估诊断信息失败: {e}")
+    
+    def _optimize_evaluation_config(self):
+        """优化评估配置以提高数据处理能力"""
+        try:
+            if not self.evaluation_engine:
+                return
+            
+            # 根据数据集大小调整批次大小
+            if hasattr(self.enhanced_config, 'evaluation_batch_size'):
+                original_batch_size = self.enhanced_config.evaluation_batch_size
+                
+                # 根据可用内存和数据集大小优化批次大小
+                if self.enhanced_config.max_memory_gb < 8:
+                    # 低内存环境，使用较小的批次
+                    optimized_batch_size = min(original_batch_size, 16)
+                elif self.enhanced_config.max_memory_gb >= 16:
+                    # 高内存环境，可以使用较大的批次
+                    optimized_batch_size = min(original_batch_size * 2, 64)
+                else:
+                    optimized_batch_size = original_batch_size
+                
+                if optimized_batch_size != original_batch_size:
+                    self.logger.info(f"优化评估批次大小: {original_batch_size} -> {optimized_batch_size}")
+                    # 更新评估引擎配置
+                    self.evaluation_engine.config.batch_size = optimized_batch_size
+            
+            # 配置增强数据处理选项
+            if hasattr(self.evaluation_engine, 'configure_enhanced_processing'):
+                self.evaluation_engine.configure_enhanced_processing(
+                    enable_detailed_logging=False,  # 避免过多日志影响性能
+                    enable_data_cleaning=True,      # 启用数据清洗
+                    enable_fallback=True,           # 启用降级处理
+                    min_valid_samples_ratio=0.05    # 较低的有效样本阈值
+                )
+                self.logger.info("已配置增强数据处理选项")
+            
+        except Exception as e:
+            self.logger.error(f"优化评估配置失败: {e}")
+    
+    def _handle_evaluation_errors(self, error: Exception, context: Dict[str, Any]) -> bool:
+        """处理评估过程中的错误"""
+        try:
+            self.logger.error(f"评估错误: {error}")
+            
+            # 检查是否是数据处理相关的错误
+            error_str = str(error).lower()
+            
+            if any(keyword in error_str for keyword in ['batch', 'empty', 'field', 'data']):
+                self.logger.info("检测到数据处理相关错误，尝试诊断和修复...")
+                
+                # 获取处理建议
+                if self.evaluation_engine and hasattr(self.evaluation_engine, 'get_processing_recommendations'):
+                    datasets = context.get('datasets', {})
+                    if datasets:
+                        recommendations = self.evaluation_engine.get_processing_recommendations(datasets)
+                        
+                        if recommendations:
+                            self.logger.info("数据处理建议:")
+                            for i, rec in enumerate(recommendations, 1):
+                                self.logger.info(f"  {i}. {rec}")
+                        
+                        # 尝试应用自动修复
+                        return self._apply_evaluation_fixes(datasets, recommendations)
+            
+            return False
+            
+        except Exception as e:
+            self.logger.error(f"处理评估错误时发生异常: {e}")
+            return False
+    
+    def _apply_evaluation_fixes(self, datasets: Dict[str, Dataset], recommendations: List[str]) -> bool:
+        """应用评估修复建议"""
+        try:
+            # 检查建议中是否包含字段映射相关的修复
+            for rec in recommendations:
+                if "字段映射" in rec or "field mapping" in rec.lower():
+                    self.logger.info("尝试应用字段映射修复...")
+                    
+                    # 重新配置字段映射
+                    if hasattr(self.evaluation_engine, 'configure_enhanced_processing'):
+                        self.evaluation_engine.configure_enhanced_processing(
+                            enable_fallback=True,
+                            enable_data_cleaning=True,
+                            min_valid_samples_ratio=0.01  # 更低的阈值
+                        )
+                        return True
+                
+                elif "批次大小" in rec or "batch size" in rec.lower():
+                    self.logger.info("尝试调整批次大小...")
+                    
+                    # 减小批次大小
+                    if hasattr(self.evaluation_engine, 'config'):
+                        original_batch_size = self.evaluation_engine.config.batch_size
+                        new_batch_size = max(1, original_batch_size // 2)
+                        self.evaluation_engine.config.batch_size = new_batch_size
+                        self.logger.info(f"批次大小已调整: {original_batch_size} -> {new_batch_size}")
+                        return True
+            
+            return False
+            
+        except Exception as e:
+            self.logger.error(f"应用评估修复失败: {e}")
+            return False
+    
+    def _generate_data_processing_report(self):
+        """生成数据处理报告"""
+        try:
+            if not self.evaluation_engine:
+                self.logger.warning("评估引擎不可用，跳过数据处理报告生成")
+                return
+            
+            self.logger.info("开始生成数据处理报告...")
+            
+            # 获取数据处理统计信息
+            if hasattr(self.evaluation_engine, 'get_diagnostic_statistics'):
+                diagnostic_stats = self.evaluation_engine.get_diagnostic_statistics()
+                
+                # 生成报告
+                report_data = {
+                    "timestamp": datetime.now().isoformat(),
+                    "model_name": self.enhanced_config.model_name,
+                    "data_processing_summary": {
+                        "enhanced_processing_enabled": True,
+                        "diagnostic_statistics": diagnostic_stats,
+                        "configuration": {
+                            "batch_size": getattr(self.evaluation_engine.config, 'batch_size', 'unknown'),
+                            "enable_data_cleaning": True,
+                            "enable_fallback": True,
+                            "min_valid_samples_ratio": 0.05
+                        }
+                    }
+                }
+                
+                # 添加数据集信息
+                if self.data_split_result:
+                    report_data["data_split_info"] = {
+                        "train_samples": len(self.data_split_result.train_dataset),
+                        "val_samples": len(self.data_split_result.val_dataset),
+                        "test_samples": len(self.data_split_result.test_dataset),
+                        "split_ratios": self.data_split_result.split_info
+                    }
+                
+                # 保存报告
+                report_path = Path(self.enhanced_config.output_dir) / "data_processing_report.json"
+                with open(report_path, 'w', encoding='utf-8') as f:
+                    json.dump(report_data, f, indent=2, ensure_ascii=False)
+                
+                self.logger.info(f"数据处理报告已保存: {report_path}")
+                
+                # 显示关键统计信息
+                if diagnostic_stats:
+                    self.logger.info("数据处理统计摘要:")
+                    processing_stats = diagnostic_stats.get("processing_stats", {})
+                    if processing_stats:
+                        self.logger.info(f"  批次处理成功率: {processing_stats.get('success_rate', 0):.2%}")
+                        self.logger.info(f"  有效样本率: {processing_stats.get('valid_sample_rate', 0):.2%}")
+                        self.logger.info(f"  处理的总批次数: {processing_stats.get('total_batches_processed', 0)}")
+            
+        except Exception as e:
+            self.logger.error(f"生成数据处理报告失败: {e}")
+    
+    def _display_enhanced_features_status(self):
+        """显示增强功能状态"""
+        try:
+            self.logger.info("=" * 60)
+            self.logger.info("增强功能状态")
+            self.logger.info("=" * 60)
+            
+            # 数据拆分功能
+            if self.enhanced_config.enable_data_splitting:
+                self.logger.info("✓ 数据拆分功能: 已启用")
+                self.logger.info(f"  - 训练集比例: {getattr(self.enhanced_config, 'train_ratio', 0.7)}")
+                self.logger.info(f"  - 验证集比例: {getattr(self.enhanced_config, 'val_ratio', 0.15)}")
+                self.logger.info(f"  - 测试集比例: {getattr(self.enhanced_config, 'test_ratio', 0.15)}")
+            else:
+                self.logger.info("✗ 数据拆分功能: 已禁用")
+            
+            # 增强评估功能
+            if self.enhanced_config.enable_comprehensive_evaluation:
+                self.logger.info("✓ 增强评估功能: 已启用")
+                self.logger.info("  - 智能字段检测: 已启用")
+                self.logger.info("  - 批次数据处理修复: 已启用")
+                self.logger.info("  - 自动错误恢复: 已启用")
+                self.logger.info("  - 数据质量诊断: 已启用")
+                self.logger.info("  - 实时处理监控: 已启用")
+                
+                if hasattr(self.enhanced_config, 'evaluation_tasks'):
+                    self.logger.info(f"  - 评估任务: {self.enhanced_config.evaluation_tasks}")
+            else:
+                self.logger.info("✗ 增强评估功能: 已禁用")
+            
+            # 实验跟踪功能
+            if self.enhanced_config.enable_experiment_tracking:
+                self.logger.info("✓ 实验跟踪功能: 已启用")
+            else:
+                self.logger.info("✗ 实验跟踪功能: 已禁用")
+            
+            # 错误恢复功能
+            if self.enhanced_config.fallback_to_basic_mode:
+                self.logger.info("✓ 错误恢复功能: 已启用")
+            else:
+                self.logger.info("✗ 错误恢复功能: 已禁用")
+            
+            # 验证集训练功能
+            if getattr(self.enhanced_config, 'enable_validation_during_training', False):
+                self.logger.info("✓ 训练时验证: 已启用")
+            else:
+                self.logger.info("✗ 训练时验证: 已禁用")
+            
+            self.logger.info("=" * 60)
+            
+        except Exception as e:
+            self.logger.error(f"显示增强功能状态失败: {e}")
     
     def _generate_enhanced_reports(self):
         """生成增强报告"""

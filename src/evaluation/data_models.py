@@ -212,6 +212,36 @@ class EvaluationConfig:
     enable_efficiency_metrics: bool = True
     enable_quality_analysis: bool = True
     
+    # 新增数据处理配置
+    data_processing: Dict[str, Any] = field(default_factory=lambda: {
+        "field_mapping": {
+            "text_generation": {
+                "input_fields": ["text", "input", "prompt"],
+                "target_fields": ["target", "answer", "output"]
+            },
+            "question_answering": {
+                "input_fields": ["question", "query"],
+                "context_fields": ["context", "passage"],
+                "target_fields": ["answer", "target"]
+            },
+            "classification": {
+                "input_fields": ["text", "input", "sentence"],
+                "target_fields": ["label", "target", "class"]
+            }
+        },
+        "validation": {
+            "min_valid_samples_ratio": 0.1,
+            "skip_empty_batches": True,
+            "enable_data_cleaning": True,
+            "enable_fallback": True
+        },
+        "diagnostics": {
+            "enable_detailed_logging": False,
+            "log_batch_statistics": True,
+            "save_processing_report": True
+        }
+    })
+    
     def to_dict(self) -> Dict[str, Any]:
         """转换为字典格式"""
         return convert_numpy_types({
@@ -223,7 +253,8 @@ class EvaluationConfig:
             "top_p": self.top_p,
             "num_samples": self.num_samples,
             "enable_efficiency_metrics": self.enable_efficiency_metrics,
-            "enable_quality_analysis": self.enable_quality_analysis
+            "enable_quality_analysis": self.enable_quality_analysis,
+            "data_processing": self.data_processing
         })
 
 
@@ -366,4 +397,64 @@ class DataIssue:
             "affected_samples": self.affected_samples,
             "severity": self.severity,
             "suggested_action": self.suggested_action
+        })
+
+
+@dataclass
+class ValidationResult:
+    """批次数据验证结果"""
+    is_valid: bool
+    valid_samples_count: int
+    total_samples_count: int
+    available_fields: List[str]
+    issues: List[str]
+    suggestions: List[str]
+    
+    def to_dict(self) -> Dict[str, Any]:
+        """转换为字典格式"""
+        return convert_numpy_types({
+            "is_valid": self.is_valid,
+            "valid_samples_count": self.valid_samples_count,
+            "total_samples_count": self.total_samples_count,
+            "available_fields": self.available_fields,
+            "issues": self.issues,
+            "suggestions": self.suggestions
+        })
+
+
+@dataclass
+class ProcessedBatch:
+    """处理后的批次数据"""
+    inputs: List[str]
+    valid_indices: List[int]
+    skipped_indices: List[int]
+    processing_stats: Dict[str, Any]
+    warnings: List[str]
+    
+    def to_dict(self) -> Dict[str, Any]:
+        """转换为字典格式"""
+        return convert_numpy_types({
+            "inputs": self.inputs,
+            "valid_indices": self.valid_indices,
+            "skipped_indices": self.skipped_indices,
+            "processing_stats": self.processing_stats,
+            "warnings": self.warnings
+        })
+
+
+@dataclass
+class FieldDetectionResult:
+    """字段检测结果"""
+    detected_fields: List[str]
+    recommended_field: Optional[str]
+    field_analysis: Dict[str, Dict[str, Any]]
+    confidence_scores: Dict[str, float]
+    
+    def to_dict(self) -> Dict[str, Any]:
+        """转换为字典格式"""
+        return convert_numpy_types({
+            "detected_fields": self.detected_fields,
+            "recommended_field": self.recommended_field,
+            "field_analysis": self.field_analysis,
+            "confidence_scores": self.confidence_scores
         })

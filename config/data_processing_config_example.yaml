@@ -1,0 +1,97 @@
+# 数据处理配置示例
+# 此文件展示了如何配置评估系统的数据处理功能
+
+data_processing:
+  # 字段映射配置 - 定义不同任务类型的字段映射规则
+  field_mapping:
+    # 文本生成任务
+    text_generation:
+      input_fields: ["text", "input", "prompt", "source", "content"]
+      target_fields: ["target", "answer", "output", "response", "label"]
+    
+    # 问答任务
+    question_answering:
+      input_fields: ["question", "query", "q"]
+      context_fields: ["context", "passage", "document", "text"]
+      target_fields: ["answer", "target", "a", "response"]
+    
+    # 分类任务
+    classification:
+      input_fields: ["text", "input", "sentence", "content"]
+      target_fields: ["label", "target", "class", "category"]
+    
+    # 相似度任务
+    similarity:
+      input_fields: ["text1", "sentence1", "text_a"]
+      input2_fields: ["text2", "sentence2", "text_b"]
+      target_fields: ["label", "score", "similarity"]
+    
+    # 自定义任务示例
+    custom_task:
+      input_fields: ["custom_input", "data"]
+      target_fields: ["custom_target", "expected"]
+
+  # 数据验证配置
+  validation:
+    # 最小有效样本比例 (0-1)
+    # 如果批次中有效样本的比例低于此值，批次将被标记为无效
+    min_valid_samples_ratio: 0.1
+    
+    # 是否跳过完全为空的批次
+    skip_empty_batches: true
+    
+    # 是否启用数据清洗
+    # 包括去除多余空白、过滤过短文本等
+    enable_data_cleaning: true
+    
+    # 是否启用降级处理
+    # 当主要字段不可用时尝试其他字段
+    enable_fallback: true
+
+  # 诊断配置
+  diagnostics:
+    # 是否启用详细日志 (可能影响性能)
+    enable_detailed_logging: false
+    
+    # 是否记录批次统计信息
+    log_batch_statistics: true
+    
+    # 是否保存处理报告
+    save_processing_report: true
+
+# 使用说明:
+# 1. 将此文件复制为 data_processing_config.yaml
+# 2. 根据你的数据集格式修改 field_mapping 部分
+# 3. 根据需要调整 validation 和 diagnostics 设置
+# 4. 在代码中加载配置:
+#    
+#    import yaml
+#    from src.evaluation.data_models import EvaluationConfig
+#    
+#    with open('config/data_processing_config.yaml', 'r') as f:
+#        config_data = yaml.safe_load(f)
+#    
+#    config = EvaluationConfig(**config_data)
+
+# 常见配置场景:
+
+# 场景1: 严格模式 - 只处理高质量数据
+strict_mode:
+  validation:
+    min_valid_samples_ratio: 0.8
+    enable_data_cleaning: true
+    enable_fallback: false
+
+# 场景2: 宽松模式 - 尽可能处理所有数据
+lenient_mode:
+  validation:
+    min_valid_samples_ratio: 0.05
+    enable_data_cleaning: true
+    enable_fallback: true
+
+# 场景3: 调试模式 - 详细日志和诊断
+debug_mode:
+  diagnostics:
+    enable_detailed_logging: true
+    log_batch_statistics: true
+    save_processing_report: true

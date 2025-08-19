@@ -25,6 +25,7 @@ from .data_models import (
 )
 from .metrics_calculator import MetricsCalculator
 from .efficiency_analyzer import EfficiencyAnalyzer
+from .data_preprocessor import DataPreprocessor
 
 logger = logging.getLogger(__name__)
 
@@ -72,6 +73,7 @@ class EvaluationEngine:
         # 初始化组件
         self.metrics_calculator = MetricsCalculator(device=self.device)
         self.efficiency_analyzer = EfficiencyAnalyzer(device=self.device)
+        self.data_preprocessor = DataPreprocessor(config)
         
         # 评估状态
         self.current_evaluation = None
@@ -247,8 +249,13 @@ class EvaluationEngine:
         
         # 批量推理
         batch_size = self.config.batch_size
+        total_batches = (len(dataset) + batch_size - 1) // batch_size
+        processed_batches = 0
+        skipped_batches = 0
+        
         for i in range(0, len(dataset), batch_size):
             batch = dataset[i:i + batch_size]
+            batch_end = min(i + batch_size, len(dataset))
             
             try:
                 # 准备输入
@@ -256,8 +263,34 @@ class EvaluationEngine:
                 
                 # 跳过空批次
                 if not inputs:
-                    logger.warning(f"跳过空批次，索引: {i}-{i+batch_size}")
+                    skipped_batches += 1
+                    logger.warning(f"跳过空批次 {processed_batches + 1}/{total_batches}，索引: {i}-{batch_end}")
+                    
+                    # 为跳过的批次添加空预测和参考答案
+                    batch_size_actual = len(batch)
+                    predictions.extend([""] * batch_size_actual)
+                    
+                    # 获取参考答案
+                    batch_references = batch.get("target", batch.get("answer", [""] * batch_size_actual))
+                    if len(batch_references) != batch_size_actual:
+                        batch_references = (batch_references + [""] * batch_size_actual)[:batch_size_actual]
+                    references.extend(batch_references)
+                    
+                    # 创建空样本对象
+                    for j in range(batch_size_actual):
+                        sample = EvaluationSample(
+                            input_text="",
+                            prediction="",
+                            reference=batch_references[j] if j < len(batch_references) else "",
+                            metrics={}
+                        )
+                        samples.append(sample)
+                    
+                    processed_batches += 1
                     continue
+                
+                processed_batches += 1
+                logger.debug(f"处理批次 {processed_batches}/{total_batches}，有效输入: {len(inputs)}")
                 
                 # 执行推理
                 batch_predictions = inference_func(inputs)
@@ -364,6 +397,16 @@ class EvaluationEngine:
         
         execution_time = time.time() - start_time
         
+        # 记录批次处理统计
+        processing_stats = self.data_preprocessor.get_processing_statistics()
+        logger.info(f"任务 {task_name} 完成 - 处理批次: {processed_batches}, "
+                   f"跳过批次: {skipped_batches}, "
+                   f"有效样本: {len([p for p in predictions if p and p.strip()])}/{len(predictions)}")
+        
+        if processing_stats["total_batches_processed"] > 0:
+            logger.info(f"数据预处理统计 - 成功率: {processing_stats['success_rate']:.2%}, "
+                       f"有效样本率: {processing_stats['valid_sample_rate']:.2%}")
+        
         return TaskResult(
             task_name=task_name,
             predictions=predictions,
@@ -469,7 +512,7 @@ class EvaluationEngine:
     
     def _prepare_inputs(self, batch: Dict[str, List], task_name: str) -> List[str]:
         """
-        准备输入数据
+        准备输入数据（使用新的数据预处理器）
         
         Args:
             batch: 批次数据
@@ -478,39 +521,36 @@ class EvaluationEngine:
         Returns:
             输入文本列表
         """
-        inputs = []
-        
-        if task_name == "text_generation":
-            inputs = batch.get("text", batch.get("input", []))
-        elif task_name == "question_answering":
-            questions = batch.get("question", [])
-            contexts = batch.get("context", [""] * len(questions))
-            inputs = [f"问题: {q}\n上下文: {c}" for q, c in zip(questions, contexts)]
-        elif task_name == "classification":
-            inputs = batch.get("text", batch.get("input", []))
-        else:
-            # 默认使用text字段
-            inputs = batch.get("text", batch.get("input", []))
-        
-        # 验证输入数据
-        if not inputs:
-            logger.warning(f"批次数据为空，任务: {task_name}，批次键: {list(batch.keys())}")
+        try:
+            # 使用新的数据预处理器
+            inputs = self.data_preprocessor.prepare_inputs(batch, task_name)
+            
+            if not inputs:
+                # 提供详细的诊断信息
+                diagnosis = self.data_preprocessor.diagnose_batch(batch, task_name)
+                logger.warning(f"批次数据处理失败，任务: {task_name}")
+                logger.warning(f"可用字段: {diagnosis['batch_info']['available_fields']}")
+                
+                if diagnosis['recommendations']:
+                    logger.warning(f"建议: {'; '.join(diagnosis['recommendations'])}")
+                
+                # 记录详细的字段分析
+                if diagnosis.get('field_detection_result'):
+                    detection_result = diagnosis['field_detection_result']
+                    if detection_result.get('detected_fields'):
+                        logger.info(f"检测到的字段: {detection_result['detected_fields']}")
+                    if detection_result.get('recommended_field'):
+                        logger.info(f"推荐字段: {detection_result['recommended_field']}")
+                
+                return []
+            
+            logger.debug(f"成功准备了 {len(inputs)} 个有效输入，任务: {task_name}")
+            return inputs
+            
+        except Exception as e:
+            logger.error(f"数据预处理失败: {e}")
+            logger.error(f"错误详情: {traceback.format_exc()}")
             return []
-        
-        # 过滤空字符串和None值
-        valid_inputs = []
-        for i, inp in enumerate(inputs):
-            if inp is None or (isinstance(inp, str) and not inp.strip()):
-                logger.warning(f"跳过空输入，索引: {i}")
-                continue
-            valid_inputs.append(str(inp).strip())
-        
-        if not valid_inputs:
-            logger.warning(f"所有输入都无效，任务: {task_name}")
-            return []
-        
-        logger.debug(f"准备了 {len(valid_inputs)} 个有效输入，任务: {task_name}")
-        return valid_inputs
     
     def _get_task_type(self, task_name: str) -> str:
         """
@@ -704,6 +744,9 @@ class EvaluationEngine:
             # 转换为可序列化的格式
             result_dict = result.get_summary()
             
+            # 添加数据处理统计信息
+            result_dict["data_processing_stats"] = self.data_preprocessor.get_processing_statistics()
+            
             with open(output_file, 'w', encoding='utf-8') as f:
                 json.dump(result_dict, f, indent=2, ensure_ascii=False)
             
@@ -711,6 +754,43 @@ class EvaluationEngine:
             
         except Exception as e:
             logger.error(f"保存评估结果失败: {e}")
+    
+    def diagnose_data_processing(self, datasets: Dict[str, Dataset]) -> Dict[str, Any]:
+        """
+        诊断数据处理问题
+        
+        Args:
+            datasets: 数据集字典
+            
+        Returns:
+            诊断信息
+        """
+        diagnosis = {
+            "overall_stats": self.data_preprocessor.get_processing_statistics(),
+            "dataset_diagnosis": {}
+        }
+        
+        for task_name, dataset in datasets.items():
+            if len(dataset) > 0:
+                # 取第一个批次进行诊断
+                batch_size = min(self.config.batch_size, len(dataset))
+                sample_batch = dataset[:batch_size]
+                
+                batch_diagnosis = self.data_preprocessor.diagnose_batch(sample_batch, task_name)
+                diagnosis["dataset_diagnosis"][task_name] = batch_diagnosis
+        
+        return diagnosis
+    
+    def update_data_processing_config(self, config: EvaluationConfig):
+        """
+        更新数据处理配置
+        
+        Args:
+            config: 新的评估配置
+        """
+        self.config = config
+        self.data_preprocessor.update_config(config)
+        logger.info("评估引擎数据处理配置已更新")
 
 
 # 添加必要的导入
