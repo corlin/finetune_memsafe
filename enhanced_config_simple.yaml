@@ -1,0 +1,38 @@
+# 简化的增强训练Pipeline配置
+# 包含最常用的配置选项
+
+# 模型配置
+model:
+  name: "Qwen/Qwen3-4B-Thinking-2507"
+  output_dir: "./enhanced-qwen3-finetuned"
+
+# 数据配置
+data:
+  data_dir: "data/raw"
+  enable_splitting: true
+  train_ratio: 0.7
+  val_ratio: 0.15
+  test_ratio: 0.15
+
+# 训练配置
+training:
+  batch_size: 4
+  num_epochs: 3
+  learning_rate: 5e-5
+  max_memory_gb: 12.0  # 增加内存限制以支持模型加载
+  enable_validation: true
+
+# 评估配置
+evaluation:
+  enable_comprehensive: true
+  tasks: ["text_generation"]
+  metrics: ["bleu", "rouge"]
+
+# 实验跟踪
+experiment:
+  enable_tracking: true
+  tags: ["demo", "simple"]
+
+# 报告配置
+reports:
+  formats: ["html", "json"]

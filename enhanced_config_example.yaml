@@ -1,0 +1,92 @@
+# 增强训练Pipeline配置示例
+# 这个配置文件展示了所有可用的配置选项
+
+# 模型配置
+model:
+  name: "Qwen/Qwen3-4B-Thinking-2507"
+  output_dir: "./enhanced-qwen3-finetuned"
+
+# 数据配置
+data:
+  data_dir: "data/raw"
+  enable_splitting: true
+  train_ratio: 0.7
+  val_ratio: 0.15
+  test_ratio: 0.15
+  stratify_by: null  # 分层字段名称，null表示随机拆分
+  split_seed: 42
+  min_samples_per_split: 10
+  enable_quality_analysis: true
+  splits_output_dir: "./data/splits"
+
+# 训练配置
+training:
+  batch_size: 4
+  gradient_accumulation_steps: 16
+  learning_rate: 5e-5
+  num_epochs: 5
+  max_sequence_length: 256
+  max_memory_gb: 13.0
+  
+  # LoRA配置
+  lora_r: 6
+  lora_alpha: 12
+  lora_dropout: 0.1
+  
+  # 验证配置
+  enable_validation: true
+  validation_steps: 100
+  save_validation_metrics: true
+  enable_early_stopping: true
+  early_stopping_patience: 5
+  early_stopping_threshold: 0.001
+
+# 评估配置
+evaluation:
+  enable_comprehensive: true
+  tasks: ["text_generation"]
+  metrics: ["bleu", "rouge", "accuracy"]
+  batch_size: 4
+  num_samples: 100  # -1表示使用全部样本
+  max_length: 512
+  temperature: 0.7
+  top_p: 0.9
+  enable_efficiency: true
+  enable_quality: true
+
+# 基准测试配置（可选）
+benchmark:
+  enable_testing: false
+  datasets: []
+  baseline_model_path: null
+
+# 实验跟踪配置
+experiment:
+  enable_tracking: true
+  name: null  # null表示自动生成
+  tags: ["qwen3", "enhanced", "pipeline"]
+  description: "增强训练Pipeline示例实验"
+  output_dir: "./experiments"
+
+# 报告配置
+reports:
+  formats: ["html", "json"]
+  enable_visualization: true
+  output_charts: true
+  output_dir: "./reports"
+
+# 系统配置
+system:
+  log_dir: "./logs"
+  enable_tensorboard: true
+  enable_inference_test: true
+  verify_environment: true
+  auto_install_deps: false
+
+# 高级配置
+advanced:
+  skip_data_splitting_if_exists: true
+  force_recompute_evaluation: false
+  parallel_evaluation: false
+  max_evaluation_workers: 2
+  fallback_to_basic_mode: true

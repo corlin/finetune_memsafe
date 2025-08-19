@@ -7,12 +7,17 @@
 import logging
 import asyncio
 import time
+import warnings
 from typing import List, Dict, Any, Optional, Callable, Union
 from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import traceback
 
 from datasets import Dataset
+
+# 抑制梯度检查点相关的警告
+warnings.filterwarnings("ignore", message=".*Caching is incompatible with gradient checkpointing.*")
+warnings.filterwarnings("ignore", message=".*past_key_value.*")
 
 from .data_models import (
     EvaluationConfig, EvaluationResult, TaskResult, EvaluationSample,
@@ -37,29 +42,42 @@ class EvaluationEngine:
     
     def __init__(self, 
                  config: EvaluationConfig,
-                 device: str = "cpu",
+                 device: str = "auto",
                  max_workers: int = 4):
         """
         初始化评估引擎
         
         Args:
             config: 评估配置
-            device: 计算设备
+            device: 计算设备 ("auto" 自动检测, "cpu", "cuda", "cuda:0" 等)
             max_workers: 最大工作线程数
         """
         self.config = config
-        self.device = device
+        
+        # 自动检测设备
+        if device == "auto":
+            try:
+                import torch
+                if torch.cuda.is_available():
+                    self.device = "cuda"
+                else:
+                    self.device = "cpu"
+            except ImportError:
+                self.device = "cpu"
+        else:
+            self.device = device
+            
         self.max_workers = max_workers
         
         # 初始化组件
-        self.metrics_calculator = MetricsCalculator(device=device)
-        self.efficiency_analyzer = EfficiencyAnalyzer(device=device)
+        self.metrics_calculator = MetricsCalculator(device=self.device)
+        self.efficiency_analyzer = EfficiencyAnalyzer(device=self.device)
         
         # 评估状态
         self.current_evaluation = None
         self.evaluation_history = []
         
-        logger.info(f"EvaluationEngine初始化完成，设备: {device}, 最大工作线程: {max_workers}")
+        logger.info(f"EvaluationEngine初始化完成，设备: {self.device}, 最大工作线程: {max_workers}")
     
     def evaluate_model(self, 
                       model,
@@ -87,17 +105,21 @@ class EvaluationEngine:
             
             # 执行任务评估
             task_results = {}
-            for task_name in self.config.tasks:
-                if task_name in datasets:
-                    logger.info(f"执行任务评估: {task_name}")
-                    task_result = self._evaluate_task(
-                        task_name, 
-                        datasets[task_name], 
-                        inference_func
-                    )
-                    task_results[task_name] = task_result
-                else:
-                    logger.warning(f"未找到任务数据集: {task_name}")
+            
+            # 如果配置的任务在数据集中找不到，尝试使用所有可用的数据集
+            available_tasks = set(self.config.tasks) & set(datasets.keys())
+            if not available_tasks:
+                logger.warning(f"配置的任务 {self.config.tasks} 在数据集中未找到，使用所有可用数据集: {list(datasets.keys())}")
+                available_tasks = datasets.keys()
+            
+            for task_name in available_tasks:
+                logger.info(f"执行任务评估: {task_name}")
+                task_result = self._evaluate_task(
+                    task_name, 
+                    datasets[task_name], 
+                    inference_func
+                )
+                task_results[task_name] = task_result
             
             # 计算整体指标
             overall_metrics = self._calculate_overall_metrics(task_results)
@@ -232,13 +254,36 @@ class EvaluationEngine:
                 # 准备输入
                 inputs = self._prepare_inputs(batch, task_name)
                 
+                # 跳过空批次
+                if not inputs:
+                    logger.warning(f"跳过空批次，索引: {i}-{i+batch_size}")
+                    continue
+                
                 # 执行推理
                 batch_predictions = inference_func(inputs)
                 
+                # 验证推理结果
+                if not batch_predictions:
+                    logger.warning(f"推理返回空结果，批次索引: {i}-{i+batch_size}")
+                    batch_predictions = [""] * len(inputs)
+                
+                # 确保预测结果数量与输入匹配
+                if len(batch_predictions) != len(inputs):
+                    logger.warning(f"预测结果数量不匹配，输入: {len(inputs)}, 预测: {len(batch_predictions)}")
+                    # 调整预测结果长度
+                    if len(batch_predictions) < len(inputs):
+                        batch_predictions.extend([""] * (len(inputs) - len(batch_predictions)))
+                    else:
+                        batch_predictions = batch_predictions[:len(inputs)]
+                
+                # 获取参考答案
+                references_batch = batch.get("target", batch.get("answer", [""] * len(batch)))
+                if len(references_batch) != len(inputs):
+                    logger.warning(f"参考答案数量不匹配，调整为输入长度")
+                    references_batch = (references_batch + [""] * len(inputs))[:len(inputs)]
+                
                 # 处理输出
-                for j, (input_text, pred, ref) in enumerate(zip(
-                    inputs, batch_predictions, batch.get("target", batch.get("answer", [""] * len(batch)))
-                )):
+                for j, (input_text, pred, ref) in enumerate(zip(inputs, batch_predictions, references_batch)):
                     predictions.append(pred)
                     references.append(ref)
                     
@@ -253,25 +298,69 @@ class EvaluationEngine:
                     
             except Exception as e:
                 logger.error(f"批次推理失败: {e}")
-                # 添加空预测以保持数量一致
-                batch_size_actual = len(batch)
-                predictions.extend([""] * batch_size_actual)
-                references.extend(batch.get("target", batch.get("answer", [""] * batch_size_actual)))
+                logger.error(f"错误详情: {traceback.format_exc()}")
                 
+                # 尝试获取批次大小
+                try:
+                    batch_inputs = self._prepare_inputs(batch, task_name)
+                    batch_size_actual = len(batch_inputs) if batch_inputs else len(batch)
+                except:
+                    batch_size_actual = len(batch)
+                
+                if batch_size_actual == 0:
+                    logger.warning("跳过空批次")
+                    continue
+                
+                # 为失败的批次添加空预测
+                predictions.extend([""] * batch_size_actual)
+                
+                # 获取参考答案
+                batch_references = batch.get("target", batch.get("answer", [""] * batch_size_actual))
+                if len(batch_references) != batch_size_actual:
+                    batch_references = (batch_references + [""] * batch_size_actual)[:batch_size_actual]
+                references.extend(batch_references)
+                
+                # 创建失败的样本对象
                 for j in range(batch_size_actual):
+                    try:
+                        batch_inputs = self._prepare_inputs(batch, task_name)
+                        input_text = batch_inputs[j] if batch_inputs and j < len(batch_inputs) else ""
+                    except:
+                        input_text = ""
+                    
                     sample = EvaluationSample(
-                        input_text="",
+                        input_text=input_text,
                         prediction="",
-                        reference="",
+                        reference=batch_references[j] if j < len(batch_references) else "",
                         metrics={}
                     )
                     samples.append(sample)
         
         # 计算任务指标
         task_type = self._get_task_type(task_name)
-        metrics = self.metrics_calculator.calculate_all_metrics(
-            predictions, references, task_type
-        )
+        
+        # 验证预测和参考答案数量
+        if len(predictions) != len(references):
+            logger.warning(f"预测和参考答案数量不匹配: {len(predictions)} vs {len(references)}")
+            # 调整到相同长度
+            min_len = min(len(predictions), len(references))
+            predictions = predictions[:min_len]
+            references = references[:min_len]
+            samples = samples[:min_len]
+        
+        # 检查是否有有效的预测结果
+        valid_predictions = [p for p in predictions if p and p.strip()]
+        if not valid_predictions:
+            logger.warning("没有有效的预测结果，返回默认指标")
+            metrics = {"accuracy": 0.0, "bleu": 0.0, "rouge_l": 0.0}
+        else:
+            try:
+                metrics = self.metrics_calculator.calculate_all_metrics(
+                    predictions, references, task_type
+                )
+            except Exception as e:
+                logger.error(f"指标计算失败: {e}")
+                metrics = {"accuracy": 0.0, "bleu": 0.0, "rouge_l": 0.0, "error": str(e)}
         
         execution_time = time.time() - start_time
         
@@ -297,22 +386,43 @@ class EvaluationEngine:
         """
         def inference_func(inputs: List[str]) -> List[str]:
             try:
+                # 验证输入
+                if not inputs:
+                    logger.warning("推理函数收到空输入列表")
+                    return []
+                
+                # 过滤无效输入
+                valid_inputs = [inp for inp in inputs if inp and isinstance(inp, str) and inp.strip()]
+                if not valid_inputs:
+                    logger.warning("推理函数收到的所有输入都无效")
+                    return [""] * len(inputs)  # 返回与输入长度相同的空字符串列表
+                
+                # 确定模型所在的设备
+                model_device = next(model.parameters()).device
+                logger.debug(f"模型设备: {model_device}")
+                
                 # 编码输入
-                encoded = tokenizer(
-                    inputs,
-                    padding=True,
-                    truncation=True,
-                    max_length=self.config.max_length,
-                    return_tensors="pt"
-                )
+                try:
+                    encoded = tokenizer(
+                        valid_inputs,
+                        padding=True,
+                        truncation=True,
+                        max_length=self.config.max_length,
+                        return_tensors="pt"
+                    )
+                except Exception as tokenizer_error:
+                    logger.error(f"分词器编码失败: {tokenizer_error}")
+                    logger.error(f"输入数据: {valid_inputs[:3]}...")  # 只显示前3个输入
+                    return [""] * len(inputs)
                 
-                # 移动到设备
-                if hasattr(encoded, 'to'):
-                    encoded = encoded.to(self.device)
-                else:
-                    encoded = {k: v.to(self.device) for k, v in encoded.items()}
+                logger.debug(f"编码前张量设备: {[(k, v.device if hasattr(v, 'device') else 'N/A') for k, v in encoded.items()]}")
                 
-                # 生成
+                # 移动所有张量到模型设备
+                encoded = {k: v.to(model_device) for k, v in encoded.items() if hasattr(v, 'to')}
+                
+                logger.debug(f"编码后张量设备: {[(k, v.device if hasattr(v, 'device') else 'N/A') for k, v in encoded.items()]}")
+                
+                # 生成 (明确禁用缓存以避免梯度检查点警告)
                 with torch.no_grad():
                     outputs = model.generate(
                         **encoded,
@@ -320,8 +430,12 @@ class EvaluationEngine:
                         temperature=self.config.temperature,
                         top_p=self.config.top_p,
                         do_sample=True,
-                        pad_token_id=tokenizer.pad_token_id
+                        pad_token_id=tokenizer.pad_token_id if tokenizer.pad_token_id is not None else tokenizer.eos_token_id,
+                        use_cache=False,  # 明确禁用缓存以避免警告
+                        past_key_values=None  # 确保不使用过去的键值对
                     )
+                
+                logger.debug(f"生成输出张量设备: {outputs.device if hasattr(outputs, 'device') else 'N/A'}")
                 
                 # 解码输出
                 predictions = tokenizer.batch_decode(outputs, skip_special_tokens=True)
@@ -330,7 +444,7 @@ class EvaluationEngine:
                 if hasattr(model, 'config') and hasattr(model.config, 'is_encoder_decoder'):
                     if not model.config.is_encoder_decoder:
                         # 对于decoder-only模型，移除输入部分
-                        input_lengths = [len(tokenizer.encode(inp)) for inp in inputs]
+                        input_lengths = [len(tokenizer.encode(inp, add_special_tokens=False)) for inp in inputs]
                         predictions = [
                             tokenizer.decode(outputs[i][input_lengths[i]:], skip_special_tokens=True)
                             for i in range(len(predictions))
@@ -340,6 +454,15 @@ class EvaluationEngine:
                 
             except Exception as e:
                 logger.error(f"推理函数执行失败: {e}")
+                logger.error(f"错误详情: {traceback.format_exc()}")
+                # 添加设备信息到错误日志
+                try:
+                    model_device = next(model.parameters()).device
+                    logger.error(f"模型设备: {model_device}")
+                    if 'encoded' in locals():
+                        logger.error(f"输入张量设备: {[(k, v.device if hasattr(v, 'device') else 'N/A') for k, v in encoded.items()]}")
+                except:
+                    logger.error("无法获取设备信息")
                 return [""] * len(inputs)
         
         return inference_func
@@ -355,17 +478,39 @@ class EvaluationEngine:
         Returns:
             输入文本列表
         """
+        inputs = []
+        
         if task_name == "text_generation":
-            return batch.get("text", batch.get("input", []))
+            inputs = batch.get("text", batch.get("input", []))
         elif task_name == "question_answering":
             questions = batch.get("question", [])
             contexts = batch.get("context", [""] * len(questions))
-            return [f"问题: {q}\n上下文: {c}" for q, c in zip(questions, contexts)]
+            inputs = [f"问题: {q}\n上下文: {c}" for q, c in zip(questions, contexts)]
         elif task_name == "classification":
-            return batch.get("text", batch.get("input", []))
+            inputs = batch.get("text", batch.get("input", []))
         else:
             # 默认使用text字段
-            return batch.get("text", batch.get("input", []))
+            inputs = batch.get("text", batch.get("input", []))
+        
+        # 验证输入数据
+        if not inputs:
+            logger.warning(f"批次数据为空，任务: {task_name}，批次键: {list(batch.keys())}")
+            return []
+        
+        # 过滤空字符串和None值
+        valid_inputs = []
+        for i, inp in enumerate(inputs):
+            if inp is None or (isinstance(inp, str) and not inp.strip()):
+                logger.warning(f"跳过空输入，索引: {i}")
+                continue
+            valid_inputs.append(str(inp).strip())
+        
+        if not valid_inputs:
+            logger.warning(f"所有输入都无效，任务: {task_name}")
+            return []
+        
+        logger.debug(f"准备了 {len(valid_inputs)} 个有效输入，任务: {task_name}")
+        return valid_inputs
     
     def _get_task_type(self, task_name: str) -> str:
         """

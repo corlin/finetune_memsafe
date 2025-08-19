@@ -121,7 +121,7 @@ class QualityAnalyzer:
             "type": self._infer_column_type(values),
             "non_null_count": sum(1 for v in values if v is not None and v != ""),
             "null_count": sum(1 for v in values if v is None or v == ""),
-            "unique_count": len(set(values))
+            "unique_count": self._safe_unique_count(values)
         }
         
         # 根据字段类型进行特定分析
@@ -133,6 +133,18 @@ class QualityAnalyzer:
             stats.update(self._analyze_categorical_column(values))
         
         return stats
+    
+    def _safe_unique_count(self, values: List[Any]) -> int:
+        """安全地计算唯一值数量，处理不可哈希的类型"""
+        try:
+            return len(set(values))
+        except TypeError:
+            # 处理不可哈希的类型（如dict, list）
+            unique_values = []
+            for value in values:
+                if value not in unique_values:
+                    unique_values.append(value)
+            return len(unique_values)
     
     def _infer_column_type(self, values: List[Any]) -> str:
         """推断字段类型"""
@@ -151,8 +163,9 @@ class QualityAnalyzer:
         # 检查是否为文本类型
         if all(isinstance(v, str) for v in non_null_values[:100]):
             # 如果唯一值较少，可能是分类字段
-            unique_ratio = len(set(non_null_values)) / len(non_null_values)
-            if unique_ratio < 0.1 and len(set(non_null_values)) < 50:
+            unique_count = self._safe_unique_count(non_null_values)
+            unique_ratio = unique_count / len(non_null_values)
+            if unique_ratio < 0.1 and unique_count < 50:
                 return "categorical"
             else:
                 return "text"
@@ -295,7 +308,7 @@ class QualityAnalyzer:
         
         for column in dataset.column_names:
             values = dataset[column]
-            unique_count = len(set(values))
+            unique_count = self._safe_unique_count(values)
             uniqueness[column] = unique_count / len(values) if values else 0
         
         return uniqueness

@@ -35,3 +35,9 @@ data/splits/
 *.log
 
 output/
+
+enhanced-qwen3-finetuned/
+
+experiments/
+
+reports/

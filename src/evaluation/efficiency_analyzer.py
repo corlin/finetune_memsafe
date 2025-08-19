@@ -91,6 +91,15 @@ class EfficiencyAnalyzer:
         Returns:
             包含延迟和吞吐量指标的字典
         """
+        # 验证输入
+        if not inputs:
+            logger.warning("延迟测量收到空输入，返回默认结果")
+            return {
+                "latency": {"mean": 0.0, "std": 0.0, "min": 0.0, "max": 0.0},
+                "throughput": {"mean": 0.0, "std": 0.0, "min": 0.0, "max": 0.0},
+                "batch_results": {}
+            }
+        
         results = {}
         
         for batch_size in batch_sizes:
@@ -185,11 +194,21 @@ class EfficiencyAnalyzer:
         initial_memory = self._get_memory_usage()
         
         try:
+            # 验证输入
+            if not inputs:
+                logger.warning("内存监控收到空输入，跳过监控")
+                return MemoryUsageResult(
+                    peak_memory_mb=0.0,
+                    average_memory_mb=0.0,
+                    memory_samples=[]
+                )
+            
             # 运行推理
             start_time = time.time()
             while time.time() - start_time < duration:
                 try:
-                    _ = inference_func(inputs[:1])  # 使用单个样本
+                    test_input = inputs[:1] if inputs else ["测试输入"]
+                    _ = inference_func(test_input)
                 except Exception as e:
                     logger.warning(f"推理过程中出错: {e}")
                     break

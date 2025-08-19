@@ -1,0 +1,32 @@
+data:
+  data_dir: data/raw
+  enable_splitting: true
+  test_ratio: 0.15
+  train_ratio: 0.7
+  val_ratio: 0.15
+evaluation:
+  enable_comprehensive: true
+  metrics:
+  - bleu
+  - rouge
+  - accuracy
+  tasks:
+  - text_generation
+experiment:
+  enable_tracking: true
+  name: config_file_example
+  tags:
+  - demo
+  - config_file
+model:
+  name: Qwen/Qwen3-4B-Thinking-2507
+  output_dir: ./example_output_config_file
+reports:
+  formats:
+  - html
+  - json
+training:
+  batch_size: 2
+  enable_validation: true
+  learning_rate: 5.0e-05
+  num_epochs: 1
