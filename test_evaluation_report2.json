@@ -1,0 +1,67 @@
+{
+  "evaluation_summary": {
+    "total_cases": 2,
+    "average_score": 0.48332762247141026,
+    "max_score": 0.486997226074896,
+    "min_score": 0.47965801886792453,
+    "checkpoint_path": "exported_models/qwen3_merged_lightweight/Qwen_Qwen3-4B-Thinking-2507_pytorch_20250820_225451",
+    "evaluation_time": "2025-08-20T23:09:27.610197"
+  },
+  "category_performance": {
+    "技术要求类": 0.47965801886792453,
+    "典型密码功能测评技术类": 0.486997226074896
+  },
+  "difficulty_performance": {
+    "hard": 0.48332762247141026
+  },
+  "detailed_results": [
+    {
+      "id": "eval_QA6_Q32",
+      "question": "第三级密码应用基本要求中设备和计算安全包括哪些？",
+      "expected_answer": "第三级密码应用基本要求中设备和计算安全包括：a）应采用密码技术对登录设备的用户进行身份鉴别，保证用户身份的真实性；b）远程管理设备时，应采用密码技术建立安全的信息传输通道；c）宜采用密码技术保证系统资...",
+      "model_answer": "第三级密码应用基本要求中设备和计算安全包括：1）应采用密码技术对登录设备的用户进行身份鉴别；2）应采用密码技术对远程访问设备的用户进行身份鉴别；3）应采用密码技术对重要可执行程序进行完整性保护；4）应...",
+      "category": "技术要求类",
+      "difficulty": "hard",
+      "score": 0.47965801886792453,
+      "evaluation_details": {
+        "length_similarity": 0.3643867924528302,
+        "keyword_overlap": 0.0,
+        "terminology_match": 0.5,
+        "structure_similarity": 1.0,
+        "completeness": 1.0,
+        "total_score": 0.47965801886792453,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA6_Q104",
+      "question": "不可否认性测评实施要点是什么？",
+      "expected_answer": "不可否认性测评实施要点：1）如果使用第三方电子认证服务,则应对密码服务资质进行核查,同时核查信息系统中是否配置了国家电子认证根CA证书并且在信息系统运行过程中是否对运营CA证书有效性进行了验证; 2）...",
+      "model_answer": "不可否认性测评实施要点包括：1）根据管理制度，核查相关密码产品和密码服务是否具有不可否认性功能；2）核查不可否认性功能是否满足相关技术要求；3）核查不可否认性功能是否满足相关管理要求。 ### 依据标...",
+      "category": "典型密码功能测评技术类",
+      "difficulty": "hard",
+      "score": 0.486997226074896,
+      "evaluation_details": {
+        "length_similarity": 0.4133148404993065,
+        "keyword_overlap": 0.0,
+        "terminology_match": 0.5,
+        "structure_similarity": 1.0,
+        "completeness": 1.0,
+        "total_score": 0.486997226074896,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    }
+  ]
+}

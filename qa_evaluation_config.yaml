@@ -1,0 +1,53 @@
+# QA评估配置文件
+
+# 数据配置
+data:
+  input_dir: "data/raw"
+  output_dir: "evaluation_results"
+  
+# 模型配置
+model:
+  checkpoint_path: "enhanced-qwen3-finetuned/checkpoint-450"
+  max_length: 512
+  temperature: 0.7
+  top_p: 0.9
+  
+# 评估配置
+evaluation:
+  max_samples: 50
+  sample_strategy: "balanced"  # random, balanced, sequential
+  
+  # 筛选条件
+  categories:
+    - "基础概念类"
+    - "密码应用等级类" 
+    - "技术要求类"
+    - "管理要求类"
+    - "密钥管理类"
+    - "测评要求类"
+  
+  difficulties:
+    - "easy"
+    - "medium"
+    - "hard"
+  
+  # 评分权重
+  scoring_weights:
+    keyword_overlap: 0.3
+    terminology_match: 0.25
+    length_similarity: 0.15
+    structure_similarity: 0.15
+    completeness: 0.15
+
+# 输出配置
+output:
+  qa_pairs_file: "extracted_qa_pairs.json"
+  evaluation_report: "qa_evaluation_report.json"
+  detailed_results: true
+  save_model_outputs: true
+
+# 日志配置
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(levelname)s - %(message)s"
+  file: "qa_evaluation.log"

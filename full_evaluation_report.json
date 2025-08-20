@@ -1,0 +1,1255 @@
+{
+  "evaluation_summary": {
+    "total_cases": 50,
+    "average_score": 0.15100068191004595,
+    "max_score": 0.3060112359550562,
+    "min_score": 0.038595505617977525,
+    "checkpoint_path": "enhanced-qwen3-finetuned/checkpoint-450",
+    "evaluation_time": "2025-08-20T22:45:01.967938"
+  },
+  "category_performance": {
+    "测评要求类（续）": 0.19365168539325844,
+    "密码服务类": 0.05797752808988763,
+    "密码应用测评技术类": 0.12117977528089886,
+    "测评技术实操类": 0.17754098360655735,
+    "密码产品类": 0.1491708542713568,
+    "基础概念类": 0.16368913857677903,
+    "密码应用方案类": 0.07314606741573033,
+    "密码应用测评报告类": 0.15741573033707862,
+    "技术要求类": 0.1526112409267177,
+    "等级要求类（续）": 0.22904494382022472,
+    "密码应用合规类": 0.07651685393258427,
+    "管理要求类": 0.18491461171323456,
+    "密钥管理类（续）": 0.17848314606741572,
+    "密码应用安全性评估流程类": 0.08157303370786516,
+    "等级要求类": 0.20313559322033897,
+    "密码算法类": 0.06303370786516854,
+    "密码应用风险分析类": 0.07904494382022471,
+    "密码应用管理类": 0.11528089887640448,
+    "密码算法选择类": 0.23751381215469614,
+    "密码应用方案设计类": 0.16499999999999998,
+    "密码应用等级类": 0.06977528089887641,
+    "密码应用合规性类": 0.11064606741573033,
+    "行业应用场景类": 0.20866666666666667,
+    "密码产品应用测试类": 0.15025280898876403,
+    "密码应用案例类": 0.11485955056179775,
+    "密码算法实现细节类": 0.21027027027027026,
+    "密码应用测评工具类": 0.12370786516853932,
+    "典型密码产品应用测评技术类": 0.13374907426999577,
+    "密码服务部署类": 0.1506203589108911,
+    "测评要求类": 0.3060112359550562,
+    "标准条文解读类": 0.17557692307692307,
+    "密钥管理具体操作类": 0.11991573033707864,
+    "新兴技术融合类": 0.19308880308880308,
+    "合规性整改类": 0.18888888888888888,
+    "密钥管理类": 0.18129213483146067,
+    "典型密码功能测评技术类": 0.13278846153846152
+  },
+  "difficulty_performance": {
+    "medium": 0.13979229934300025,
+    "hard": 0.17853201096610702,
+    "easy": 0.15872659176029963
+  },
+  "detailed_results": [
+    {
+      "id": "eval_QA6_Q138",
+      "question": "应用和数据安全中重要信息资源安全标记完整性测评指标有哪些？",
+      "expected_answer": "应用和数据安全中重要信息资源安全标记完整性测评指标：宜采用密码技术保证信息系统应用的重要信息资源安全标记的完整性(适用于第三级)；应采用密码技术保证信息系统应用的重要信息资源安全标记的完整性(适用于第...",
+      "model_answer": "生成失败: Expected all tensors to be on the same device, but got index is on cpu, different from other t...",
+      "category": "测评要求类（续）",
+      "difficulty": "medium",
+      "score": 0.19365168539325844,
+      "evaluation_details": {
+        "length_similarity": 0.6910112359550562,
+        "keyword_overlap": 0.0,
+        "terminology_match": 0.0,
+        "structure_similarity": 0.5,
+        "completeness": 0.1,
+        "total_score": 0.19365168539325844,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA2_Q73",
+      "question": "什么是密码服务？",
+      "expected_answer": "密码服务是指为信息系统提供密码功能支持的服务，包括但不限于密钥管理服务、密码运算服务、身份认证服务等。",
+      "model_answer": "生成失败: Expected all tensors to be on the same device, but got index is on cpu, different from other t...",
+      "category": "密码服务类",
+      "difficulty": "medium",
+      "score": 0.05797752808988763,
+      "evaluation_details": {
+        "length_similarity": 0.28651685393258425,
+        "keyword_overlap": 0.0,
+        "terminology_match": 0.0,
+        "structure_similarity": 0,
+        "completeness": 0.1,
+        "total_score": 0.05797752808988763,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA4_Q366",
+      "question": "密码应用可靠性测评技术的主要方法有哪些？",
+      "expected_answer": "密码应用可靠性测评技术的主要方法包括：故障注入测试（故意注入故障验证系统可靠性）、恢复测试（验证系统从故障中恢复的能力）、容错测试（验证系统在错误情况下的容错能力）、寿命测试（验证系统在长期运行下的可...",
+      "model_answer": "生成失败: Expected all tensors to be on the same device, but got index is on cpu, different from other t...",
+      "category": "密码应用测评技术类",
+      "difficulty": "medium",
+      "score": 0.12117977528089886,
+      "evaluation_details": {
+        "length_similarity": 0.7078651685393258,
+        "keyword_overlap": 0.0,
+        "terminology_match": 0.0,
+        "structure_similarity": 0,
+        "completeness": 0.1,
+        "total_score": 0.12117977528089886,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA5_Q411",
+      "question": "使用Wireshark分析IPSec VPN通信时，如何验证其是否使用了国密算法？",
+      "expected_answer": "使用Wireshark分析IPSec VPN通信验证国密算法的方法：1）捕获IKEv2协商包（UDP端口500/4500）；2）在\"Internet Key Exchange\"协议中查找\"Transf...",
+      "model_answer": "生成失败: Expected all tensors to be on the same device, but got index is on cpu, different from other t...",
+      "category": "测评技术实操类",
+      "difficulty": "hard",
+      "score": 0.17754098360655735,
+      "evaluation_details": {
+        "length_similarity": 0.5836065573770491,
+        "keyword_overlap": 0.0,
+        "terminology_match": 0.0,
+        "structure_similarity": 0.5,
+        "completeness": 0.1,
+        "total_score": 0.17754098360655735,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA2_Q72",
+      "question": "VPN产品和安全认证网关的测评实施要点有哪些？",
+      "expected_answer": "VPN产品和安全认证网关的测评实施要点包括：利用端口扫描类工具，探测IPSec VPN和SSL VPN服务端所对应的端口服务是否开启；利用协议分析类工具，抓取IPSec协议互联网密钥交换(IKE)阶段...",
+      "model_answer": "生成失败: Expected all tensors to be on the same device, but got index is on cpu, different from other t...",
+      "category": "密码产品类",
+      "difficulty": "medium",
+      "score": 0.1491708542713568,
+      "evaluation_details": {
+        "length_similarity": 0.8944723618090452,
+        "keyword_overlap": 0.0,
+        "terminology_match": 0.0,
+        "structure_similarity": 0,
+        "completeness": 0.1,
+        "total_score": 0.1491708542713568,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA6_Q1",
+      "question": "什么是信息系统密码应用的基本要求？",
+      "expected_answer": "信息系统密码应用基本要求是指从信息系统的物理和环境安全、网络和通信安全、设备和计算安全、应用和数据安全四个技术层面提出的密码应用技术要求，以及从管理制度、人员管理、建设运行和应急处置四个方面提出的密码...",
+      "model_answer": "生成失败: Expected all tensors to be on the same device, but got index is on cpu, different from other t...",
+      "category": "基础概念类",
+      "difficulty": "medium",
+      "score": 0.19617977528089886,
+      "evaluation_details": {
+        "length_similarity": 0.7078651685393258,
+        "keyword_overlap": 0.0,
+        "terminology_match": 0.0,
+        "structure_similarity": 0.5,
+        "completeness": 0.1,
+        "total_score": 0.19617977528089886,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA3_Q167",
+      "question": "密码应用方案编制的主要内容包括哪些？",
+      "expected_answer": "密码应用方案编制的主要内容包括信息系统基本情况分析、密码应用需求分析、密码应用技术方案设计、密码应用管理方案设计、密码应用安全保障措施等。",
+      "model_answer": "生成失败: Expected all tensors to be on the same device, but got index is on cpu, different from other t...",
+      "category": "密码应用方案类",
+      "difficulty": "medium",
+      "score": 0.07314606741573033,
+      "evaluation_details": {
+        "length_similarity": 0.38764044943820225,
+        "keyword_overlap": 0.0,
+        "terminology_match": 0.0,
+        "structure_similarity": 0,
+        "completeness": 0.1,
+        "total_score": 0.07314606741573033,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA4_Q392",
+      "question": "密码应用测评报告的主要组成部分有哪些？",
+      "expected_answer": "密码应用测评报告的主要组成部分包括：报告摘要（简要概述测评结果和结论）、测评背景（描述测评的背景和目的）、测评范围（描述测评的范围和对象）、测评方法（描述测评的方法和工具）、测评环境（描述测评的环境和...",
+      "model_answer": "生成失败: Expected all tensors to be on the same device, but got index is on cpu, different from other t...",
+      "category": "密码应用测评报告类",
+      "difficulty": "medium",
+      "score": 0.15741573033707862,
+      "evaluation_details": {
+        "length_similarity": 0.949438202247191,
+        "keyword_overlap": 0.0,
+        "terminology_match": 0.0,
+        "structure_similarity": 0,
+        "completeness": 0.1,
+        "total_score": 0.15741573033707862,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA3_Q41",
+      "question": "第四级网络和通信安全的技术要求有哪些？",
+      "expected_answer": "第四级网络和通信安全的技术要求包括：应采用密码技术对通信实体进行双向身份鉴别，保证通信实体身份的真实性；应采用密码技术保证通信过程中数据的完整性；应采用密码技术保证通信过程中重要数据的机密性；应采用密...",
+      "model_answer": "生成失败: Expected all tensors to be on the same device, but got index is on cpu, different from other t...",
+      "category": "技术要求类",
+      "difficulty": "medium",
+      "score": 0.1506741573033708,
+      "evaluation_details": {
+        "length_similarity": 0.9044943820224719,
+        "keyword_overlap": 0.0,
+        "terminology_match": 0.0,
+        "structure_similarity": 0,
+        "completeness": 0.1,
+        "total_score": 0.1506741573033708,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA6_Q188",
+      "question": "密码产品测评实施要点是什么？",
+      "expected_answer": "密码产品测评实施要点：了解信息系统中使用的密码产品的型号和版本等配置信息，核查密码产品是否经商用密码认证机构认证合格，并核查密码产品的使用是否满足其安全运行的条件，例如其安全策略或使用手册说明的部署条...",
+      "model_answer": "生成失败: Expected all tensors to be on the same device, but got index is on cpu, different from other t...",
+      "category": "等级要求类（续）",
+      "difficulty": "medium",
+      "score": 0.22904494382022472,
+      "evaluation_details": {
+        "length_similarity": 0.9269662921348315,
+        "keyword_overlap": 0.0,
+        "terminology_match": 0.0,
+        "structure_similarity": 0.5,
+        "completeness": 0.1,
+        "total_score": 0.22904494382022472,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA3_Q194",
+      "question": "信息系统密码应用合规性评估的主要内容包括哪些？",
+      "expected_answer": "信息系统密码应用合规性评估的主要内容包括密码算法合规性检查、密码技术合规性检查、密码产品合规性检查、密码服务合规性检查、密码应用管理合规性检查等。",
+      "model_answer": "生成失败: Expected all tensors to be on the same device, but got index is on cpu, different from other t...",
+      "category": "密码应用合规类",
+      "difficulty": "medium",
+      "score": 0.07651685393258427,
+      "evaluation_details": {
+        "length_similarity": 0.4101123595505618,
+        "keyword_overlap": 0.0,
+        "terminology_match": 0.0,
+        "structure_similarity": 0,
+        "completeness": 0.1,
+        "total_score": 0.07651685393258427,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA6_Q50",
+      "question": "第四级密码应用基本要求中建设运行包括哪些？",
+      "expected_answer": "第四级密码应用基本要求中建设运行包括：a）应依据密码相关标准和密码应用需求，制定密码应用方案；b）应根据密码应用方案，确定系统涉及的密钥种类、体系及其生存周期环节，各环节密钥管理要求参照附录B；c）应...",
+      "model_answer": "生成失败: Expected all tensors to be on the same device, but got index is on cpu, different from other t...",
+      "category": "管理要求类",
+      "difficulty": "hard",
+      "score": 0.20814159292035397,
+      "evaluation_details": {
+        "length_similarity": 0.7876106194690266,
+        "keyword_overlap": 0.0,
+        "terminology_match": 0.0,
+        "structure_similarity": 0.5,
+        "completeness": 0.1,
+        "total_score": 0.20814159292035397,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA6_Q120",
+      "question": "密钥分发的注意事项是什么？",
+      "expected_answer": "密钥分发的注意事项是密钥分发是密钥从一个密码产品传递到另一个密码产品的过程，分发时要注意抗截取、篡改、假冒等攻击，保证密钥的机密性、完整性以及分发者、接收者身份的真实性等。（基于GB/T 39786-...",
+      "model_answer": "生成失败: Expected all tensors to be on the same device, but got index is on cpu, different from other t...",
+      "category": "密钥管理类（续）",
+      "difficulty": "medium",
+      "score": 0.17848314606741572,
+      "evaluation_details": {
+        "length_similarity": 0.5898876404494382,
+        "keyword_overlap": 0.0,
+        "terminology_match": 0.0,
+        "structure_similarity": 0.5,
+        "completeness": 0.1,
+        "total_score": 0.17848314606741572,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA4_Q203",
+      "question": "密码应用安全性评估现场测评准备阶段的主要工作内容是什么？",
+      "expected_answer": "密码应用安全性评估现场测评准备阶段的主要工作内容包括：组建评估团队、准备评估工具、制定现场测评计划、与被评估单位沟通协调、获取必要的系统访问权限和文档资料等。",
+      "model_answer": "生成失败: Expected all tensors to be on the same device, but got index is on cpu, different from other t...",
+      "category": "密码应用安全性评估流程类",
+      "difficulty": "medium",
+      "score": 0.08157303370786516,
+      "evaluation_details": {
+        "length_similarity": 0.4438202247191011,
+        "keyword_overlap": 0.0,
+        "terminology_match": 0.0,
+        "structure_similarity": 0,
+        "completeness": 0.1,
+        "total_score": 0.08157303370786516,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA6_Q88",
+      "question": "密钥归档检查要点是什么？",
+      "expected_answer": "密钥归档检查要点：a）检查目的密钥归档过程是否保证了密钥的安全性和正确性，并生成了审计信息。b）检查对象密钥、密钥管理制度及策略类文档，以及信息系统中的密码产品、密码服务以及密码算法实现和密码技术实现...",
+      "model_answer": "生成失败: Expected all tensors to be on the same device, but got index is on cpu, different from other t...",
+      "category": "等级要求类",
+      "difficulty": "hard",
+      "score": 0.20313559322033897,
+      "evaluation_details": {
+        "length_similarity": 0.7542372881355932,
+        "keyword_overlap": 0.0,
+        "terminology_match": 0.0,
+        "structure_similarity": 0.5,
+        "completeness": 0.1,
+        "total_score": 0.20313559322033897,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA3_Q151",
+      "question": "非对称密码算法的主要特点是什么？",
+      "expected_answer": "非对称密码算法的主要特点是加密和解密使用不同的密钥（公钥和私钥），算法效率相对较低，适合少量数据的加密和密钥交换。",
+      "model_answer": "生成失败: Expected all tensors to be on the same device, but got index is on cpu, different from other t...",
+      "category": "密码算法类",
+      "difficulty": "medium",
+      "score": 0.06303370786516854,
+      "evaluation_details": {
+        "length_similarity": 0.3202247191011236,
+        "keyword_overlap": 0.0,
+        "terminology_match": 0.0,
+        "structure_similarity": 0,
+        "completeness": 0.1,
+        "total_score": 0.06303370786516854,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA4_Q311",
+      "question": "密码应用风险分析的主要目的是什么？",
+      "expected_answer": "密码应用风险分析的主要目的是识别和评估密码应用过程中可能面临的安全风险，确定风险的优先级，为制定风险应对措施提供依据，从而提高密码应用的安全性和可靠性。",
+      "model_answer": "生成失败: Expected all tensors to be on the same device, but got index is on cpu, different from other t...",
+      "category": "密码应用风险分析类",
+      "difficulty": "medium",
+      "score": 0.07904494382022471,
+      "evaluation_details": {
+        "length_similarity": 0.42696629213483145,
+        "keyword_overlap": 0.0,
+        "terminology_match": 0.0,
+        "structure_similarity": 0,
+        "completeness": 0.1,
+        "total_score": 0.07904494382022471,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA4_Q310",
+      "question": "密码应用安全事件整改的主要措施有哪些？",
+      "expected_answer": "密码应用安全事件整改的主要措施包括：技术整改（修复技术漏洞，加强技术防护）、管理整改（完善管理制度，加强管理控制）、人员整改（加强人员培训，提高安全意识）、流程整改（优化工作流程，减少操作风险）、监控...",
+      "model_answer": "生成失败: Expected all tensors to be on the same device, but got index is on cpu, different from other t...",
+      "category": "密码应用管理类",
+      "difficulty": "medium",
+      "score": 0.11528089887640448,
+      "evaluation_details": {
+        "length_similarity": 0.6685393258426966,
+        "keyword_overlap": 0.0,
+        "terminology_match": 0.0,
+        "structure_similarity": 0,
+        "completeness": 0.1,
+        "total_score": 0.11528089887640448,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA4_Q282",
+      "question": "国密算法与国际算法的主要区别有哪些？",
+      "expected_answer": "国密算法与国际算法的主要区别包括：设计机构不同（国密算法由中国密码管理局设计，国际算法由国际标准组织或国外机构设计）、算法细节不同（如SM4与AES、SM3与SHA-256、SM2与ECC/RSA等在...",
+      "model_answer": "生成失败: Expected all tensors to be on the same device, but got index is on cpu, different from other t...",
+      "category": "密码算法选择类",
+      "difficulty": "medium",
+      "score": 0.23751381215469614,
+      "evaluation_details": {
+        "length_similarity": 0.9834254143646409,
+        "keyword_overlap": 0.0,
+        "terminology_match": 0.0,
+        "structure_similarity": 0.5,
+        "completeness": 0.1,
+        "total_score": 0.23751381215469614,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA4_Q214",
+      "question": "密码应用技术方案设计的主要内容有哪些？",
+      "expected_answer": "密码应用技术方案设计的主要内容包括：物理和环境安全密码应用设计（如物理访问身份鉴别、电子门禁记录数据存储完整性等）、网络和通信安全密码应用设计（如通信实体身份鉴别、通信数据完整性、通信数据机密性等）、...",
+      "model_answer": "生成失败: Expected all tensors to be on the same device, but got index is on cpu, different from other t...",
+      "category": "密码应用方案设计类",
+      "difficulty": "medium",
+      "score": 0.16499999999999998,
+      "evaluation_details": {
+        "length_similarity": 1.0,
+        "keyword_overlap": 0.0,
+        "terminology_match": 0.0,
+        "structure_similarity": 0,
+        "completeness": 0.1,
+        "total_score": 0.16499999999999998,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA3_Q34",
+      "question": "不同等级在定期进行安全岗位人员考核要求上有何区别？",
+      "expected_answer": "不同等级在定期进行安全岗位人员考核要求上的区别是：第一级和第二级没有相关要求；第三级和第四级应定期对密码应用安全岗位人员进行考核。",
+      "model_answer": "生成失败: Expected all tensors to be on the same device, but got index is on cpu, different from other t...",
+      "category": "密码应用等级类",
+      "difficulty": "medium",
+      "score": 0.06977528089887641,
+      "evaluation_details": {
+        "length_similarity": 0.3651685393258427,
+        "keyword_overlap": 0.0,
+        "terminology_match": 0.0,
+        "structure_similarity": 0,
+        "completeness": 0.1,
+        "total_score": 0.06977528089887641,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA4_Q358",
+      "question": "密码应用合规性整改的主要措施有哪些？",
+      "expected_answer": "密码应用合规性整改的主要措施包括：技术整改（修复技术漏洞，加强技术防护）、管理整改（完善管理制度，加强管理控制）、人员整改（加强人员培训，提高合规意识）、流程整改（优化工作流程，减少合规风险）、监控整...",
+      "model_answer": "生成失败: Expected all tensors to be on the same device, but got index is on cpu, different from other t...",
+      "category": "密码应用合规性类",
+      "difficulty": "medium",
+      "score": 0.11696629213483145,
+      "evaluation_details": {
+        "length_similarity": 0.6797752808988764,
+        "keyword_overlap": 0.0,
+        "terminology_match": 0.0,
+        "structure_similarity": 0,
+        "completeness": 0.1,
+        "total_score": 0.11696629213483145,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA5_Q407",
+      "question": "医疗物联网（IoMT）设备在第二级密码应用中，如何平衡安全性与资源受限问题？",
+      "expected_answer": "医疗物联网（IoMT）设备在第二级密码应用中平衡安全性与资源受限的方法：1）选择轻量级密码算法（如SM4-128代替AES-256）；2）采用预共享密钥（PSK）模式替代证书体系；3）使用硬件安全模块...",
+      "model_answer": "生成失败: Expected all tensors to be on the same device, but got index is on cpu, different from other t...",
+      "category": "行业应用场景类",
+      "difficulty": "hard",
+      "score": 0.20866666666666667,
+      "evaluation_details": {
+        "length_similarity": 0.7911111111111111,
+        "keyword_overlap": 0.0,
+        "terminology_match": 0.0,
+        "structure_similarity": 0.5,
+        "completeness": 0.1,
+        "total_score": 0.20866666666666667,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA4_Q250",
+      "question": "密码产品应用测试的主要工具有哪些？",
+      "expected_answer": "密码产品应用测试的主要工具包括：功能测试工具（如自动化测试框架）、性能测试工具（如负载生成器、性能监控器）、安全测试工具（如漏洞扫描器、渗透测试工具）、兼容性测试工具（如不同浏览器测试工具）、协议分析...",
+      "model_answer": "生成失败: Expected all tensors to be on the same device, but got index is on cpu, different from other t...",
+      "category": "密码产品应用测试类",
+      "difficulty": "medium",
+      "score": 0.14898876404494382,
+      "evaluation_details": {
+        "length_similarity": 0.8932584269662921,
+        "keyword_overlap": 0.0,
+        "terminology_match": 0.0,
+        "structure_similarity": 0,
+        "completeness": 0.1,
+        "total_score": 0.14898876404494382,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA4_Q344",
+      "question": "人工智能密码应用的典型场景有哪些？",
+      "expected_answer": "人工智能密码应用的典型场景包括：人工智能模型保护（使用密码技术保护人工智能模型安全）、人工智能训练数据保护（使用密码技术保护训练数据安全）、人工智能推理数据保护（使用密码技术保护推理数据安全）、人工智...",
+      "model_answer": "生成失败: Expected all tensors to be on the same device, but got index is on cpu, different from other t...",
+      "category": "密码应用案例类",
+      "difficulty": "medium",
+      "score": 0.14814606741573033,
+      "evaluation_details": {
+        "length_similarity": 0.8876404494382022,
+        "keyword_overlap": 0.0,
+        "terminology_match": 0.0,
+        "structure_similarity": 0,
+        "completeness": 0.1,
+        "total_score": 0.14814606741573033,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA5_Q405",
+      "question": "SM9标识密码算法与传统公钥密码的主要区别是什么？在政务云系统中如何部署？",
+      "expected_answer": "SM9标识密码算法与传统公钥密码的主要区别在于：1）SM9基于身份（如邮箱地址）而非随机数生成公钥；2）私钥由密钥生成中心（KGC）统一分发；3）无需数字证书管理公钥。在政务云系统中部署需：1）依据G...",
+      "model_answer": "生成失败: Expected all tensors to be on the same device, but got index is on cpu, different from other t...",
+      "category": "密码算法实现细节类",
+      "difficulty": "hard",
+      "score": 0.21027027027027026,
+      "evaluation_details": {
+        "length_similarity": 0.8018018018018018,
+        "keyword_overlap": 0.0,
+        "terminology_match": 0.0,
+        "structure_similarity": 0.5,
+        "completeness": 0.1,
+        "total_score": 0.21027027027027026,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA4_Q383",
+      "question": "密码应用测评工具的主要部署方式有哪些？",
+      "expected_answer": "密码应用测评工具的主要部署方式包括：本地部署（工具部署在本地服务器或工作站上）、云端部署（工具部署在云平台上）、混合部署（部分功能本地部署，部分功能云端部署）、容器化部署（工具部署在容器中，便于部署和...",
+      "model_answer": "生成失败: Expected all tensors to be on the same device, but got index is on cpu, different from other t...",
+      "category": "密码应用测评工具类",
+      "difficulty": "medium",
+      "score": 0.12370786516853932,
+      "evaluation_details": {
+        "length_similarity": 0.7247191011235955,
+        "keyword_overlap": 0.0,
+        "terminology_match": 0.0,
+        "structure_similarity": 0,
+        "completeness": 0.1,
+        "total_score": 0.12370786516853932,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA6_Q105",
+      "question": "智能IC卡/智能密码钥匙测评实施要点是什么？",
+      "expected_answer": "智能IC卡/智能密码钥匙测评实施要点：1）进行错误尝试试验，验证在智能集成电路卡（智能IC卡）或智能密码钥匙未使用或错误使用（如使用他人的介质）时，相关密码应用过程（如鉴别）不能正常工作； 2）条件允...",
+      "model_answer": "生成失败: Expected all tensors to be on the same device, but got index is on cpu, different from other t...",
+      "category": "典型密码产品应用测评技术类",
+      "difficulty": "hard",
+      "score": 0.13908088235294117,
+      "evaluation_details": {
+        "length_similarity": 0.3272058823529412,
+        "keyword_overlap": 0.0,
+        "terminology_match": 0.0,
+        "structure_similarity": 0.5,
+        "completeness": 0.1,
+        "total_score": 0.13908088235294117,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA4_Q269",
+      "question": "密码服务部署的主要成本优化措施有哪些？",
+      "expected_answer": "密码服务部署的主要成本优化措施包括：资源优化（提高资源利用率，减少资源浪费）、云服务优化（优化云服务使用，减少不必要的费用）、自动化运维（使用自动化工具减少人工成本）、共享服务（多个系统共享密码服务，...",
+      "model_answer": "生成失败: Expected all tensors to be on the same device, but got index is on cpu, different from other t...",
+      "category": "密码服务部署类",
+      "difficulty": "hard",
+      "score": 0.1471782178217822,
+      "evaluation_details": {
+        "length_similarity": 0.8811881188118812,
+        "keyword_overlap": 0.0,
+        "terminology_match": 0.0,
+        "structure_similarity": 0,
+        "completeness": 0.1,
+        "total_score": 0.1471782178217822,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA6_Q53",
+      "question": "什么是核查？",
+      "expected_answer": "核查是密评人员对测评对象进行访谈、文档审查、实地查验和分析，以帮助密评人员理解、澄清或取得证据的过程。注：核查时可选用的测评方式以及方式的选用说明参考GM/T0116—2021。（基于GB/T 432...",
+      "model_answer": "生成失败: Expected all tensors to be on the same device, but got index is on cpu, different from other t...",
+      "category": "测评要求类",
+      "difficulty": "medium",
+      "score": 0.3060112359550562,
+      "evaluation_details": {
+        "length_similarity": 0.6067415730337079,
+        "keyword_overlap": 0.0,
+        "terminology_match": 0.5,
+        "structure_similarity": 0.5,
+        "completeness": 0.1,
+        "total_score": 0.3060112359550562,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA5_Q427",
+      "question": "GB/T 43206-2023中\"测评单元\"的定义是什么？其与\"控制项\"的关系是什么？",
+      "expected_answer": "\"测评单元\"定义及与\"控制项\"关系：1）定义：测评单元是\"一组相对独立和完整的测评内容，由测评指标、测评对象、测评实施和结果判定组成\"（GB/T 43206-2023第3.12条）；2）组成要素：1）...",
+      "model_answer": "生成失败: Expected all tensors to be on the same device, but got index is on cpu, different from other t...",
+      "category": "标准条文解读类",
+      "difficulty": "hard",
+      "score": 0.17557692307692307,
+      "evaluation_details": {
+        "length_similarity": 0.5705128205128205,
+        "keyword_overlap": 0.0,
+        "terminology_match": 0.0,
+        "structure_similarity": 0.5,
+        "completeness": 0.1,
+        "total_score": 0.17557692307692307,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA4_Q223",
+      "question": "密钥存储过程中的安全控制措施有哪些？",
+      "expected_answer": "密钥存储过程中的安全控制措施包括：不在密码产品外部以明文方式存储密钥（公钥除外）、使用安全的存储介质、对存储介质进行物理保护、实施访问控制（限制对密钥的访问权限）、对密钥进行加密保护、定期备份密钥、记...",
+      "model_answer": "生成失败: Expected all tensors to be on the same device, but got index is on cpu, different from other t...",
+      "category": "密钥管理具体操作类",
+      "difficulty": "medium",
+      "score": 0.11696629213483145,
+      "evaluation_details": {
+        "length_similarity": 0.6797752808988764,
+        "keyword_overlap": 0.0,
+        "terminology_match": 0.0,
+        "structure_similarity": 0,
+        "completeness": 0.1,
+        "total_score": 0.11696629213483145,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA5_Q422",
+      "question": "区块链智能合约中调用密码运算的安全风险有哪些？如何通过国密技术降低风险？",
+      "expected_answer": "智能合约密码运算风险及国密技术降低风险方法：1）主要风险：1）链上运算透明导致密钥暴露；2）Gas消耗过大导致交易失败；3）随机数生成不安全；2）国密技术方案：1）链下签名：使用SM2私钥在链外签名，...",
+      "model_answer": "生成失败: Expected all tensors to be on the same device, but got index is on cpu, different from other t...",
+      "category": "新兴技术融合类",
+      "difficulty": "hard",
+      "score": 0.19308880308880308,
+      "evaluation_details": {
+        "length_similarity": 0.6872586872586872,
+        "keyword_overlap": 0.0,
+        "terminology_match": 0.0,
+        "structure_similarity": 0.5,
+        "completeness": 0.1,
+        "total_score": 0.19308880308880308,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA5_Q417",
+      "question": "评估发现政务云平台\"密钥管理员与密码操作员职责未分离\"，违反了哪级要求？整改方案是什么？",
+      "expected_answer": "违反第三级及以上要求（GB/T 39786-2021第8.6.2条）。整改方案：1）岗位拆分：设立\"密钥管理员\"（负责密钥生命周期管理）和\"密码操作员\"（负责日常设备操作）；2）权限分离：密钥管理员仅...",
+      "model_answer": "生成失败: Expected all tensors to be on the same device, but got index is on cpu, different from other t...",
+      "category": "合规性整改类",
+      "difficulty": "hard",
+      "score": 0.18888888888888888,
+      "evaluation_details": {
+        "length_similarity": 0.6592592592592592,
+        "keyword_overlap": 0.0,
+        "terminology_match": 0.0,
+        "structure_similarity": 0.5,
+        "completeness": 0.1,
+        "total_score": 0.18888888888888888,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA6_Q95",
+      "question": "现场测评活动的任务是什么？",
+      "expected_answer": "现场测评活动的任务包括：现场测评准备、现场测评和结果记录、结果确认和资料归还。（基于测评过程指南）",
+      "model_answer": "生成失败: Expected all tensors to be on the same device, but got index is on cpu, different from other t...",
+      "category": "密钥管理类",
+      "difficulty": "easy",
+      "score": 0.18129213483146067,
+      "evaluation_details": {
+        "length_similarity": 0.2752808988764045,
+        "keyword_overlap": 0.0,
+        "terminology_match": 0.5,
+        "structure_similarity": 0,
+        "completeness": 0.1,
+        "total_score": 0.18129213483146067,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA6_Q103",
+      "question": "真实性测评实施要点是什么？",
+      "expected_answer": "真实性测评实施要点：1）如果信息系统以外挂密码产品的形式实现对用户、设备的真实性鉴别，如电子门禁系统、VPN网关、安全认证网关、动态令牌系统等，则需要对密码产品应用情况进行测评，测评方法参考附录C中对...",
+      "model_answer": "生成失败: Expected all tensors to be on the same device, but got index is on cpu, different from other t...",
+      "category": "典型密码功能测评技术类",
+      "difficulty": "hard",
+      "score": 0.13278846153846152,
+      "evaluation_details": {
+        "length_similarity": 0.28525641025641024,
+        "keyword_overlap": 0.0,
+        "terminology_match": 0.0,
+        "structure_similarity": 0.5,
+        "completeness": 0.1,
+        "total_score": 0.13278846153846152,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA6_Q36",
+      "question": "第一级密码应用基本要求中管理制度包括哪些？",
+      "expected_answer": "第一级密码应用基本要求中管理制度包括：a）应具备密码应用安全管理制度，包括密码人员管理、密钥管理、建设运行、应急处置、密码软硬件及介质管理等制度；b）应根据密码应用方案建立相应密钥管理规则。（基于GB...",
+      "model_answer": "生成失败: Expected all tensors to be on the same device, but got index is on cpu, different from other t...",
+      "category": "管理要求类",
+      "difficulty": "medium",
+      "score": 0.18606741573033708,
+      "evaluation_details": {
+        "length_similarity": 0.6404494382022472,
+        "keyword_overlap": 0.0,
+        "terminology_match": 0.0,
+        "structure_similarity": 0.5,
+        "completeness": 0.1,
+        "total_score": 0.18606741573033708,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA3_Q38",
+      "question": "真实性技术要求的应用场景有哪些？",
+      "expected_answer": "真实性技术要求的应用场景包括：进入重要物理区域人员的身份鉴别、通信双方的身份鉴别、网络设备接入时的身份鉴别、重要可执行程序的来源真实性保证、登录操作系统和数据库系统的用户身份鉴别、应用系统的用户身份鉴...",
+      "model_answer": "生成失败: Expected all tensors to be on the same device, but got index is on cpu, different from other t...",
+      "category": "技术要求类",
+      "difficulty": "medium",
+      "score": 0.10095505617977527,
+      "evaluation_details": {
+        "length_similarity": 0.5730337078651685,
+        "keyword_overlap": 0.0,
+        "terminology_match": 0.0,
+        "structure_similarity": 0,
+        "completeness": 0.1,
+        "total_score": 0.10095505617977527,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA4_Q263",
+      "question": "密码服务部署的主要安全措施有哪些？",
+      "expected_answer": "密码服务部署的主要安全措施包括：网络安全（防火墙、入侵检测/防御系统、网络隔离等）、主机安全（主机加固、恶意代码防护、安全配置等）、应用安全（安全编码、漏洞扫描、Web应用防火墙等）、数据安全（数据加...",
+      "model_answer": "生成失败: Expected all tensors to be on the same device, but got index is on cpu, different from other t...",
+      "category": "密码服务部署类",
+      "difficulty": "medium",
+      "score": 0.1540625,
+      "evaluation_details": {
+        "length_similarity": 0.9270833333333334,
+        "keyword_overlap": 0.0,
+        "terminology_match": 0.0,
+        "structure_similarity": 0,
+        "completeness": 0.1,
+        "total_score": 0.1540625,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA2_Q41",
+      "question": "不同等级在建立操作规程要求上有何区别？",
+      "expected_answer": "不同等级在建立操作规程要求上的区别是：第一级没有相关要求；第二级、第三级和第四级都应对管理人员或操作人员执行的日常管理操作建立操作规程。",
+      "model_answer": "生成失败: Expected all tensors to be on the same device, but got index is on cpu, different from other t...",
+      "category": "管理要求类",
+      "difficulty": "medium",
+      "score": 0.19730337078651686,
+      "evaluation_details": {
+        "length_similarity": 0.38202247191011235,
+        "keyword_overlap": 0.0,
+        "terminology_match": 0.5,
+        "structure_similarity": 0,
+        "completeness": 0.1,
+        "total_score": 0.19730337078651686,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA3_Q183",
+      "question": "企业信息系统通常应采用哪一级密码应用要求？",
+      "expected_answer": "企业信息系统根据企业规模、业务性质和数据敏感性不同，通常应采用第一级或第二级密码应用要求，对于涉及核心业务和敏感数据的企业信息系统，可采用第三级密码应用要求。",
+      "model_answer": "生成失败: Expected all tensors to be on the same device, but got index is on cpu, different from other t...",
+      "category": "密码应用案例类",
+      "difficulty": "medium",
+      "score": 0.08157303370786516,
+      "evaluation_details": {
+        "length_similarity": 0.4438202247191011,
+        "keyword_overlap": 0.0,
+        "terminology_match": 0.0,
+        "structure_similarity": 0,
+        "completeness": 0.1,
+        "total_score": 0.08157303370786516,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA4_Q240",
+      "question": "密钥管理中的\"培训意识\"原则是什么？",
+      "expected_answer": "密钥管理中的\"培训意识\"原则是指对密钥管理人员和相关人员进行密钥管理知识和技能的培训，提高其密钥安全意识和操作能力。培训内容包括密钥管理政策、密钥管理流程、密钥管理安全控制措施、密钥管理应急处理流程等...",
+      "model_answer": "生成失败: Expected all tensors to be on the same device, but got index is on cpu, different from other t...",
+      "category": "密钥管理具体操作类",
+      "difficulty": "medium",
+      "score": 0.12286516853932583,
+      "evaluation_details": {
+        "length_similarity": 0.7191011235955056,
+        "keyword_overlap": 0.0,
+        "terminology_match": 0.0,
+        "structure_similarity": 0,
+        "completeness": 0.1,
+        "total_score": 0.12286516853932583,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA4_Q253",
+      "question": "密码产品应用测试的主要指标有哪些？",
+      "expected_answer": "密码产品应用测试的主要指标包括：功能覆盖率（测试用例覆盖功能的百分比）、缺陷密度（每千行代码发现的缺陷数）、缺陷修复率（已修复缺陷占总缺陷的百分比）、测试通过率（通过测试用例占总测试用例的百分比）、性...",
+      "model_answer": "生成失败: Expected all tensors to be on the same device, but got index is on cpu, different from other t...",
+      "category": "密码产品应用测试类",
+      "difficulty": "medium",
+      "score": 0.15151685393258424,
+      "evaluation_details": {
+        "length_similarity": 0.9101123595505618,
+        "keyword_overlap": 0.0,
+        "terminology_match": 0.0,
+        "structure_similarity": 0,
+        "completeness": 0.1,
+        "total_score": 0.15151685393258424,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA6_Q13",
+      "question": "什么是访问控制？",
+      "expected_answer": "访问控制是按照特定策略，允许或拒绝用户对资源访问的一种机制。（基于GB/T 39786-2021）",
+      "model_answer": "生成失败: Expected all tensors to be on the same device, but got index is on cpu, different from other t...",
+      "category": "基础概念类",
+      "difficulty": "easy",
+      "score": 0.2562921348314607,
+      "evaluation_details": {
+        "length_similarity": 0.2752808988764045,
+        "keyword_overlap": 0.0,
+        "terminology_match": 0.5,
+        "structure_similarity": 0.5,
+        "completeness": 0.1,
+        "total_score": 0.2562921348314607,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA3_Q4",
+      "question": "什么是数据完整性？",
+      "expected_answer": "数据完整性是指数据没有遭受以非授权方式所作的改变的性质。",
+      "model_answer": "生成失败: Expected all tensors to be on the same device, but got index is on cpu, different from other t...",
+      "category": "基础概念类",
+      "difficulty": "easy",
+      "score": 0.038595505617977525,
+      "evaluation_details": {
+        "length_similarity": 0.15730337078651685,
+        "keyword_overlap": 0.0,
+        "terminology_match": 0.0,
+        "structure_similarity": 0,
+        "completeness": 0.1,
+        "total_score": 0.038595505617977525,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA4_Q351",
+      "question": "密码应用合规性评估的主要方法有哪些？",
+      "expected_answer": "密码应用合规性评估的主要方法包括：文档审查（审查相关文档是否符合合规要求）、现场检查（检查实际实施情况是否符合合规要求）、技术测试（通过技术手段验证是否符合合规要求）、人员访谈（访谈相关人员了解合规实...",
+      "model_answer": "生成失败: Expected all tensors to be on the same device, but got index is on cpu, different from other t...",
+      "category": "密码应用合规性类",
+      "difficulty": "medium",
+      "score": 0.10432584269662921,
+      "evaluation_details": {
+        "length_similarity": 0.5955056179775281,
+        "keyword_overlap": 0.0,
+        "terminology_match": 0.0,
+        "structure_similarity": 0,
+        "completeness": 0.1,
+        "total_score": 0.10432584269662921,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA6_Q107",
+      "question": "VPN产品和安全认证网关测评实施要点是什么？",
+      "expected_answer": "VPN产品和安全认证网关测评实施要点：1）利用端口扫描类工具，探测IPSec VPN和SSL VPN服务端所对应的端口服务是否开启。例如，IPSec VPN服务对应的用户数据报协议(UDP)500、4...",
+      "model_answer": "生成失败: Expected all tensors to be on the same device, but got index is on cpu, different from other t...",
+      "category": "典型密码产品应用测评技术类",
+      "difficulty": "hard",
+      "score": 0.12841726618705035,
+      "evaluation_details": {
+        "length_similarity": 0.25611510791366904,
+        "keyword_overlap": 0.0,
+        "terminology_match": 0.0,
+        "structure_similarity": 0.5,
+        "completeness": 0.1,
+        "total_score": 0.12841726618705035,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA6_Q39",
+      "question": "第一级密码应用基本要求中应急处置包括哪些？",
+      "expected_answer": "第一级密码应用基本要求中应急处置包括：可根据密码产品提供的安全策略，由用户自主处置密码应用安全事件。（基于GB/T 39786-2021）",
+      "model_answer": "生成失败: Expected all tensors to be on the same device, but got index is on cpu, different from other t...",
+      "category": "管理要求类",
+      "difficulty": "medium",
+      "score": 0.14814606741573033,
+      "evaluation_details": {
+        "length_similarity": 0.38764044943820225,
+        "keyword_overlap": 0.0,
+        "terminology_match": 0.0,
+        "structure_similarity": 0.5,
+        "completeness": 0.1,
+        "total_score": 0.14814606741573033,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA2_Q29",
+      "question": "第四级网络和通信安全的技术要求有哪些？",
+      "expected_answer": "第四级网络和通信安全的技术要求包括：应采用密码技术对通信实体进行双向身份鉴别，保证通信实体身份的真实性；应采用密码技术保证通信过程中数据的完整性；应采用密码技术保证通信过程中重要数据的机密性；应采用密...",
+      "model_answer": "生成失败: Expected all tensors to be on the same device, but got index is on cpu, different from other t...",
+      "category": "技术要求类",
+      "difficulty": "medium",
+      "score": 0.1506741573033708,
+      "evaluation_details": {
+        "length_similarity": 0.9044943820224719,
+        "keyword_overlap": 0.0,
+        "terminology_match": 0.0,
+        "structure_similarity": 0,
+        "completeness": 0.1,
+        "total_score": 0.1506741573033708,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA6_Q34",
+      "question": "第四级密码应用基本要求中物理和环境安全包括哪些？",
+      "expected_answer": "第四级密码应用基本要求中物理和环境安全包括：a）应采用密码技术进行物理访问身份鉴别，保证重要区域进入人员身份的真实性；b）应采用密码技术保证电子门禁系统进出记录数据的存储完整性；c）应采用密码技术保证...",
+      "model_answer": "生成失败: Expected all tensors to be on the same device, but got index is on cpu, different from other t...",
+      "category": "技术要求类",
+      "difficulty": "hard",
+      "score": 0.20814159292035397,
+      "evaluation_details": {
+        "length_similarity": 0.7876106194690266,
+        "keyword_overlap": 0.0,
+        "terminology_match": 0.0,
+        "structure_similarity": 0.5,
+        "completeness": 0.1,
+        "total_score": 0.20814159292035397,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    }
+  ]
+}

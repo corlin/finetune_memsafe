@@ -1,31 +1,21 @@
-export:
-  base_model:
-    load_in_4bit: false
-    name: Qwen/Qwen3-4B-Thinking-2507
-  checkpoint:
-    auto_detect_latest: true
-    path: qwen3-finetuned
-  formats:
-    onnx:
-      enabled: true
-      opset_version: 14
-      optimize_graph: true
-    pytorch:
-      enabled: true
-      save_tokenizer: true
-    tensorrt:
-      enabled: false
-  monitoring:
-    log_level: INFO
-    max_memory_gb: 16.0
-  optimization:
-    compress_weights: true
-    quantization: int8
-    remove_artifacts: true
-  output:
-    directory: exported_models
-    naming_pattern: '{model_name}_{timestamp}'
-  validation:
-    benchmark_performance: true
-    enabled: true
-    test_samples: 5
+# Demo Configuration for Checkpoint Evaluation
+checkpoint_path: "enhanced-qwen3-finetuned/checkpoint-450"
+data_path: "data/raw"
+max_samples: 20
+output_file: "demo_evaluation_report.json"
+
+# Model generation parameters
+generation_config:
+  max_length: 512
+  temperature: 0.7
+  do_sample: true
+  top_p: 0.9
+
+# Evaluation weights
+evaluation_weights:
+  knowledge_accuracy: 0.4
+  terminology_accuracy: 0.3
+  reasoning_quality: 0.3
+
+# Categories to focus on (empty means all)
+focus_categories: []
