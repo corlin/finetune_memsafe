@@ -32,6 +32,12 @@ dependencies = [
     "nltk>=3.9.1",
     "rouge-score>=0.1.2",
     "bert-score>=0.3.13",
+    # Industry Evaluation System 依赖
+    "flask>=2.3.0",
+    "flask-restx>=1.1.0",
+    "flask-cors>=4.0.0",
+    "watchdog>=3.0.0",
+    "requests>=2.31.0",
 ]
 
 [build-system]
@@ -40,7 +46,7 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["src*"]
+include = ["src*", "industry_evaluation*"]
 
 [tool.uv]
 dev-dependencies = [

@@ -1,0 +1,151 @@
+# OpenAI兼容模型配置示例
+# 支持多种OpenAI兼容的API提供商
+
+models:
+  # BigModel GLM系列
+  bigmodel_glm_4_5:
+    adapter_type: "openai_compatible"
+    provider: "bigmodel"
+    api_key: "${BIGMODEL_API_KEY}"  # 从环境变量获取
+    model_name: "glm-4.5"
+    base_url: "https://open.bigmodel.cn/api/paas/v4"
+    timeout: 30
+    retry_config:
+      max_retries: 3
+      strategy: "exponential_backoff"
+    custom_headers:
+      User-Agent: "Industry-Evaluation/1.0"
+
+  # 智谱AI GLM系列
+  zhipu_glm_4:
+    adapter_type: "openai_compatible"
+    provider: "zhipu"
+    api_key: "${ZHIPU_API_KEY}"
+    model_name: "glm-4"
+    base_url: "https://open.bigmodel.cn/api/paas/v4"
+    timeout: 30
+
+  # DeepSeek系列
+  deepseek_chat:
+    adapter_type: "openai_compatible"
+    provider: "deepseek"
+    api_key: "${DEEPSEEK_API_KEY}"
+    model_name: "deepseek-chat"
+    base_url: "https://api.deepseek.com/v1"
+    timeout: 30
+
+  # Moonshot AI系列
+  moonshot_v1_8k:
+    adapter_type: "openai_compatible"
+    provider: "moonshot"
+    api_key: "${MOONSHOT_API_KEY}"
+    model_name: "moonshot-v1-8k"
+    base_url: "https://api.moonshot.cn/v1"
+    timeout: 30
+
+  # OpenAI官方
+  openai_gpt_4:
+    adapter_type: "openai"
+    api_key: "${OPENAI_API_KEY}"
+    model_name: "gpt-4"
+    base_url: "https://api.openai.com/v1"
+    timeout: 30
+
+  # 自定义OpenAI兼容API
+  custom_api:
+    adapter_type: "openai_compatible"
+    provider: "custom"
+    api_key: "${CUSTOM_API_KEY}"
+    model_name: "custom-model"
+    base_url: "https://your-api-endpoint.com/v1"
+    auth_type: "bearer"  # bearer, api_key, custom
+    chat_endpoint: "/chat/completions"
+    response_path: ["choices", 0, "message", "content"]
+    timeout: 30
+    custom_headers:
+      X-Custom-Header: "value"
+
+# 评估配置
+evaluation_configs:
+  basic_test:
+    industry_domain: "general"
+    evaluation_dimensions: 
+      - "knowledge_accuracy"
+      - "terminology_usage"
+      - "logical_reasoning"
+    weight_config:
+      knowledge_accuracy: 0.4
+      terminology_usage: 0.3
+      logical_reasoning: 0.3
+    threshold_config:
+      knowledge_accuracy: 0.7
+      terminology_usage: 0.6
+      logical_reasoning: 0.6
+    auto_generate_report: true
+
+  industry_specific:
+    industry_domain: "finance"
+    evaluation_dimensions:
+      - "knowledge_accuracy"
+      - "terminology_usage"
+      - "logical_reasoning"
+      - "context_understanding"
+    weight_config:
+      knowledge_accuracy: 0.3
+      terminology_usage: 0.3
+      logical_reasoning: 0.2
+      context_understanding: 0.2
+    threshold_config:
+      knowledge_accuracy: 0.8
+      terminology_usage: 0.7
+      logical_reasoning: 0.7
+      context_understanding: 0.6
+    expert_review_required: true
+    auto_generate_report: true
+
+# 测试数据集配置
+test_datasets:
+  basic_qa:
+    name: "基础问答测试"
+    description: "测试模型的基础问答能力"
+    samples:
+      - id: "qa_1"
+        input: "什么是人工智能？"
+        expected_output: "人工智能是计算机科学的一个分支，致力于创建能够执行通常需要人类智能的任务的系统。"
+        context:
+          domain: "technology"
+          difficulty: "basic"
+      
+      - id: "qa_2"
+        input: "请解释机器学习的基本概念。"
+        expected_output: "机器学习是人工智能的一个子领域，通过算法让计算机从数据中学习模式，无需明确编程。"
+        context:
+          domain: "technology"
+          difficulty: "intermediate"
+
+  industry_analysis:
+    name: "行业分析测试"
+    description: "测试模型的行业分析能力"
+    samples:
+      - id: "industry_1"
+        input: "中国大模型行业在2025年将面临哪些机遇和挑战？"
+        expected_output: "2025年中国大模型行业将面临技术创新加速、应用场景扩展、国际竞争加剧、监管政策完善等机遇和挑战。"
+        context:
+          domain: "industry_analysis"
+          difficulty: "advanced"
+      
+      - id: "industry_2"
+        input: "如何评估大语言模型在垂直领域的应用效果？"
+        expected_output: "评估大语言模型在垂直领域的应用效果需要考虑专业知识准确性、术语使用正确性、业务逻辑理解能力等多个维度。"
+        context:
+          domain: "industry_analysis"
+          difficulty: "advanced"
+
+# 环境变量说明
+environment_variables:
+  BIGMODEL_API_KEY: "BigModel API密钥，从 https://open.bigmodel.cn 获取"
+  ZHIPU_API_KEY: "智谱AI API密钥"
+  DEEPSEEK_API_KEY: "DeepSeek API密钥"
+  MOONSHOT_API_KEY: "Moonshot AI API密钥"
+  OPENAI_API_KEY: "OpenAI API密钥"
+  CUSTOM_API_KEY: "自定义API密钥"

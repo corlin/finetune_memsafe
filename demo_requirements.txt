@@ -1,0 +1,25 @@
+# Industry Evaluation System 演示程序依赖
+# 运行演示程序的最小依赖集合
+
+# 核心依赖
+pyyaml>=6.0.0
+requests>=2.31.0
+
+# API 演示依赖
+flask>=2.3.0
+flask-restx>=1.1.0
+flask-cors>=4.0.0
+
+# 配置管理依赖
+watchdog>=3.0.0
+
+# 系统监控依赖
+psutil>=5.9.0
+
+# 数据处理依赖
+numpy>=1.21.0
+
+# 可选依赖（用于完整功能）
+scikit-learn>=1.0.0
+matplotlib>=3.5.0
+seaborn>=0.11.0

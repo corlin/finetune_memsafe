@@ -5,7 +5,7 @@
 from abc import ABC, abstractmethod
 from typing import Dict, List, Any, Optional
 from industry_evaluation.models.data_models import (
-    EvaluationConfig, EvaluationResult, EvaluationScore, 
+    EvaluationConfig, EvaluationResult, EvaluationScore, SampleResult,
     Dataset, ProgressInfo, Report, Criterion, Explanation
 )
 

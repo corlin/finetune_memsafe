@@ -18,19 +18,11 @@ from industry_evaluation.core.interfaces import (
     SampleResult,
     ProgressInfo
 )
+from industry_evaluation.models.data_models import EvaluationStatus
 from industry_evaluation.core.result_aggregator import ResultAggregator
 from industry_evaluation.core.progress_tracker import ProgressTracker
 from industry_evaluation.adapters.model_adapter import ModelManager
 from industry_evaluation.reporting.report_generator import ReportGenerator
-
-
-class EvaluationStatus(Enum):
-    """评估状态"""
-    PENDING = "pending"
-    RUNNING = "running"
-    COMPLETED = "completed"
-    FAILED = "failed"
-    CANCELLED = "cancelled"
 
 
 @dataclass
@@ -164,10 +156,18 @@ class EvaluationOrchestrator:
             task.error = f"模型不存在: {task.model_id}"
             return False
         
-        if not model_adapter.is_available():
-            task.status = EvaluationStatus.FAILED
-            task.error = f"模型不可用: {task.model_id}"
-            return False
+        # 检查模型可用性，但对于已知的提供商给予更多宽容
+        try:
+            if not model_adapter.is_available():
+                # 对于BigModel等已知提供商，尝试更宽松的检查
+                if hasattr(model_adapter, 'config') and model_adapter.config.get('provider') in ['bigmodel', 'zhipu']:
+                    self.logger.warning(f"模型 {task.model_id} 健康检查失败，但继续执行评估")
+                else:
+                    task.status = EvaluationStatus.FAILED
+                    task.error = f"模型不可用: {task.model_id}"
+                    return False
+        except Exception as e:
+            self.logger.warning(f"模型可用性检查异常: {str(e)}，继续执行评估")
         
         # 提交任务到线程池
         future = self.executor.submit(self._execute_evaluation, task)

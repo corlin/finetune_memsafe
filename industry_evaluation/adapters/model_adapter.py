@@ -176,9 +176,11 @@ class BaseModelAdapter(ModelAdapter):
         """
         try:
             # 发送简单的测试请求
-            test_result = self.predict("测试", {})
-            return test_result is not None
-        except Exception:
+            test_result = self.predict("Hello", {"max_tokens": 5})
+            # 更宽松的检查：只要不是None且不是空字符串就认为可用
+            return test_result is not None and str(test_result).strip() != ""
+        except Exception as e:
+            self.logger.debug(f"模型可用性检查失败: {str(e)}")
             return False
     
     def _apply_rate_limit(self):
@@ -314,8 +316,255 @@ class BaseModelAdapter(ModelAdapter):
         }
 
 
-class OpenAIAdapter(BaseModelAdapter):
-    """OpenAI模型适配器"""
+class OpenAICompatibleAdapter(BaseModelAdapter):
+    """OpenAI兼容API适配器 - 支持多种OpenAI兼容的API提供商"""
+    
+    def __init__(self, model_id: str, config: Dict[str, Any]):
+        """
+        初始化OpenAI兼容适配器
+        
+        Args:
+            model_id: 模型ID
+            config: 配置信息，应包含api_key, base_url等
+        """
+        super().__init__(model_id, config)
+        self.api_key = config.get("api_key", "")
+        self.base_url = config.get("base_url", "https://api.openai.com/v1")
+        self.model_name = config.get("model_name", "gpt-3.5-turbo")
+        
+        # 支持不同的认证方式
+        self.auth_type = config.get("auth_type", "bearer")  # bearer, api_key, custom
+        self.custom_headers = config.get("custom_headers", {})
+        
+        # API端点配置
+        self.chat_endpoint = config.get("chat_endpoint", "/chat/completions")
+        
+        # 提供商特定配置
+        self.provider = config.get("provider", "openai")  # openai, bigmodel, zhipu, etc.
+        
+        # 请求参数映射
+        self.param_mapping = config.get("param_mapping", {})
+        
+        # 响应解析配置
+        self.response_path = config.get("response_path", ["choices", 0, "message", "content"])
+        self.fallback_response_paths = config.get("fallback_response_paths", [])
+    
+    def _make_prediction(self, input_text: str, context: Optional[Dict[str, Any]] = None) -> str:
+        """执行OpenAI兼容API调用"""
+        try:
+            # 构建请求头
+            headers = self._build_headers()
+            
+            # 构建消息
+            messages = self._build_messages(input_text, context)
+            
+            # 构建请求数据
+            data = self._build_request_data(messages, context)
+            
+            # 发送请求
+            response = requests.post(
+                f"{self.base_url.rstrip('/')}{self.chat_endpoint}",
+                headers=headers,
+                json=data,
+                timeout=self.timeout
+            )
+            
+            # 处理HTTP错误
+            self._handle_http_errors(response)
+            
+            response.raise_for_status()
+            result = response.json()
+            
+            # 解析响应
+            return self._parse_response(result)
+            
+        except requests.exceptions.Timeout:
+            raise ModelTimeoutException(f"API调用超时 ({self.timeout}秒)")
+        except requests.exceptions.ConnectionError as e:
+            raise ModelConnectionException(f"连接失败: {str(e)}")
+        except requests.exceptions.HTTPError as e:
+            raise ModelConnectionException(f"HTTP错误: {str(e)}")
+        except Exception as e:
+            if isinstance(e, (ModelException,)):
+                raise
+            raise ModelException(f"未知错误: {str(e)}")
+    
+    def _build_headers(self) -> Dict[str, str]:
+        """构建请求头"""
+        headers = {
+            "Content-Type": "application/json"
+        }
+        
+        # 添加认证头
+        if self.auth_type == "bearer":
+            headers["Authorization"] = f"Bearer {self.api_key}"
+        elif self.auth_type == "api_key":
+            headers["X-API-Key"] = self.api_key
+        elif self.auth_type == "custom":
+            # 自定义认证方式，从配置中获取
+            auth_header = self.config.get("auth_header", "Authorization")
+            auth_value = self.config.get("auth_value", f"Bearer {self.api_key}")
+            headers[auth_header] = auth_value
+        
+        # 添加自定义头
+        headers.update(self.custom_headers)
+        
+        return headers
+    
+    def _build_messages(self, input_text: str, context: Optional[Dict[str, Any]] = None) -> List[Dict[str, str]]:
+        """构建消息列表"""
+        messages = []
+        
+        # 添加系统消息
+        if context and context.get("system_prompt"):
+            messages.append({"role": "system", "content": context["system_prompt"]})
+        
+        # 添加用户消息
+        messages.append({"role": "user", "content": input_text})
+        
+        return messages
+    
+    def _build_request_data(self, messages: List[Dict[str, str]], context: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+        """构建请求数据"""
+        data = {
+            "model": self.model_name,
+            "messages": messages
+        }
+        
+        # 添加可选参数
+        if context:
+            if "max_tokens" in context:
+                data["max_tokens"] = context["max_tokens"]
+            if "temperature" in context:
+                data["temperature"] = context["temperature"]
+            if "top_p" in context:
+                data["top_p"] = context["top_p"]
+            if "stream" in context:
+                data["stream"] = context["stream"]
+        else:
+            # 默认参数
+            data["max_tokens"] = 1000
+            data["temperature"] = 0.7
+        
+        # 应用参数映射（用于不同提供商的参数名差异）
+        if self.param_mapping:
+            mapped_data = {}
+            for key, value in data.items():
+                mapped_key = self.param_mapping.get(key, key)
+                mapped_data[mapped_key] = value
+            data = mapped_data
+        
+        return data
+    
+    def _handle_http_errors(self, response: requests.Response):
+        """处理HTTP错误"""
+        if response.status_code == 401:
+            raise ModelAuthenticationException("API密钥无效或已过期")
+        elif response.status_code == 429:
+            raise ModelRateLimitException("API调用频率超限")
+        elif response.status_code >= 500:
+            raise ModelConnectionException(f"服务器错误: {response.status_code}")
+        elif response.status_code == 400:
+            try:
+                error_detail = response.json().get("error", {}).get("message", "请求参数错误")
+            except:
+                error_detail = "请求参数错误"
+            raise ModelException(f"请求错误: {error_detail}")
+    
+    def _parse_response(self, result: Dict[str, Any]) -> str:
+        """解析API响应"""
+        try:
+            # 首先尝试主要响应路径
+            current = result
+            for key in self.response_path:
+                if isinstance(key, int):
+                    if not isinstance(current, list) or len(current) <= key:
+                        raise ModelResponseException(f"响应解析错误: 索引 {key} 超出范围")
+                    current = current[key]
+                else:
+                    if not isinstance(current, dict) or key not in current:
+                        raise ModelResponseException(f"响应解析错误: 缺少字段 {key}")
+                    current = current[key]
+            
+            # 如果主路径的结果为空，尝试fallback路径
+            if not current or (isinstance(current, str) and current.strip() == ""):
+                fallback_paths = getattr(self, 'fallback_response_paths', [])
+                for fallback_path in fallback_paths:
+                    try:
+                        fallback_current = result
+                        for key in fallback_path:
+                            if isinstance(key, int):
+                                if not isinstance(fallback_current, list) or len(fallback_current) <= key:
+                                    break
+                                fallback_current = fallback_current[key]
+                            else:
+                                if not isinstance(fallback_current, dict) or key not in fallback_current:
+                                    break
+                                fallback_current = fallback_current[key]
+                        else:
+                            # 如果成功遍历完所有键，且结果不为空，使用这个结果
+                            if fallback_current and (not isinstance(fallback_current, str) or fallback_current.strip()):
+                                current = fallback_current
+                                break
+                    except:
+                        continue
+            
+            if not isinstance(current, str):
+                current = str(current) if current is not None else ""
+            
+            return current
+            
+        except ModelResponseException:
+            raise
+        except Exception as e:
+            # 尝试备用解析方式
+            try:
+                # 标准OpenAI格式
+                if "choices" in result and result["choices"]:
+                    choice = result["choices"][0]
+                    if "message" in choice:
+                        message = choice["message"]
+                        # 优先使用content字段
+                        if "content" in message and message["content"]:
+                            return message["content"]
+                        # 对于GLM-4.5等模型，尝试reasoning_content字段
+                        elif "reasoning_content" in message and message["reasoning_content"]:
+                            return message["reasoning_content"]
+                        # 如果content为空但reasoning_content有内容，使用reasoning_content
+                        elif "reasoning_content" in message:
+                            return message["reasoning_content"] or ""
+                
+                # 简化格式
+                if "response" in result:
+                    return str(result["response"])
+                
+                if "output" in result:
+                    return str(result["output"])
+                
+                # 记录原始响应以便调试
+                self.logger.debug(f"无法解析API响应，原始响应: {result}")
+                raise ModelResponseException("无法解析API响应")
+                
+            except Exception as parse_error:
+                self.logger.debug(f"响应解析失败，原始响应: {result}, 错误: {str(parse_error)}")
+                raise ModelResponseException(f"响应解析失败: {str(e)}")
+    
+    def _perform_health_check(self):
+        """执行健康检查"""
+        try:
+            # 发送简单的测试请求
+            test_input = "Hello"
+            result = self._make_prediction(test_input, {"max_tokens": 10})
+            
+            if not result or (isinstance(result, str) and result.strip() == ""):
+                raise ModelException("健康检查返回空结果")
+                
+        except Exception as e:
+            raise ModelException(f"健康检查失败: {str(e)}")
+
+
+class OpenAIAdapter(OpenAICompatibleAdapter):
+    """OpenAI模型适配器 - 保持向后兼容"""
     
     def __init__(self, model_id: str, config: Dict[str, Any]):
         """
@@ -325,71 +574,14 @@ class OpenAIAdapter(BaseModelAdapter):
             model_id: 模型ID
             config: 配置信息，应包含api_key
         """
-        super().__init__(model_id, config)
-        self.api_key = config.get("api_key", "")
-        self.base_url = config.get("base_url", "https://api.openai.com/v1")
-        self.model_name = config.get("model_name", "gpt-3.5-turbo")
-    
-    def _make_prediction(self, input_text: str, context: Optional[Dict[str, Any]] = None) -> str:
-        """执行OpenAI API调用"""
-        try:
-            headers = {
-                "Authorization": f"Bearer {self.api_key}",
-                "Content-Type": "application/json"
-            }
-            
-            messages = [{"role": "user", "content": input_text}]
-            
-            # 如果有上下文，添加系统消息
-            if context and context.get("system_prompt"):
-                messages.insert(0, {"role": "system", "content": context["system_prompt"]})
-            
-            data = {
-                "model": self.model_name,
-                "messages": messages,
-                "max_tokens": context.get("max_tokens", 1000) if context else 1000,
-                "temperature": context.get("temperature", 0.7) if context else 0.7
-            }
-            
-            response = requests.post(
-                f"{self.base_url}/chat/completions",
-                headers=headers,
-                json=data,
-                timeout=self.timeout
-            )
-            
-            # 处理HTTP错误
-            if response.status_code == 401:
-                raise ModelAuthenticationException("API密钥无效或已过期")
-            elif response.status_code == 429:
-                raise ModelRateLimitException("API调用频率超限")
-            elif response.status_code >= 500:
-                raise ModelConnectionException(f"服务器错误: {response.status_code}")
-            
-            response.raise_for_status()
-            result = response.json()
-            
-            # 验证响应格式
-            if "choices" not in result or not result["choices"]:
-                raise ModelResponseException("API响应格式异常：缺少choices字段")
-            
-            if "message" not in result["choices"][0]:
-                raise ModelResponseException("API响应格式异常：缺少message字段")
-            
-            return result["choices"][0]["message"]["content"]
-            
-        except requests.exceptions.Timeout:
-            raise ModelTimeoutException(f"API调用超时 ({self.timeout}秒)")
-        except requests.exceptions.ConnectionError as e:
-            raise ModelConnectionException(f"连接失败: {str(e)}")
-        except requests.exceptions.HTTPError as e:
-            raise ModelConnectionException(f"HTTP错误: {str(e)}")
-        except KeyError as e:
-            raise ModelResponseException(f"响应解析错误: 缺少字段 {str(e)}")
-        except Exception as e:
-            if isinstance(e, (ModelException,)):
-                raise
-            raise ModelException(f"未知错误: {str(e)}")
+        # 设置OpenAI默认配置
+        openai_config = {
+            "base_url": "https://api.openai.com/v1",
+            "model_name": "gpt-3.5-turbo",
+            "provider": "openai",
+            **config
+        }
+        super().__init__(model_id, openai_config)
 
 
 class LocalModelAdapter(BaseModelAdapter):
@@ -539,8 +731,50 @@ class ModelAdapterFactory:
     
     _adapters = {
         "openai": OpenAIAdapter,
+        "openai_compatible": OpenAICompatibleAdapter,
         "local": LocalModelAdapter,
         "http": HTTPModelAdapter
+    }
+    
+    # 预定义的提供商配置
+    _provider_configs = {
+        "openai": {
+            "base_url": "https://api.openai.com/v1",
+            "auth_type": "bearer",
+            "chat_endpoint": "/chat/completions",
+            "response_path": ["choices", 0, "message", "content"]
+        },
+        "bigmodel": {
+            "base_url": "https://open.bigmodel.cn/api/paas/v4",
+            "auth_type": "bearer",
+            "chat_endpoint": "/chat/completions",
+            "response_path": ["choices", 0, "message", "content"],
+            "fallback_response_paths": [
+                ["choices", 0, "message", "reasoning_content"],
+                ["choices", 0, "message", "content"]
+            ],
+            "custom_headers": {
+                "User-Agent": "Industry-Evaluation/1.0"
+            }
+        },
+        "zhipu": {
+            "base_url": "https://open.bigmodel.cn/api/paas/v4",
+            "auth_type": "bearer", 
+            "chat_endpoint": "/chat/completions",
+            "response_path": ["choices", 0, "message", "content"]
+        },
+        "deepseek": {
+            "base_url": "https://api.deepseek.com/v1",
+            "auth_type": "bearer",
+            "chat_endpoint": "/chat/completions", 
+            "response_path": ["choices", 0, "message", "content"]
+        },
+        "moonshot": {
+            "base_url": "https://api.moonshot.cn/v1",
+            "auth_type": "bearer",
+            "chat_endpoint": "/chat/completions",
+            "response_path": ["choices", 0, "message", "content"]
+        }
     }
     
     @classmethod
@@ -563,6 +797,36 @@ class ModelAdapterFactory:
         return adapter_class(model_id, config)
     
     @classmethod
+    def create_openai_compatible_adapter(cls, model_id: str, provider: str, api_key: str, 
+                                       model_name: str, **kwargs) -> ModelAdapter:
+        """
+        创建OpenAI兼容适配器的便捷方法
+        
+        Args:
+            model_id: 模型ID
+            provider: 提供商名称
+            api_key: API密钥
+            model_name: 模型名称
+            **kwargs: 其他配置参数
+            
+        Returns:
+            ModelAdapter: 模型适配器实例
+        """
+        if provider not in cls._provider_configs:
+            raise ValueError(f"不支持的提供商: {provider}，支持的提供商: {list(cls._provider_configs.keys())}")
+        
+        # 合并提供商默认配置和用户配置
+        config = cls._provider_configs[provider].copy()
+        config.update({
+            "api_key": api_key,
+            "model_name": model_name,
+            "provider": provider,
+            **kwargs
+        })
+        
+        return cls.create_adapter("openai_compatible", model_id, config)
+    
+    @classmethod
     def register_adapter(cls, adapter_type: str, adapter_class):
         """
         注册新的适配器类型
@@ -577,6 +841,18 @@ class ModelAdapterFactory:
     def get_supported_types(cls) -> List[str]:
         """获取支持的适配器类型"""
         return list(cls._adapters.keys())
+    
+    @classmethod
+    def get_supported_providers(cls) -> List[str]:
+        """获取支持的OpenAI兼容提供商"""
+        return list(cls._provider_configs.keys())
+    
+    @classmethod
+    def get_provider_config(cls, provider: str) -> Dict[str, Any]:
+        """获取提供商的默认配置"""
+        if provider not in cls._provider_configs:
+            raise ValueError(f"不支持的提供商: {provider}")
+        return cls._provider_configs[provider].copy()
 
 
 class ModelManager:

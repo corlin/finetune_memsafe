@@ -62,8 +62,9 @@ class ReportTemplate:
             "supported_formats": [f.value for f in self.supported_formats],
             "created_time": self.created_time.isoformat()
         }
-cla
-ss ReportTemplateManager:
+
+
+class ReportTemplateManager:
     """报告模板管理器"""
     
     def __init__(self):
@@ -541,8 +542,9 @@ ss ReportTemplateManager:
 </body>
 </html>
         """
-class Chart
-Generator:
+
+
+class ChartGenerator:
     """图表生成器"""
     
     def __init__(self):

@@ -1,387 +1,344 @@
-# 示例代码
+# Industry Evaluation System 演示程序
 
-本目录包含了数据拆分和评估系统的各种使用示例。
+本目录包含了 Industry Evaluation System（行业评估系统）的完整功能演示程序，帮助您快速了解和使用系统的各项功能。
 
-## 目录结构
+## 📋 演示程序列表
 
-```
-examples/
-├── README.md                    # 本文件
-├── basic_usage.py              # 基本使用示例
-├── advanced_evaluation.py      # 高级评估示例
-├── config_examples/            # 配置文件示例
-│   ├── basic_config.yaml       # 基础配置
-│   └── advanced_config.yaml    # 高级配置
-├── benchmark_examples/         # 基准测试示例
-├── custom_tasks/              # 自定义任务示例
-└── integration_examples/      # 集成示例
-```
+### 1. 🎬 完整功能演示 (`complete_demo.py`)
 
-## 快速开始
+**最全面的演示程序**，展示系统的所有核心功能：
 
-### 1. 基本使用示例
-
-最简单的使用方式，演示核心功能：
+- ⚙️ 配置管理系统
+- 🤖 模型适配器和管理
+- 📊 多维度评估器
+- 🎯 单模型评估
+- ⚖️ 多模型对比评估
+- 📦 批量评估处理
+- 📄 评估报告生成
+- 🌐 REST API接口
+- 👁️ 实时进度监控
 
 ```bash
-# 使用uv运行
-uv run python examples/basic_usage.py
-
-# 或使用python直接运行
-python examples/basic_usage.py
+# 运行完整演示
+python examples/complete_demo.py
 ```
 
-**功能演示:**
-- 数据拆分
-- 模型评估
-- 实验跟踪
-- 报告生成
+**特点：**
+- 异步执行，支持并发评估
+- 真实的评估流程模拟
+- 详细的进度监控和结果展示
+- 完整的错误处理和资源清理
 
-### 2. 高级评估示例
+### 2. 🚀 简化演示 (`simple_demo.py`)
 
-展示系统的高级功能：
+**快速入门演示**，适合初次使用者：
+
+- 基础配置设置
+- 简单模型注册
+- 基本评估流程
+- 结果对比展示
 
 ```bash
-uv run python examples/advanced_evaluation.py
+# 运行简化演示
+python examples/simple_demo.py
 ```
 
-**功能演示:**
-- 多模型对比评估
-- 质量分析
-- 基准测试
-- 高级报告生成
-- 性能分析
+**特点：**
+- 同步执行，逻辑清晰
+- 代码简洁，易于理解
+- 快速体验核心功能
+- 适合学习和参考
 
-## 配置文件示例
+### 3. 🌐 API接口演示 (`api_demo.py`)
 
-### 基础配置 (basic_config.yaml)
+**REST API功能演示**，展示如何通过HTTP接口使用系统：
 
-适用于简单的分类任务：
+- 🔍 健康检查和系统信息
+- 🤖 模型管理接口
+- 🎯 评估任务创建和监控
+- ⚙️ 配置管理接口
+- 📤 文件上传功能
 
-```yaml
-data_split:
-  train_ratio: 0.7
-  val_ratio: 0.15
-  test_ratio: 0.15
-
-evaluation:
-  tasks: ["classification"]
-  metrics: ["accuracy", "f1"]
-  batch_size: 8
+```bash
+# 运行API演示
+python examples/api_demo.py
 ```
 
-使用方法：
+**特点：**
+- 启动内置API服务器
+- 测试所有主要API端点
+- 展示API调用方法
+- 包含错误处理示例
+
+### 4. ⚙️ 配置管理演示 (`config_demo.py`)
+
+**配置系统专项演示**，深入展示配置管理功能：
+
+- 🎨 配置模板生成（金融、医疗行业）
+- 📂 配置文件加载和解析
+- ✅ 配置验证和错误检测
+- 🔄 配置动态更新
+- 🌍 环境变量支持
+- 👁️ 配置文件监控
+- ⚡ 性能测试
+
+```bash
+# 运行配置管理演示
+python examples/config_demo.py
+```
+
+**特点：**
+- 全面的配置功能展示
+- 实际的配置文件操作
+- 性能测试和优化建议
+- 最佳实践示例
+
+## 🛠️ 运行环境要求
+
+### 基础依赖
+
+```bash
+# 方法1: 使用快速安装脚本（推荐）
+python install_demo_deps.py
+
+# 方法2: 手动安装依赖
+pip install pyyaml requests flask flask-restx flask-cors watchdog psutil
+
+# 方法3: 使用项目依赖文件
+pip install -r requirements.txt
+
+# 方法4: 开发环境安装
+pip install -e .
+```
+
+### 解决导入问题
+
+如果遇到 `ModuleNotFoundError: No module named 'industry_evaluation'` 错误：
+
+```bash
+# 快速解决方案1: 使用快速启动脚本
+python quick_start.py
+
+# 快速解决方案2: 在项目根目录运行
+cd /path/to/your/project
+python examples/simple_demo.py
+
+# 快速解决方案3: 设置 PYTHONPATH
+export PYTHONPATH=$PWD:$PYTHONPATH
+python examples/simple_demo.py
+```
+
+### 可选依赖
+
+```bash
+# API演示需要的额外依赖
+pip install flask flask-restx flask-cors
+
+# 配置文件监控功能
+pip install watchdog
+
+# 性能测试工具
+pip install psutil
+```
+
+## 🚀 快速开始
+
+### 1. 运行简化演示（推荐新手）
+
+```bash
+cd examples
+python simple_demo.py
+```
+
+### 2. 运行完整演示
+
+```bash
+cd examples
+python complete_demo.py
+```
+
+### 3. 测试API接口
+
+```bash
+cd examples
+python api_demo.py
+
+# 在另一个终端测试API
+curl http://localhost:5001/health
+curl http://localhost:5001/info
+```
+
+### 4. 探索配置管理
+
+```bash
+cd examples
+python config_demo.py
+```
+
+## 📊 演示数据说明
+
+### 测试数据集
+
+演示程序使用模拟的金融领域测试数据：
+
+```json
+{
+  "id": "finance_1",
+  "input": "请解释金融风险管理中的VaR模型及其应用",
+  "expected_output": "VaR（Value at Risk）是一种风险度量方法...",
+  "context": {
+    "industry": "finance",
+    "topic": "risk_management",
+    "difficulty": "intermediate"
+  }
+}
+```
+
+### 模拟模型
+
+演示程序包含三种质量的模拟模型：
+
+- **🏆 专家模型** (`excellent`): 高质量回答，包含详细分析
+- **👍 通用模型** (`good`): 中等质量回答，基本准确
+- **📝 基础模型** (`poor`): 简单回答，可能不够详细
+
+## 🎯 评估维度说明
+
+系统支持多个评估维度：
+
+- **📚 知识准确性** (`knowledge`): 评估专业知识的准确性
+- **🏷️ 术语使用** (`terminology`): 评估专业术语的正确使用
+- **🧠 逻辑推理** (`reasoning`): 评估逻辑推理能力
+- **📖 长文本理解** (`long_text`): 评估长文本理解能力
+
+## 📈 结果解读
+
+### 评估得分
+
+- **综合得分**: 0.0-1.0，越高越好
+- **维度得分**: 各评估维度的具体得分
+- **样本数量**: 处理的测试样本总数
+- **改进建议**: 基于评估结果的具体建议
+
+### 示例输出
+
+```
+📊 评估结果:
+  - 综合得分: 0.856
+  - 知识得分: 0.892
+  - 术语得分: 0.834
+  - 推理得分: 0.841
+  - 处理样本数: 3
+
+💡 改进建议:
+  - 加强金融术语的准确使用
+  - 提高复杂场景的推理能力
+  - 增强专业知识的深度
+```
+
+## 🔧 自定义配置
+
+### 创建自定义配置
+
 ```python
-from evaluation.config_manager import ConfigManager
+from industry_evaluation.config.config_manager import ConfigTemplate, ModelConfig
 
-config_manager = ConfigManager()
-config = config_manager.load_config("examples/config_examples/basic_config.yaml")
-```
+# 生成基础配置
+config = ConfigTemplate.generate_finance_config()
 
-### 高级配置 (advanced_config.yaml)
-
-适用于复杂的多任务评估：
-
-```yaml
-evaluation:
-  tasks: ["text_generation", "classification", "question_answering"]
-  metrics: ["bleu", "rouge", "accuracy", "f1", "bertscore"]
-  batch_size: 16
-  device: "cuda"
-  memory_optimization: true
-```
-
-## 自定义示例
-
-### 创建自定义评估任务
-
-```python
-from evaluation.task_evaluators import CustomTaskEvaluator
-
-class MyCustomEvaluator(CustomTaskEvaluator):
-    def evaluate(self, predictions, references, **kwargs):
-        # 实现自定义评估逻辑
-        custom_score = self.calculate_custom_metric(predictions, references)
-        return {"custom_metric": custom_score}
-    
-    def calculate_custom_metric(self, predictions, references):
-        # 自定义指标计算
-        return 0.85
-
-# 注册自定义评估器
-engine.register_task_evaluator("custom_task", MyCustomEvaluator())
-```
-
-### 自定义数据拆分策略
-
-```python
-from evaluation import DataSplitter
-
-class CustomDataSplitter(DataSplitter):
-    def custom_split_strategy(self, dataset):
-        # 实现自定义拆分逻辑
-        pass
-
-splitter = CustomDataSplitter()
-```
-
-## 基准测试示例
-
-### 运行CLUE基准测试
-
-```python
-from evaluation import BenchmarkManager
-
-benchmark_manager = BenchmarkManager()
-
-# 运行CLUE评估
-clue_result = benchmark_manager.run_clue_evaluation(
-    model=model,
-    tokenizer=tokenizer,
-    model_name="my_model"
+# 添加自定义模型
+custom_model = ModelConfig(
+    model_id="my_model",
+    adapter_type="openai",
+    api_key="your_api_key",
+    model_name="gpt-4",
+    timeout=60
 )
 
-print(f"CLUE总分: {clue_result.overall_score:.3f}")
+config.models["my_model"] = custom_model
+
+# 保存配置
+ConfigTemplate.save_template(config, "my_config.yaml")
 ```
 
-### 自定义基准测试
+### 使用环境变量
 
-```python
-from evaluation.data_models import BenchmarkConfig
+```bash
+# 设置环境变量
+export EVAL_MAX_WORKERS=8
+export EVAL_LOG_LEVEL=DEBUG
+export OPENAI_API_KEY=your_api_key
+export OPENAI_MODEL_NAME=gpt-4
 
-custom_config = BenchmarkConfig(
-    name="my_benchmark",
-    dataset_path="path/to/data.json",
-    tasks=["custom_task"],
-    evaluation_protocol="standard",
-    metrics=["accuracy", "f1"]
-)
-
-result = benchmark_manager.run_custom_benchmark(
-    config=custom_config,
-    model=model,
-    tokenizer=tokenizer,
-    model_name="my_model"
-)
+# 运行演示
+python examples/simple_demo.py
 ```
 
-## 集成示例
+## 🐛 故障排除
 
-### 与训练流程集成
+### 常见问题
 
-```python
-from evaluation import EvaluationEngine, DataSplitter
+1. **导入错误**
+   ```bash
+   # 确保在项目根目录运行
+   cd /path/to/industry-evaluation
+   python examples/simple_demo.py
+   ```
 
-# 在训练过程中集成评估
-class TrainingWithEvaluation:
-    def __init__(self, model, tokenizer, eval_config):
-        self.model = model
-        self.tokenizer = tokenizer
-        self.eval_engine = EvaluationEngine(eval_config)
-    
-    def train_epoch(self, train_data):
-        # 训练逻辑
-        pass
-    
-    def evaluate_epoch(self, val_data):
-        # 每个epoch后评估
-        result = self.eval_engine.evaluate_model(
-            self.model, self.tokenizer, 
-            {"validation": val_data}, 
-            "training_model"
-        )
-        return result
-```
+2. **API服务器启动失败**
+   ```bash
+   # 检查端口是否被占用
+   netstat -an | grep 5001
+   
+   # 或使用不同端口
+   python api_demo.py --port 5002
+   ```
 
-### 与数据管道集成
+3. **配置文件错误**
+   ```bash
+   # 检查配置文件格式
+   python -c "import yaml; yaml.safe_load(open('config.yaml'))"
+   ```
+
+### 调试模式
 
 ```python
-from evaluation import DataSplitter, QualityAnalyzer
-
-class DataPipelineWithEvaluation:
-    def __init__(self):
-        self.splitter = DataSplitter()
-        self.quality_analyzer = QualityAnalyzer()
-    
-    def process_data(self, raw_data):
-        # 质量分析
-        quality_report = self.quality_analyzer.analyze_data_quality(raw_data)
-        
-        # 数据拆分
-        split_result = self.splitter.split_data(raw_data, "data/splits")
-        
-        return split_result, quality_report
-```
-
-## 性能优化示例
-
-### 批处理优化
-
-```python
-# 使用较大的批次大小提高吞吐量
-config = EvaluationConfig(
-    batch_size=32,  # 增大批次
-    memory_optimization=True,
-    device="cuda"
-)
-```
-
-### 并行处理
-
-```python
-# 启用并行评估
-engine = EvaluationEngine(config, max_workers=4)
-
-# 并行评估多个模型
-results = engine.evaluate_multiple_models(models_info, datasets)
-```
-
-### 内存优化
-
-```python
-# 启用内存优化选项
-config = EvaluationConfig(
-    memory_optimization=True,
-    gradient_checkpointing=True,
-    mixed_precision=True
-)
-```
-
-## 错误处理示例
-
-### 基本错误处理
-
-```python
-from evaluation.exceptions import EvaluationError, DataSplitError
-
-try:
-    split_result = splitter.split_data(dataset, "output")
-except DataSplitError as e:
-    print(f"数据拆分失败: {e}")
-    # 处理错误
-except EvaluationError as e:
-    print(f"评估系统错误: {e}")
-```
-
-### 自定义错误处理
-
-```python
-class CustomErrorHandler:
-    def handle_evaluation_error(self, error, context):
-        # 记录错误
-        self.log_error(error, context)
-        
-        # 尝试恢复
-        if self.can_recover(error):
-            return self.recover_from_error(error, context)
-        else:
-            raise error
-```
-
-## 调试技巧
-
-### 启用详细日志
-
-```python
+# 启用详细日志
 import logging
-from evaluation.logging_system import setup_logging
+logging.basicConfig(level=logging.DEBUG)
 
-# 设置详细日志
-setup_logging(level="DEBUG")
+# 运行演示
+python examples/complete_demo.py
 ```
 
-### 使用小数据集测试
+## 📚 进一步学习
 
-```python
-# 使用小数据集快速测试
-test_dataset = dataset.select(range(10))
-config = EvaluationConfig(num_samples=5)
-```
+### 相关文档
 
-### 分步调试
-
-```python
-# 分别测试各个组件
-print("测试数据拆分...")
-split_result = splitter.split_data(small_dataset, "debug")
-
-print("测试评估引擎...")
-result = engine.evaluate_model(model, tokenizer, {"task": small_dataset})
-
-print("测试报告生成...")
-report = generator.generate_evaluation_report(result)
-```
-
-## 最佳实践
-
-### 1. 配置管理
-
-- 使用配置文件而不是硬编码参数
-- 为不同环境创建不同的配置文件
-- 使用环境变量处理敏感信息
-
-### 2. 实验管理
-
-- 为每个实验添加描述性标签
-- 定期备份实验数据
-- 使用版本控制管理配置文件
-
-### 3. 性能优化
-
-- 根据硬件资源调整批次大小
-- 使用GPU加速计算密集型任务
-- 启用内存优化选项
-
-### 4. 错误处理
-
-- 实现完善的错误处理机制
-- 记录详细的错误信息
-- 提供错误恢复策略
-
-## 常见问题
-
-### Q: 如何处理大数据集？
-
-A: 使用以下策略：
-- 增大批次大小
-- 启用内存优化
-- 使用数据流处理
-- 分批处理数据
-
-### Q: 如何自定义评估指标？
-
-A: 继承相应的基类：
-```python
-from evaluation.metrics_calculator import MetricsCalculator
-
-class CustomMetricsCalculator(MetricsCalculator):
-    def calculate_custom_metric(self, predictions, references):
-        # 实现自定义指标
-        pass
-```
-
-### Q: 如何集成到现有系统？
-
-A: 使用模块化设计：
-- 单独使用各个组件
-- 通过配置文件集成
-- 使用API接口集成
-
-## 更多资源
-
-- [用户指南](../docs/EVALUATION_USER_GUIDE.md)
-- [API参考](../docs/API_REFERENCE.md)
+- [API参考文档](../docs/API_REFERENCE.md)
 - [配置指南](../docs/CONFIGURATION_GUIDE.md)
+- [部署指南](../docs/DEPLOYMENT_GUIDE.md)
 - [故障排除](../docs/TROUBLESHOOTING_GUIDE.md)
 
-## 贡献
+### 扩展示例
 
-欢迎提交新的示例代码！请确保：
-1. 代码可以正常运行
-2. 包含适当的注释
-3. 提供使用说明
-4. 遵循代码风格规范
+- [高级评估配置](config_examples/advanced_config.yaml)
+- [批量处理脚本](../scripts/batch_evaluation.py)
+- [自定义评估器](../industry_evaluation/evaluators/custom_evaluator.py)
+
+## 🤝 贡献
+
+欢迎提交问题和改进建议：
+
+1. 🐛 报告bug或问题
+2. 💡 提出新功能建议
+3. 📝 改进文档和示例
+4. 🔧 提交代码改进
+
+## 📄 许可证
+
+本项目采用 MIT 许可证，详见 [LICENSE](../LICENSE) 文件。
 
 ---
 
-*示例代码持续更新中，如有问题请参考最新版本。*
+**💡 提示**: 建议按顺序运行演示程序，从 `simple_demo.py` 开始，逐步了解系统的各项功能。

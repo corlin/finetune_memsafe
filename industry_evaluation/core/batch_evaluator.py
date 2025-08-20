@@ -12,7 +12,8 @@ from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor, as_compl
 from pathlib import Path
 import multiprocessing as mp
 from industry_evaluation.core.interfaces import EvaluationConfig, EvaluationResult
-from industry_evaluation.core.evaluation_engine import IndustryEvaluationEngine, EvaluationStatus
+from industry_evaluation.models.data_models import EvaluationStatus
+from industry_evaluation.core.evaluation_engine import IndustryEvaluationEngine
 
 
 @dataclass
