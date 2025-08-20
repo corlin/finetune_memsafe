@@ -1,512 +1,506 @@
 """
-配置管理器测试
-
-测试ConfigManager类的功能。
+测试配置管理系统
 """
 
 import pytest
+import tempfile
 import json
 import yaml
+import time
 from pathlib import Path
+from unittest.mock import Mock, patch
+from industry_evaluation.config.config_manager import (
+    ConfigManager,
+    ConfigValidator,
+    ConfigTemplate,
+    EnvironmentConfigLoader,
+    ModelConfig,
+    EvaluatorConfig,
+    SystemConfig,
+    EvaluationSystemConfig
+)
 
-from evaluation.config_manager import ConfigManager
-from evaluation.data_models import EvaluationConfig
+
+class TestConfigValidator:
+    """测试配置验证器"""
+    
+    def test_validate_model_config_success(self):
+        """测试模型配置验证成功"""
+        config = ModelConfig(
+            model_id="test_model",
+            adapter_type="openai",
+            api_key="test_key",
+            timeout=30,
+            max_retries=3
+        )
+        
+        errors = ConfigValidator.validate_model_config(config)
+        assert len(errors) == 0
+    
+    def test_validate_model_config_missing_fields(self):
+        """测试模型配置缺少必需字段"""
+        config = ModelConfig(
+            model_id="",
+            adapter_type="",
+            timeout=0,
+            max_retries=-1
+        )
+        
+        errors = ConfigValidator.validate_model_config(config)
+        assert len(errors) > 0
+        assert any("model_id不能为空" in error for error in errors)
+        assert any("adapter_type不能为空" in error for error in errors)
+        assert any("timeout必须大于0" in error for error in errors)
+        assert any("max_retries不能小于0" in error for error in errors)
+    
+    def test_validate_openai_config_missing_api_key(self):
+        """测试OpenAI配置缺少API密钥"""
+        config = ModelConfig(
+            model_id="test_model",
+            adapter_type="openai"
+        )
+        
+        errors = ConfigValidator.validate_model_config(config)
+        assert any("OpenAI适配器需要api_key" in error for error in errors)
+    
+    def test_validate_http_config_missing_url(self):
+        """测试HTTP配置缺少URL"""
+        config = ModelConfig(
+            model_id="test_model",
+            adapter_type="http"
+        )
+        
+        errors = ConfigValidator.validate_model_config(config)
+        assert any("HTTP适配器需要api_url" in error for error in errors)
+    
+    def test_validate_evaluator_config_success(self):
+        """测试评估器配置验证成功"""
+        config = EvaluatorConfig(
+            evaluator_type="knowledge",
+            weight=0.5,
+            threshold=0.7
+        )
+        
+        errors = ConfigValidator.validate_evaluator_config(config)
+        assert len(errors) == 0
+    
+    def test_validate_evaluator_config_invalid_values(self):
+        """测试评估器配置无效值"""
+        config = EvaluatorConfig(
+            evaluator_type="",
+            weight=-0.1,
+            threshold=1.5
+        )
+        
+        errors = ConfigValidator.validate_evaluator_config(config)
+        assert len(errors) > 0
+        assert any("evaluator_type不能为空" in error for error in errors)
+        assert any("weight不能小于0" in error for error in errors)
+        assert any("threshold必须在0-1之间" in error for error in errors)
+    
+    def test_validate_system_config_success(self):
+        """测试系统配置验证成功"""
+        config = SystemConfig(
+            max_workers=4,
+            log_level="INFO",
+            cache_ttl=3600,
+            metrics_port=8080
+        )
+        
+        errors = ConfigValidator.validate_system_config(config)
+        assert len(errors) == 0
+    
+    def test_validate_system_config_invalid_values(self):
+        """测试系统配置无效值"""
+        config = SystemConfig(
+            max_workers=0,
+            log_level="INVALID",
+            cache_ttl=-1,
+            metrics_port=70000
+        )
+        
+        errors = ConfigValidator.validate_system_config(config)
+        assert len(errors) > 0
+        assert any("max_workers必须大于0" in error for error in errors)
+        assert any("log_level必须是有效的日志级别" in error for error in errors)
+        assert any("cache_ttl必须大于0" in error for error in errors)
+        assert any("metrics_port必须是有效的端口号" in error for error in errors)
+    
+    def test_validate_full_config_weight_sum(self):
+        """测试完整配置权重总和验证"""
+        config = EvaluationSystemConfig(
+            default_weights={
+                "knowledge": 0.6,
+                "terminology": 0.5  # 总和为1.1，超过1.0
+            }
+        )
+        
+        errors = ConfigValidator.validate_full_config(config)
+        assert any("默认权重总和应该为1.0" in error for error in errors)
 
 
 class TestConfigManager:
-    """配置管理器测试类"""
+    """测试配置管理器"""
     
-    def test_init_default_params(self):
-        """测试默认参数初始化"""
-        manager = ConfigManager()
+    def setup_method(self):
+        """设置测试环境"""
+        self.temp_dir = tempfile.mkdtemp()
+        self.config_file = Path(self.temp_dir) / "test_config.yaml"
+    
+    def teardown_method(self):
+        """清理测试环境"""
+        import shutil
+        shutil.rmtree(self.temp_dir)
+    
+    def test_create_default_config(self):
+        """测试创建默认配置"""
+        config_manager = ConfigManager(self.config_file, auto_reload=False)
         
-        assert manager.config_dir == "configs"
-        assert manager.default_config_file == "default_config.yaml"
-        assert manager.validate_on_load == True
+        assert self.config_file.exists()
+        config = config_manager.get_config()
+        
+        assert config.version == "1.0.0"
+        assert config.system.max_workers == 4
+        assert len(config.models) > 0
+        assert len(config.evaluators) > 0
     
-    def test_init_custom_params(self, temp_dir):
-        """测试自定义参数初始化"""
-        manager = ConfigManager(
-            config_dir=str(temp_dir),
-            default_config_file="custom_config.yaml",
-            validate_on_load=False
+    def test_load_yaml_config(self):
+        """测试加载YAML配置"""
+        test_config = {
+            "version": "1.0.0",
+            "system": {
+                "max_workers": 8,
+                "log_level": "DEBUG"
+            },
+            "models": {
+                "test_model": {
+                    "model_id": "test_model",
+                    "adapter_type": "local",
+                    "timeout": 60
+                }
+            },
+            "evaluators": {
+                "knowledge": {
+                    "evaluator_type": "knowledge",
+                    "weight": 1.0,
+                    "threshold": 0.8
+                }
+            },
+            "industry_domains": ["test"],
+            "default_weights": {"knowledge": 1.0},
+            "default_thresholds": {"knowledge": 0.8}
+        }
+        
+        with open(self.config_file, 'w', encoding='utf-8') as f:
+            yaml.dump(test_config, f)
+        
+        config_manager = ConfigManager(self.config_file, auto_reload=False)
+        config = config_manager.get_config()
+        
+        assert config.version == "1.0.0"
+        assert config.system.max_workers == 8
+        assert config.system.log_level == "DEBUG"
+        assert "test_model" in config.models
+        assert config.models["test_model"].timeout == 60
+    
+    def test_load_json_config(self):
+        """测试加载JSON配置"""
+        json_config_file = Path(self.temp_dir) / "test_config.json"
+        
+        test_config = {
+            "version": "1.0.0",
+            "system": {
+                "max_workers": 6,
+                "log_level": "WARNING"
+            },
+            "models": {},
+            "evaluators": {},
+            "industry_domains": [],
+            "default_weights": {},
+            "default_thresholds": {}
+        }
+        
+        with open(json_config_file, 'w', encoding='utf-8') as f:
+            json.dump(test_config, f)
+        
+        config_manager = ConfigManager(json_config_file, auto_reload=False)
+        config = config_manager.get_config()
+        
+        assert config.version == "1.0.0"
+        assert config.system.max_workers == 6
+        assert config.system.log_level == "WARNING"
+    
+    def test_save_config(self):
+        """测试保存配置"""
+        config_manager = ConfigManager(self.config_file, auto_reload=False)
+        
+        # 修改配置
+        config = config_manager.get_config()
+        config.system.max_workers = 16
+        
+        # 保存配置
+        success = config_manager.save_config()
+        assert success == True
+        
+        # 重新加载验证
+        new_config_manager = ConfigManager(self.config_file, auto_reload=False)
+        new_config = new_config_manager.get_config()
+        
+        assert new_config.system.max_workers == 16
+    
+    def test_update_config(self):
+        """测试更新配置"""
+        config_manager = ConfigManager(self.config_file, auto_reload=False)
+        
+        updates = {
+            "system": {
+                "max_workers": 12,
+                "log_level": "ERROR"
+            }
+        }
+        
+        success = config_manager.update_config(updates)
+        assert success == True
+        
+        config = config_manager.get_config()
+        assert config.system.max_workers == 12
+        assert config.system.log_level == "ERROR"
+    
+    def test_add_model(self):
+        """测试添加模型配置"""
+        config_manager = ConfigManager(self.config_file, auto_reload=False)
+        
+        model_config = ModelConfig(
+            model_id="new_model",
+            adapter_type="openai",
+            api_key="test_key"
         )
         
-        assert manager.config_dir == str(temp_dir)
-        assert manager.default_config_file == "custom_config.yaml"
-        assert manager.validate_on_load == False
+        success = config_manager.add_model("new_model", model_config)
+        assert success == True
+        
+        config = config_manager.get_config()
+        assert "new_model" in config.models
+        assert config.models["new_model"].adapter_type == "openai"
     
-    def test_load_yaml_config(self, temp_dir):
-        """测试加载YAML配置"""
-        manager = ConfigManager()
+    def test_remove_model(self):
+        """测试移除模型配置"""
+        config_manager = ConfigManager(self.config_file, auto_reload=False)
         
-        # 创建测试配置文件
-        config_data = {
-            "data_split": {
-                "train_ratio": 0.7,
-                "val_ratio": 0.15,
-                "test_ratio": 0.15,
-                "random_seed": 42
-            },
-            "evaluation": {
-                "tasks": ["classification", "text_generation"],
-                "metrics": ["accuracy", "bleu"],
-                "batch_size": 8
-            }
-        }
+        # 先添加一个模型
+        model_config = ModelConfig(
+            model_id="temp_model",
+            adapter_type="local"
+        )
+        config_manager.add_model("temp_model", model_config)
         
-        config_path = temp_dir / "test_config.yaml"
-        with open(config_path, 'w', encoding='utf-8') as f:
-            yaml.dump(config_data, f, allow_unicode=True)
+        # 验证模型存在
+        config = config_manager.get_config()
+        assert "temp_model" in config.models
         
-        loaded_config = manager.load_config(str(config_path))
+        # 移除模型
+        success = config_manager.remove_model("temp_model")
+        assert success == True
         
-        assert loaded_config["data_split"]["train_ratio"] == 0.7
-        assert "classification" in loaded_config["evaluation"]["tasks"]
-        assert loaded_config["evaluation"]["batch_size"] == 8
+        # 验证模型已移除
+        config = config_manager.get_config()
+        assert "temp_model" not in config.models
     
-    def test_load_json_config(self, temp_dir):
-        """测试加载JSON配置"""
-        manager = ConfigManager()
+    def test_add_evaluator(self):
+        """测试添加评估器配置"""
+        config_manager = ConfigManager(self.config_file, auto_reload=False)
         
-        config_data = {
-            "model": {
-                "name": "test_model",
-                "max_length": 512
-            },
-            "training": {
-                "epochs": 10,
-                "learning_rate": 0.001
-            }
-        }
+        evaluator_config = EvaluatorConfig(
+            evaluator_type="new_evaluator",
+            weight=0.5,
+            threshold=0.6
+        )
         
-        config_path = temp_dir / "test_config.json"
-        with open(config_path, 'w', encoding='utf-8') as f:
-            json.dump(config_data, f, ensure_ascii=False)
+        success = config_manager.add_evaluator("new_evaluator", evaluator_config)
+        assert success == True
         
-        loaded_config = manager.load_config(str(config_path))
-        
-        assert loaded_config["model"]["name"] == "test_model"
-        assert loaded_config["training"]["epochs"] == 10
+        config = config_manager.get_config()
+        assert "new_evaluator" in config.evaluators
+        assert config.evaluators["new_evaluator"].weight == 0.5
     
-    def test_save_yaml_config(self, temp_dir):
-        """测试保存YAML配置"""
-        manager = ConfigManager()
+    def test_remove_evaluator(self):
+        """测试移除评估器配置"""
+        config_manager = ConfigManager(self.config_file, auto_reload=False)
         
-        config_data = {
-            "test_section": {
-                "param1": "value1",
-                "param2": 42,
-                "param3": [1, 2, 3]
-            }
-        }
+        # 先添加一个评估器
+        evaluator_config = EvaluatorConfig(
+            evaluator_type="temp_evaluator",
+            weight=0.3,
+            threshold=0.5
+        )
+        config_manager.add_evaluator("temp_evaluator", evaluator_config)
         
-        config_path = temp_dir / "saved_config.yaml"
-        manager.save_config(config_data, str(config_path))
+        # 验证评估器存在
+        config = config_manager.get_config()
+        assert "temp_evaluator" in config.evaluators
         
-        # 验证文件是否创建
-        assert config_path.exists()
+        # 移除评估器
+        success = config_manager.remove_evaluator("temp_evaluator")
+        assert success == True
         
-        # 验证内容是否正确
-        with open(config_path, 'r', encoding='utf-8') as f:
-            loaded_data = yaml.safe_load(f)
-        
-        assert loaded_data["test_section"]["param1"] == "value1"
-        assert loaded_data["test_section"]["param2"] == 42
+        # 验证评估器已移除
+        config = config_manager.get_config()
+        assert "temp_evaluator" not in config.evaluators
     
-    def test_save_json_config(self, temp_dir):
-        """测试保存JSON配置"""
-        manager = ConfigManager()
-        
-        config_data = {
-            "settings": {
-                "debug": True,
-                "timeout": 30.5,
-                "items": ["a", "b", "c"]
-            }
-        }
-        
-        config_path = temp_dir / "saved_config.json"
-        manager.save_config(config_data, str(config_path), format="json")
-        
-        assert config_path.exists()
-        
-        with open(config_path, 'r', encoding='utf-8') as f:
-            loaded_data = json.load(f)
-        
-        assert loaded_data["settings"]["debug"] == True
-        assert loaded_data["settings"]["timeout"] == 30.5
-    
-    def test_validate_config_valid(self):
-        """测试有效配置验证"""
-        manager = ConfigManager()
-        
-        valid_config = {
-            "data_split": {
-                "train_ratio": 0.7,
-                "val_ratio": 0.15,
-                "test_ratio": 0.15
-            },
-            "evaluation": {
-                "tasks": ["classification"],
-                "metrics": ["accuracy"],
-                "batch_size": 8
-            }
-        }
-        
-        # 应该不抛出异常
-        is_valid = manager.validate_config(valid_config)
-        assert is_valid == True
-    
-    def test_validate_config_invalid_ratios(self):
-        """测试无效比例配置验证"""
-        manager = ConfigManager()
-        
+    def test_config_validation_error(self):
+        """测试配置验证错误"""
+        # 创建无效配置文件
         invalid_config = {
-            "data_split": {
-                "train_ratio": 0.5,
-                "val_ratio": 0.3,
-                "test_ratio": 0.3  # 总和 > 1.0
-            }
-        }
-        
-        is_valid = manager.validate_config(invalid_config)
-        assert is_valid == False
-    
-    def test_validate_config_missing_required(self):
-        """测试缺少必需字段的配置验证"""
-        manager = ConfigManager()
-        
-        incomplete_config = {
-            "evaluation": {
-                "tasks": [],  # 空任务列表
-                "batch_size": 0  # 无效批次大小
-            }
-        }
-        
-        is_valid = manager.validate_config(incomplete_config)
-        assert is_valid == False
-    
-    def test_merge_configs(self):
-        """测试配置合并"""
-        manager = ConfigManager()
-        
-        base_config = {
-            "data_split": {
-                "train_ratio": 0.7,
-                "val_ratio": 0.15,
-                "test_ratio": 0.15
+            "version": "1.0.0",
+            "system": {
+                "max_workers": -1,  # 无效值
+                "log_level": "INVALID"  # 无效值
             },
-            "evaluation": {
-                "batch_size": 8,
-                "metrics": ["accuracy"]
-            }
+            "models": {},
+            "evaluators": {},
+            "industry_domains": [],
+            "default_weights": {},
+            "default_thresholds": {}
         }
         
-        override_config = {
-            "evaluation": {
-                "batch_size": 16,  # 覆盖
-                "tasks": ["classification"]  # 新增
-            },
-            "new_section": {
-                "param": "value"
-            }
-        }
+        with open(self.config_file, 'w', encoding='utf-8') as f:
+            yaml.dump(invalid_config, f)
         
-        merged = manager.merge_configs(base_config, override_config)
+        # 应该抛出验证错误
+        with pytest.raises(ValueError) as exc_info:
+            ConfigManager(self.config_file, auto_reload=False)
         
-        # 检查合并结果
-        assert merged["data_split"]["train_ratio"] == 0.7  # 保持原值
-        assert merged["evaluation"]["batch_size"] == 16  # 被覆盖
-        assert merged["evaluation"]["metrics"] == ["accuracy"]  # 保持原值
-        assert merged["evaluation"]["tasks"] == ["classification"]  # 新增
-        assert merged["new_section"]["param"] == "value"  # 新增节
+        assert "配置验证失败" in str(exc_info.value)
     
-    def test_get_default_config(self):
-        """测试获取默认配置"""
-        manager = ConfigManager()
+    def test_reload_callback(self):
+        """测试配置重新加载回调"""
+        config_manager = ConfigManager(self.config_file, auto_reload=False)
         
-        default_config = manager.get_default_config()
+        callback_called = False
+        old_config_received = None
+        new_config_received = None
         
-        assert isinstance(default_config, dict)
-        assert "data_split" in default_config
-        assert "evaluation" in default_config
+        def test_callback(old_config, new_config):
+            nonlocal callback_called, old_config_received, new_config_received
+            callback_called = True
+            old_config_received = old_config
+            new_config_received = new_config
         
-        # 检查默认值
-        assert default_config["data_split"]["train_ratio"] == 0.7
-        assert default_config["data_split"]["val_ratio"] == 0.15
-        assert default_config["data_split"]["test_ratio"] == 0.15
+        config_manager.register_reload_callback(test_callback)
+        
+        # 修改配置文件
+        config = config_manager.get_config()
+        config.system.max_workers = 20
+        config_manager.save_config()
+        
+        # 重新加载配置
+        config_manager.reload_config()
+        
+        # 验证回调被调用
+        assert callback_called == True
+        assert old_config_received is not None
+        assert new_config_received is not None
+        assert new_config_received.system.max_workers == 20
+
+
+class TestConfigTemplate:
+    """测试配置模板"""
     
-    def test_create_evaluation_config(self):
-        """测试创建评估配置对象"""
-        manager = ConfigManager()
+    def test_generate_finance_config(self):
+        """测试生成金融配置模板"""
+        config = ConfigTemplate.generate_finance_config()
         
-        config_dict = {
-            "evaluation": {
-                "tasks": ["classification", "text_generation"],
-                "metrics": ["accuracy", "bleu", "rouge"],
-                "batch_size": 16,
-                "max_length": 256,
-                "num_samples": 100
-            }
-        }
-        
-        eval_config = manager.create_evaluation_config(config_dict)
-        
-        assert isinstance(eval_config, EvaluationConfig)
-        assert eval_config.tasks == ["classification", "text_generation"]
-        assert eval_config.batch_size == 16
-        assert eval_config.num_samples == 100
+        assert config.system.max_workers == 8
+        assert "finance_gpt4" in config.models
+        assert "finance_local" in config.models
+        assert config.models["finance_gpt4"].adapter_type == "openai"
+        assert config.evaluators["knowledge"].weight == 0.5
+        assert "finance" in config.industry_domains
     
-    def test_update_config_section(self, temp_dir):
-        """测试更新配置节"""
-        manager = ConfigManager()
+    def test_generate_healthcare_config(self):
+        """测试生成医疗配置模板"""
+        config = ConfigTemplate.generate_healthcare_config()
         
-        # 创建初始配置
-        initial_config = {
-            "section1": {"param1": "value1"},
-            "section2": {"param2": "value2"}
-        }
-        
-        config_path = temp_dir / "update_test.yaml"
-        manager.save_config(initial_config, str(config_path))
-        
-        # 更新配置节
-        new_section_data = {"param1": "new_value1", "param3": "value3"}
-        manager.update_config_section(str(config_path), "section1", new_section_data)
-        
-        # 验证更新结果
-        updated_config = manager.load_config(str(config_path))
-        
-        assert updated_config["section1"]["param1"] == "new_value1"
-        assert updated_config["section1"]["param3"] == "value3"
-        assert updated_config["section2"]["param2"] == "value2"  # 未改变
+        assert config.system.max_workers == 6
+        assert "medical_gpt" in config.models
+        assert config.evaluators["knowledge"].weight == 0.6
+        assert config.evaluators["knowledge"].threshold == 0.85
+        assert "healthcare" in config.industry_domains
     
-    def test_list_config_templates(self, temp_dir):
-        """测试列出配置模板"""
-        manager = ConfigManager(config_dir=str(temp_dir))
-        
-        # 创建一些模板文件
-        templates = ["template1.yaml", "template2.json", "template3.yaml"]
-        for template in templates:
-            (temp_dir / template).write_text("test: config")
-        
-        # 创建非配置文件（应该被忽略）
-        (temp_dir / "readme.txt").write_text("not a config")
-        
-        template_list = manager.list_config_templates()
-        
-        assert len(template_list) == 3
-        assert "template1.yaml" in template_list
-        assert "template2.json" in template_list
-        assert "template3.yaml" in template_list
-        assert "readme.txt" not in template_list
-    
-    def test_validate_config_schema(self):
-        """测试配置模式验证"""
-        manager = ConfigManager()
-        
-        # 定义配置模式
-        schema = {
-            "type": "object",
-            "properties": {
-                "data_split": {
-                    "type": "object",
-                    "properties": {
-                        "train_ratio": {"type": "number", "minimum": 0, "maximum": 1},
-                        "val_ratio": {"type": "number", "minimum": 0, "maximum": 1},
-                        "test_ratio": {"type": "number", "minimum": 0, "maximum": 1}
-                    },
-                    "required": ["train_ratio", "val_ratio", "test_ratio"]
-                }
-            },
-            "required": ["data_split"]
-        }
-        
-        # 有效配置
-        valid_config = {
-            "data_split": {
-                "train_ratio": 0.7,
-                "val_ratio": 0.15,
-                "test_ratio": 0.15
-            }
-        }
-        
-        assert manager.validate_config_schema(valid_config, schema) == True
-        
-        # 无效配置
-        invalid_config = {
-            "data_split": {
-                "train_ratio": 1.5,  # 超出范围
-                "val_ratio": 0.15
-                # 缺少 test_ratio
-            }
-        }
-        
-        assert manager.validate_config_schema(invalid_config, schema) == False
-    
-    def test_environment_variable_substitution(self, temp_dir):
-        """测试环境变量替换"""
-        import os
-        
-        manager = ConfigManager()
-        
-        # 设置环境变量
-        os.environ["TEST_BATCH_SIZE"] = "32"
-        os.environ["TEST_MODEL_NAME"] = "test_model"
-        
+    def test_save_template(self):
+        """测试保存配置模板"""
+        temp_dir = tempfile.mkdtemp()
         try:
-            config_data = {
-                "evaluation": {
-                    "batch_size": "${TEST_BATCH_SIZE}",
-                    "model_name": "${TEST_MODEL_NAME}",
-                    "default_value": "${UNDEFINED_VAR:default}"
-                }
-            }
+            config = ConfigTemplate.generate_finance_config()
+            template_file = Path(temp_dir) / "finance_template.yaml"
             
-            config_path = temp_dir / "env_test.yaml"
-            with open(config_path, 'w') as f:
-                yaml.dump(config_data, f)
+            ConfigTemplate.save_template(config, template_file)
             
-            loaded_config = manager.load_config(str(config_path), substitute_env_vars=True)
+            assert template_file.exists()
             
-            assert loaded_config["evaluation"]["batch_size"] == "32"
-            assert loaded_config["evaluation"]["model_name"] == "test_model"
-            assert loaded_config["evaluation"]["default_value"] == "default"
+            # 验证保存的内容
+            with open(template_file, 'r', encoding='utf-8') as f:
+                saved_data = yaml.safe_load(f)
+            
+            assert saved_data["system"]["max_workers"] == 8
+            assert "finance_gpt4" in saved_data["models"]
             
         finally:
-            # 清理环境变量
-            os.environ.pop("TEST_BATCH_SIZE", None)
-            os.environ.pop("TEST_MODEL_NAME", None)
+            import shutil
+            shutil.rmtree(temp_dir)
+
+
+class TestEnvironmentConfigLoader:
+    """测试环境变量配置加载器"""
     
-    def test_config_inheritance(self, temp_dir):
-        """测试配置继承"""
-        manager = ConfigManager()
+    @patch.dict('os.environ', {
+        'EVAL_MAX_WORKERS': '16',
+        'EVAL_LOG_LEVEL': 'DEBUG',
+        'OPENAI_API_KEY': 'test_key_123',
+        'OPENAI_MODEL_NAME': 'gpt-4'
+    })
+    def test_load_from_env(self):
+        """测试从环境变量加载配置"""
+        config = EnvironmentConfigLoader.load_from_env()
         
-        # 创建基础配置
-        base_config = {
-            "data_split": {
-                "train_ratio": 0.7,
-                "val_ratio": 0.15,
-                "test_ratio": 0.15
-            },
-            "evaluation": {
-                "batch_size": 8,
-                "metrics": ["accuracy"]
-            }
-        }
-        
-        base_path = temp_dir / "base_config.yaml"
-        manager.save_config(base_config, str(base_path))
-        
-        # 创建继承配置
-        child_config = {
-            "inherit_from": str(base_path),
-            "evaluation": {
-                "batch_size": 16,  # 覆盖
-                "tasks": ["classification"]  # 新增
-            }
-        }
-        
-        child_path = temp_dir / "child_config.yaml"
-        manager.save_config(child_config, str(child_path))
-        
-        # 加载继承配置
-        loaded_config = manager.load_config(str(child_path), resolve_inheritance=True)
-        
-        # 检查继承结果
-        assert loaded_config["data_split"]["train_ratio"] == 0.7  # 继承
-        assert loaded_config["evaluation"]["batch_size"] == 16  # 覆盖
-        assert loaded_config["evaluation"]["metrics"] == ["accuracy"]  # 继承
-        assert loaded_config["evaluation"]["tasks"] == ["classification"]  # 新增
+        assert config["system"]["max_workers"] == 16
+        assert config["system"]["log_level"] == "DEBUG"
+        assert "openai_default" in config["models"]
+        assert config["models"]["openai_default"]["api_key"] == "test_key_123"
+        assert config["models"]["openai_default"]["model_name"] == "gpt-4"
     
-    def test_config_validation_with_custom_rules(self):
-        """测试自定义验证规则"""
-        manager = ConfigManager()
+    @patch.dict('os.environ', {}, clear=True)
+    def test_load_from_env_empty(self):
+        """测试从空环境变量加载配置"""
+        config = EnvironmentConfigLoader.load_from_env()
         
-        def custom_validator(config):
-            """自定义验证函数"""
-            errors = []
+        assert config == {}
+    
+    @patch.dict('os.environ', {
+        'EVAL_MAX_WORKERS': '8',
+        'OPENAI_API_KEY': 'env_key'
+    })
+    def test_apply_env_overrides(self):
+        """测试应用环境变量覆盖"""
+        temp_dir = tempfile.mkdtemp()
+        try:
+            config_file = Path(temp_dir) / "test_config.yaml"
+            config_manager = ConfigManager(config_file, auto_reload=False)
             
-            # 检查数据拆分比例总和
-            if "data_split" in config:
-                split = config["data_split"]
-                total = split.get("train_ratio", 0) + split.get("val_ratio", 0) + split.get("test_ratio", 0)
-                if abs(total - 1.0) > 0.001:
-                    errors.append("数据拆分比例总和必须等于1.0")
+            # 应用环境变量覆盖
+            EnvironmentConfigLoader.apply_env_overrides(config_manager)
             
-            # 检查批次大小
-            if "evaluation" in config and "batch_size" in config["evaluation"]:
-                if config["evaluation"]["batch_size"] <= 0:
-                    errors.append("批次大小必须大于0")
+            config = config_manager.get_config()
             
-            return errors
-        
-        manager.add_custom_validator(custom_validator)
-        
-        # 测试有效配置
-        valid_config = {
-            "data_split": {"train_ratio": 0.7, "val_ratio": 0.15, "test_ratio": 0.15},
-            "evaluation": {"batch_size": 8}
-        }
-        
-        assert manager.validate_config(valid_config) == True
-        
-        # 测试无效配置
-        invalid_config = {
-            "data_split": {"train_ratio": 0.5, "val_ratio": 0.3, "test_ratio": 0.3},
-            "evaluation": {"batch_size": 0}
-        }
-        
-        assert manager.validate_config(invalid_config) == False
-    
-    def test_error_handling_invalid_file(self):
-        """测试无效文件的错误处理"""
-        manager = ConfigManager()
-        
-        # 测试不存在的文件
-        with pytest.raises(FileNotFoundError):
-            manager.load_config("nonexistent_file.yaml")
-        
-        # 测试无效的YAML文件
-        with pytest.raises(yaml.YAMLError):
-            manager.load_config_from_string("invalid: yaml: content: [")
-        
-        # 测试无效的JSON文件
-        with pytest.raises(json.JSONDecodeError):
-            manager.load_config_from_string('{"invalid": json content}', format="json")
-    
-    def test_config_backup_and_restore(self, temp_dir):
-        """测试配置备份和恢复"""
-        manager = ConfigManager()
-        
-        original_config = {
-            "test_section": {
-                "param1": "original_value",
-                "param2": 42
-            }
-        }
-        
-        config_path = temp_dir / "backup_test.yaml"
-        manager.save_config(original_config, str(config_path))
-        
-        # 创建备份
-        backup_path = manager.backup_config(str(config_path))
-        assert Path(backup_path).exists()
-        
-        # 修改原配置
-        modified_config = {
-            "test_section": {
-                "param1": "modified_value",
-                "param2": 100
-            }
-        }
-        manager.save_config(modified_config, str(config_path))
-        
-        # 恢复备份
-        manager.restore_config(str(config_path), backup_path)
-        
-        # 验证恢复结果
-        restored_config = manager.load_config(str(config_path))
-        assert restored_config["test_section"]["param1"] == "original_value"
-        assert restored_config["test_section"]["param2"] == 42
+            # 验证环境变量覆盖生效
+            assert config.system.max_workers == 8
+            assert "openai_default" in config.models
+            assert config.models["openai_default"].api_key == "env_key"
+            
+        finally:
+            import shutil
+            shutil.rmtree(temp_dir)
+
+
+if __name__ == "__main__":
+    pytest.main([__file__])

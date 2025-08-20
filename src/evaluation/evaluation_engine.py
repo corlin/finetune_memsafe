@@ -194,7 +194,7 @@ class EvaluationEngine:
                     ): info
                     for i, info in enumerate(models_info)
                 }
-                
+                print("# im here #")
                 for future in as_completed(future_to_model):
                     model_info = future_to_model[future]
                     try:

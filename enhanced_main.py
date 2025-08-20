@@ -144,7 +144,7 @@ class EnhancedQwenFineTuningApplication(QwenFineTuningApplication):
                 self.evaluation_engine = create_enhanced_evaluation_engine(
                     config_data=eval_config_dict,
                     device="auto",
-                    max_workers=4
+                    max_workers=8
                 )
                 self.logger.info("增强评估引擎初始化完成")
             

@@ -122,7 +122,7 @@ def check_model_files(model_path):
 def convert_model():
     """转换模型"""
     # 路径设置
-    model_path = "exported_models/qwen3_merged_lightweight/Qwen_Qwen3-4B-Thinking-2507_pytorch_20250816_225620"
+    model_path = "exported_models/qwen3_merged_lightweight/Qwen_Qwen3-4B-Thinking-2507_pytorch_20250820_160032"
     output_dir = "exported_models/qwen3_merged_lightweight/gguf"
     output_file = os.path.join(output_dir, "qwen3-4b-thinking-f16.gguf")
     llama_cpp_dir = "llama.cpp"

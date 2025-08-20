@@ -71,7 +71,7 @@ class EnhancedApplicationConfig(ApplicationConfig):
     enable_quality_analysis: bool = True
     """是否启用质量分析"""
     
-    evaluation_batch_size: int = 4
+    evaluation_batch_size: int = 12
     """评估批次大小"""
     
     evaluation_num_samples: int = 100
@@ -154,7 +154,7 @@ class EnhancedApplicationConfig(ApplicationConfig):
     parallel_evaluation: bool = False
     """是否启用并行评估（实验性功能）"""
     
-    max_evaluation_workers: int = 2
+    max_evaluation_workers: int = 4
     """最大评估工作线程数"""
     
     # === 兼容性配置 ===

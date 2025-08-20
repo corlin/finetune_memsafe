@@ -29,7 +29,7 @@ def main():
         sys.exit(1)
     
     # 检查checkpoint
-    checkpoint_path = Path("qwen3-finetuned/checkpoint-300")
+    checkpoint_path = Path("./enhanced-qwen3-finetuned/checkpoint-450")
     if not checkpoint_path.exists():
         print(f"❌ 错误: Checkpoint目录不存在: {checkpoint_path}")
         sys.exit(1)
@@ -80,7 +80,7 @@ logging.basicConfig(
 
 # 创建轻量级导出配置
 config = ExportConfiguration(
-    checkpoint_path="./qwen3-finetuned/checkpoint-300",
+    checkpoint_path="./enhanced-qwen3-finetuned/checkpoint-450",
     base_model_name="Qwen/Qwen3-4B-Thinking-2507",
     output_directory="./exported_models/qwen3_merged_lightweight",
     quantization_level="none",  # 使用FP16而不是INT8，更快但文件稍大
