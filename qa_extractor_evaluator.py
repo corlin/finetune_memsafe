@@ -594,11 +594,7 @@ def find_available_checkpoint():
     """查找可用的checkpoint路径"""
     possible_paths = [
         "exported_models/qwen3_merged_lightweight/Qwen_Qwen3-4B-Thinking-2507_pytorch_20250820_225451",
-        "enhanced-qwen3-finetuned/checkpoint-450",
-        "enhanced-qwen3-finetuned/checkpoint-400",
-        "enhanced-qwen3-finetuned/checkpoint-300",
-        "qwen3-finetuned/checkpoint-300",
-        "qwen3-finetuned/checkpoint-200"
+        
     ]
     
     for path in possible_paths:

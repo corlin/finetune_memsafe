@@ -616,32 +616,32 @@ def create_argument_parser() -> argparse.ArgumentParser:
     
     # 内存配置
     parser.add_argument("--max-memory-gb", type=float, 
-                       default=13.0,
+                       default=16.0,
                        help="最大GPU内存限制(GB)")
     
     # 训练配置
     parser.add_argument("--batch-size", type=int, 
-                       default=4,
+                       default=48,
                        help="批次大小")
     parser.add_argument("--gradient-accumulation-steps", type=int, 
                        default=16,
                        help="梯度累积步数")
     parser.add_argument("--learning-rate", type=float, 
-                       default=5e-5,
+                       default=2e-4,
                        help="学习率")
     parser.add_argument("--num-epochs", type=int, 
                        default=10,
                        help="训练轮数")
     parser.add_argument("--max-sequence-length", type=int, 
-                       default=256,
+                       default=512,
                        help="最大序列长度")
     
     # LoRA配置
     parser.add_argument("--lora-r", type=int, 
-                       default=6,
+                       default=16,
                        help="LoRA rank")
     parser.add_argument("--lora-alpha", type=int, 
-                       default=12,
+                       default=32,
                        help="LoRA alpha")
     parser.add_argument("--lora-dropout", type=float, 
                        default=0.1,
