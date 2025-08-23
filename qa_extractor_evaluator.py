@@ -593,7 +593,7 @@ class CheckpointEvaluator:
 def find_available_checkpoint():
     """查找可用的checkpoint路径"""
     possible_paths = [
-        "exported_models/qwen3_merged_lightweight/Qwen_Qwen3-4B-Thinking-2507_pytorch_20250820_225451",
+        "exported_models/qwen3_merged_lightweight/Qwen_Qwen3-4B-Thinking-2507_pytorch_20250823_143214",
         
     ]
     

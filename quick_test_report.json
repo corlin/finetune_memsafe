@@ -1,0 +1,68 @@
+{
+  "evaluation_summary": {
+    "total_cases": 2,
+    "average_score": 0.5234117009113226,
+    "max_score": 0.5680066079295154,
+    "min_score": 0.47881679389312976,
+    "checkpoint_path": "exported_models/qwen3_merged_lightweight/Qwen_Qwen3-4B-Thinking-2507_pytorch_20250823_143214",
+    "evaluation_time": "2025-08-23T14:57:47.150254"
+  },
+  "category_performance": {
+    "基础概念类": 0.47881679389312976,
+    "密码应用管理类": 0.5680066079295154
+  },
+  "difficulty_performance": {
+    "easy": 0.47881679389312976,
+    "medium": 0.5680066079295154
+  },
+  "detailed_results": [
+    {
+      "id": "eval_QA2_Q13",
+      "question": "什么是密钥？",
+      "expected_answer": "密钥是控制密码算法运算的关键信息或参数。",
+      "model_answer": "密钥是控制密码算法运算的输入数据。密钥可以是数字的、字母的、符号的组合，也可以是其他形式的表示。密钥用于对明文进行加密得到密文，或对密文进行解密得到明文。密钥具有机密性，未经授权的用户不能了解密钥的真...",
+      "category": "基础概念类",
+      "difficulty": "easy",
+      "score": 0.47881679389312976,
+      "evaluation_details": {
+        "length_similarity": 0.02544529262086514,
+        "keyword_overlap": 0.0,
+        "terminology_match": 1.0,
+        "structure_similarity": 0.5,
+        "completeness": 1.0,
+        "total_score": 0.47881679389312976,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA4_Q308",
+      "question": "密码应用安全事件报告的主要要求有哪些？",
+      "expected_answer": "密码应用安全事件报告的主要要求包括：及时性（事件发生后及时报告）、准确性（报告内容应准确真实）、完整性（报告内容应完整全面）、规范性（报告格式应符合规范要求）、分级报告（根据事件严重程度向不同级别的人...",
+      "model_answer": "密码应用安全事件报告的主要要求包括：事件基本情况（事件发生的时间、地点、涉及系统、人员等）、事件影响范围（事件对信息系统的影响程度）、事件原因分析（事件发生的根本原因）、事件应对措施（事件发生时采取的...",
+      "category": "密码应用管理类",
+      "difficulty": "medium",
+      "score": 0.5680066079295154,
+      "evaluation_details": {
+        "length_similarity": 0.12004405286343613,
+        "keyword_overlap": 0.0,
+        "terminology_match": 1.0,
+        "structure_similarity": 1.0,
+        "completeness": 1.0,
+        "total_score": 0.5680066079295154,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    }
+  ]
+}

@@ -85,7 +85,7 @@ def setup_lora(model):
         r=6,  # 进一步减小LoRA矩阵的秩以节省显存（从8降到4）
         lora_alpha=12,  # 相应调整缩放因子（alpha = 2*r）
         target_modules=[  # 精选目标模块，最小化显存占用
-            "q_proj", "v_proj", "ffn.w1"  # 只对最重要的注意力模块应用LoRA
+            "q_proj", "v_proj"#, "ffn.w1"  # 只对最重要的注意力模块应用LoRA
         ],
         lora_dropout=0.1,  # 降低dropout以减少计算开销
         bias="none",  # 不训练偏置以节省参数

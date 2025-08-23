@@ -42,7 +42,7 @@ logger = logging.getLogger(__name__)
 class TrainingConfig:
     """训练配置数据类"""
     output_dir: str = "./qwen3-finetuned"
-    max_memory_gb: float = 13.0
+    max_memory_gb: float = 15.0
     batch_size: int = 4
     gradient_accumulation_steps: int = 16
     learning_rate: float = 5e-5
@@ -51,8 +51,8 @@ class TrainingConfig:
     warmup_ratio: float = 0.1
     weight_decay: float = 0.01
     logging_steps: int = 10
-    save_steps: int = 100
-    eval_steps: int = 100
+    save_steps: int = 50
+    eval_steps: int = 50
     max_grad_norm: float = 1.0
     dataloader_num_workers: int = 0  # 设为0以避免多进程问题
     save_total_limit: int = 3  # 限制保存的检查点数量

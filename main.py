@@ -621,16 +621,16 @@ def create_argument_parser() -> argparse.ArgumentParser:
     
     # 训练配置
     parser.add_argument("--batch-size", type=int, 
-                       default=48,
+                       default=4,
                        help="批次大小")
     parser.add_argument("--gradient-accumulation-steps", type=int, 
-                       default=16,
+                       default=8,
                        help="梯度累积步数")
     parser.add_argument("--learning-rate", type=float, 
-                       default=2e-4,
+                       default=3e-5,
                        help="学习率")
     parser.add_argument("--num-epochs", type=int, 
-                       default=10,
+                       default=100,
                        help="训练轮数")
     parser.add_argument("--max-sequence-length", type=int, 
                        default=512,
@@ -638,10 +638,10 @@ def create_argument_parser() -> argparse.ArgumentParser:
     
     # LoRA配置
     parser.add_argument("--lora-r", type=int, 
-                       default=16,
+                       default=96,
                        help="LoRA rank")
     parser.add_argument("--lora-alpha", type=int, 
-                       default=32,
+                       default=192,
                        help="LoRA alpha")
     parser.add_argument("--lora-dropout", type=float, 
                        default=0.1,

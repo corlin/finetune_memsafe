@@ -48,7 +48,7 @@ def check_environment():
     logger.info(f"✓ 找到 {len(qa_files)} 个QA文件")
     
     # 检查checkpoint目录
-    checkpoint_dir = Path("exported_models/qwen3_merged_lightweight/Qwen_Qwen3-4B-Thinking-2507_pytorch_20250822_141655")
+    checkpoint_dir = Path("./exported_models/qwen3_merged_lightweight/Qwen_Qwen3-4B-Thinking-2507_pytorch_20250823_143214/")
     if not checkpoint_dir.exists():
         logger.warning(f"Checkpoint目录不存在: {checkpoint_dir}")
         logger.info("将使用默认路径，如果路径不正确请手动指定")

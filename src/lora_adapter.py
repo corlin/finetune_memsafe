@@ -42,7 +42,7 @@ class LoRAAdapter:
         # 如果没有指定目标模块，使用Qwen3的默认模块
         if target_modules is None:
             target_modules = [
-                "q_proj", "v_proj", "ffn.w1"
+                "q_proj", "v_proj"#, "ffn.w1"
                 #"k_proj", 
                 #"o_proj",
                 #"gate_proj",
