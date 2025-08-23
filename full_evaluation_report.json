@@ -1,0 +1,1255 @@
+{
+  "evaluation_summary": {
+    "total_cases": 50,
+    "average_score": 0.5540306720940582,
+    "max_score": 0.9048701298701298,
+    "min_score": 0.33081289736603087,
+    "checkpoint_path": "exported_models/qwen3_merged_lightweight/Qwen_Qwen3-4B-Thinking-2507_pytorch_20250823_143214",
+    "evaluation_time": "2025-08-23T15:21:03.716898"
+  },
+  "category_performance": {
+    "等级要求类": 0.7291450777202072,
+    "密码应用风险分析类": 0.4664804469273743,
+    "典型密码产品应用测评技术类": 0.5148959646910467,
+    "密码应用合规性类": 0.9048701298701298,
+    "管理要求类": 0.5660975609756097,
+    "新兴技术融合类": 0.6083216783216783,
+    "密码应用安全性评估流程类": 0.5508426966292135,
+    "密码算法实现细节类": 0.563777738315469,
+    "密码产品应用测试类": 0.6889830508474576,
+    "测评技术实操类": 0.5684540726425282,
+    "密码应用管理类": 0.6410130577654791,
+    "密码应用测评工具类": 0.6636842105263158,
+    "密码算法类": 0.4812984496124031,
+    "密钥管理类（续）": 0.378448275862069,
+    "密码算法选择类": 0.6764705882352942,
+    "测评要求类": 0.5327653235396633,
+    "密钥管理类": 0.4520836638728889,
+    "密码应用测评报告类": 0.6734285714285714,
+    "密码应用案例类": 0.5628246753246753,
+    "基础概念类": 0.4564236157688861,
+    "密码产品类": 0.5736924686192468,
+    "密码应用方案类": 0.4910388821385176,
+    "密码服务类": 0.5211329574559809,
+    "测评要求类（续）": 0.724256837098692,
+    "密码服务部署类": 0.5102325581395348,
+    "密钥管理具体操作类": 0.4976756495955062,
+    "密码应用测评技术类": 0.6696808510638298,
+    "合规性整改类": 0.5698956454574681,
+    "标准条文解读类": 0.35564803804994055,
+    "技术要求类": 0.47634308510638296,
+    "等级要求类（续）": 0.5467165898617512,
+    "密码应用合规类": 0.5893013100436681,
+    "密码应用方案设计类": 0.5670863309352517,
+    "行业应用场景类": 0.49476127320954905,
+    "典型密码功能测评技术类": 0.6255090497737557,
+    "密码应用等级类": 0.48418367346938773
+  },
+  "difficulty_performance": {
+    "medium": 0.5725008679728,
+    "hard": 0.5355898421727294,
+    "easy": 0.5143929490105001
+  },
+  "detailed_results": [
+    {
+      "id": "eval_QA6_Q79",
+      "question": "第四级密码应用基本要求中通用要求是什么？",
+      "expected_answer": "第四级密码应用基本要求中通用要求与第一级相同：a）信息系统中使用的密码算法应符合法律、法规的规定和密码相关国家标准、行业标准的有关要求；b）信息系统中使用的密码技术应遵循密码相关国家标准和行业标准；c...",
+      "model_answer": "第四级密码应用基本要求中通用要求与第一级相同，即：a）信息系统中使用的密码算法应符合法律、法规的规定和密码相关国家标准、行业标准的有关要求；b）信息系统中使用的密码技术应遵循密码相关国家标准和行业标准...",
+      "category": "等级要求类",
+      "difficulty": "medium",
+      "score": 0.7291450777202072,
+      "evaluation_details": {
+        "length_similarity": 0.19430051813471502,
+        "keyword_overlap": 0.5,
+        "terminology_match": 1.0,
+        "structure_similarity": 1.0,
+        "completeness": 1.0,
+        "total_score": 0.7291450777202072,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA4_Q317",
+      "question": "密码应用管理风险的主要表现有哪些？",
+      "expected_answer": "密码应用管理风险的主要表现包括：密钥管理流程不完善或执行不到位、密码应用管理制度不健全或执行不力、密码相关人员安全意识不足或技能不足、密码应用操作规程不明确或不遵守、密码应用安全事件应急处理不当等。",
+      "model_answer": "密码应用管理风险的主要表现包括：管理制度不完善（如缺乏密码应用管理制度或制度不健全）、人员培训不足（如缺乏密码相关安全培训或人员技能不足）、操作流程不规范（如密码操作流程不明确或执行不规范）、责任分工...",
+      "category": "密码应用风险分析类",
+      "difficulty": "medium",
+      "score": 0.4664804469273743,
+      "evaluation_details": {
+        "length_similarity": 0.276536312849162,
+        "keyword_overlap": 0.0,
+        "terminology_match": 0.5,
+        "structure_similarity": 1.0,
+        "completeness": 1.0,
+        "total_score": 0.4664804469273743,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA6_Q108",
+      "question": "电子签章系统测评实施要点是什么？",
+      "expected_answer": "电子签章系统测评实施要点：1）检查电子印章的验证是否符合GB/T 38540-2020的要求，其中部分检测内容可以复用产品检测的结果； 2）检查电子签章的生成和验证是否符合GB/T 38540-202...",
+      "model_answer": "电子签章系统测评实施要点：1）检查电子签章的验证过程是否具备完整性、真实性和不可否认性。2）检查电子签章系统是否支持对签章行为的审计。3）检查电子签章系统是否具有防伪功能。4）检查电子签章的验证结果是...",
+      "category": "典型密码产品应用测评技术类",
+      "difficulty": "hard",
+      "score": 0.5148959646910467,
+      "evaluation_details": {
+        "length_similarity": 0.3493064312736444,
+        "keyword_overlap": 0.125,
+        "terminology_match": 0.5,
+        "structure_similarity": 1.0,
+        "completeness": 1.0,
+        "total_score": 0.5148959646910467,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA4_Q347",
+      "question": "密码应用合规性的主要国家标准有哪些？",
+      "expected_answer": "密码应用合规性的主要国家标准包括：GB/T 39786-2021《信息安全技术 信息系统密码应用基本要求》（规定信息系统密码应用的基本要求）、GB/T 43206-2023《信息安全技术 信息系统密码...",
+      "model_answer": "密码应用合规性的主要国家标准包括：GB/T 39786-2021《信息安全技术 信息系统密码应用基本要求》（规定信息系统密码应用的基本要求）、GB/T 43206-2023《信息安全技术 信息系统密码...",
+      "category": "密码应用合规性类",
+      "difficulty": "medium",
+      "score": 0.9048701298701298,
+      "evaluation_details": {
+        "length_similarity": 0.6515151515151515,
+        "keyword_overlap": 0.8571428571428571,
+        "terminology_match": 1.0,
+        "structure_similarity": 1.0,
+        "completeness": 1.0,
+        "total_score": 0.9048701298701298,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA3_Q73",
+      "question": "不同等级在制定密钥安全管理策略要求上有何区别？",
+      "expected_answer": "不同等级在制定密钥安全管理策略要求上的区别是：第一级、第二级、第三级和第四级都应根据密码应用方案，确定系统涉及的密钥种类、体系及其生存周期环节，各环节密钥管理要求参照相关标准。",
+      "model_answer": "不同等级在制定密钥安全管理策略要求上的区别是：第一级、第二级和第三级应根据密码应用方案，确定密钥管理的范围、密钥种类和密钥体系，以及密钥生成、存储、传输、使用、更新、归档、备份、撤销、销毁等全生命周期...",
+      "category": "管理要求类",
+      "difficulty": "medium",
+      "score": 0.5660975609756097,
+      "evaluation_details": {
+        "length_similarity": 0.1073170731707317,
+        "keyword_overlap": 0.0,
+        "terminology_match": 1.0,
+        "structure_similarity": 1.0,
+        "completeness": 1.0,
+        "total_score": 0.5660975609756097,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA5_Q423",
+      "question": "边缘计算场景下，如何实现轻量级但符合第三级要求的密码应用？",
+      "expected_answer": "边缘计算轻量级第三级密码应用方案：1）硬件选型：采用符合GM/T 0002的轻量级加密芯片（如支持SM4的TEA）；2）算法优化：1）使用SM4-128代替SM4-256；2）HMAC-SM3-96代...",
+      "model_answer": "边缘计算轻量级密码应用方案：1）算法选择：采用国密SM4-128（4字节轮键）；2）密钥管理：1）中心CA定期生成边缘设备专用证书（有效期≤90天）；2）密钥更新：采用\"轮换+预共享\"机制，新密钥在旧...",
+      "category": "新兴技术融合类",
+      "difficulty": "hard",
+      "score": 0.6083216783216783,
+      "evaluation_details": {
+        "length_similarity": 0.3888111888111888,
+        "keyword_overlap": 0.0,
+        "terminology_match": 1.0,
+        "structure_similarity": 1.0,
+        "completeness": 1.0,
+        "total_score": 0.6083216783216783,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA4_Q209",
+      "question": "密码应用安全性评估后的整改流程是什么？",
+      "expected_answer": "密码应用安全性评估后的整改流程通常包括：被评估单位根据评估报告中的问题和建议制定整改计划、实施整改措施、进行整改效果验证、形成整改报告等。评估机构可根据需要对整改情况进行跟踪验证。",
+      "model_answer": "密码应用安全性评估后的整改流程包括：1）整改需求分析：根据评估报告中的问题和建议，分析整改需求和优先级；2）整改方案制定：制定详细的整改方案，包括整改措施、整改时限、责任人员等；3）整改实施：按照整改...",
+      "category": "密码应用安全性评估流程类",
+      "difficulty": "medium",
+      "score": 0.5508426966292135,
+      "evaluation_details": {
+        "length_similarity": 0.5056179775280899,
+        "keyword_overlap": 0.0,
+        "terminology_match": 1.0,
+        "structure_similarity": 0.5,
+        "completeness": 1.0,
+        "total_score": 0.5508426966292135,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA5_Q401",
+      "question": "SM4分组密码算法的工作模式有哪些？在第四级信息系统中应优先选择哪种模式？",
+      "expected_answer": "SM4分组密码算法的工作模式包括ECB（电子密码本）、CBC（密码分组链接）、CFB（密码反馈）、OFB（输出反馈）、CTR（计数器）等。在第四级信息系统中，根据GB/T 43206-2023要求，应...",
+      "model_answer": "SM4分组密码算法的工作模式包括电码本模式（ECB）、密码分组链接模式（CBC）、输出反馈模式（OFB）、计数反馈模式（CFB）等。在第四级信息系统中，为提高密码安全性，应优先选择密码分组链接模式（C...",
+      "category": "密码算法实现细节类",
+      "difficulty": "medium",
+      "score": 0.5358322744599746,
+      "evaluation_details": {
+        "length_similarity": 0.2388818297331639,
+        "keyword_overlap": 0.0,
+        "terminology_match": 0.8,
+        "structure_similarity": 1.0,
+        "completeness": 1.0,
+        "total_score": 0.5358322744599746,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA4_Q246",
+      "question": "密码产品兼容性测试的主要内容包括哪些？",
+      "expected_answer": "密码产品兼容性测试的主要内容包括：操作系统兼容性测试（验证产品是否支持目标操作系统）、数据库兼容性测试（验证产品是否支持目标数据库）、中间件兼容性测试（验证产品是否支持目标中间件）、浏览器兼容性测试（...",
+      "model_answer": "密码产品兼容性测试的主要内容包括：操作系统兼容性测试（验证产品是否支持目标操作系统）、数据库兼容性测试（验证产品是否支持目标数据库）、中间件兼容性测试（验证产品是否支持目标中间件）、应用兼容性测试（验...",
+      "category": "密码产品应用测试类",
+      "difficulty": "medium",
+      "score": 0.6889830508474576,
+      "evaluation_details": {
+        "length_similarity": 0.9265536723163842,
+        "keyword_overlap": 0.0,
+        "terminology_match": 1.0,
+        "structure_similarity": 1.0,
+        "completeness": 1.0,
+        "total_score": 0.6889830508474576,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA5_Q412",
+      "question": "对密码机进行性能测试时，应关注哪些关键指标？第三级系统的最低要求是什么？",
+      "expected_answer": "密码机性能测试关键指标及第三级系统最低要求：1）SM4加密吞吐量：≥2Gbps（128位密钥，CBC模式）；2）SM2签名速度：≥500次/秒（256位密钥）；3）SM3哈希速度：≥1Gbps；4）密...",
+      "model_answer": "关键指标包括：吞吐量（如加密/解密/签名/验证速率）、延迟（如平均处理时间、最大处理时间）、资源占用（如CPU占用率、内存占用率、存储占用率）、并发能力（如支持的并发连接数或交易数）。第三级系统的最低...",
+      "category": "测评技术实操类",
+      "difficulty": "hard",
+      "score": 0.5361301369863014,
+      "evaluation_details": {
+        "length_similarity": 0.2408675799086758,
+        "keyword_overlap": 0.0,
+        "terminology_match": 0.8,
+        "structure_similarity": 1.0,
+        "completeness": 1.0,
+        "total_score": 0.5361301369863014,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA4_Q306",
+      "question": "密码应用安全事件的主要类型有哪些？",
+      "expected_answer": "密码应用安全事件的主要类型包括：密钥泄露事件（密钥被非授权访问或泄露）、密钥损坏事件（密钥损坏或丢失）、密码算法破解事件（密码算法被破解或存在严重漏洞）、密码产品故障事件（密码产品出现故障或异常）、密...",
+      "model_answer": "密码应用安全事件的主要类型包括：密钥管理事件（如密钥泄露、密钥丢失、密钥生成故障等）、密码产品/服务事件（如密码产品故障、密码服务中断、密码服务被攻击等）、密码算法事件（如密码算法被破解、密码算法漏洞...",
+      "category": "密码应用管理类",
+      "difficulty": "medium",
+      "score": 0.6602040816326531,
+      "evaluation_details": {
+        "length_similarity": 0.7346938775510204,
+        "keyword_overlap": 0.0,
+        "terminology_match": 1.0,
+        "structure_similarity": 1.0,
+        "completeness": 1.0,
+        "total_score": 0.6602040816326531,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA4_Q378",
+      "question": "密码应用性能测评工具的主要特点有哪些？",
+      "expected_answer": "密码应用性能测评工具的主要特点包括：支持多种性能测试类型（如负载测试、压力测试、稳定性测试等）、支持多种性能指标监控（如响应时间、吞吐量、资源占用率等）、支持多种负载模式（如恒定负载、递增负载、波动负...",
+      "model_answer": "密码应用性能测评工具的主要特点包括：支持多种性能测试类型（如负载测试、压力测试、稳定性测试等）、支持多种性能指标监控（如响应时间、吞吐量、资源占用率等）、支持多种资源类型监控（如CPU、内存、磁盘、网...",
+      "category": "密码应用测评工具类",
+      "difficulty": "medium",
+      "score": 0.6636842105263158,
+      "evaluation_details": {
+        "length_similarity": 0.7578947368421053,
+        "keyword_overlap": 0.0,
+        "terminology_match": 1.0,
+        "structure_similarity": 1.0,
+        "completeness": 1.0,
+        "total_score": 0.6636842105263158,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA3_Q149",
+      "question": "密码算法的主要类型有哪些？",
+      "expected_answer": "密码算法的主要类型包括对称密码算法、非对称密码算法、杂凑算法、随机数生成算法等。",
+      "model_answer": "密码算法的主要类型包括对称密码算法、非对称密码算法和密码杂凑算法等。对称密码算法使用相同的密钥进行加解密，如DES、AES等；非对称密码算法使用不同的密钥进行加解密，如RSA、ECC等；密码杂凑算法将...",
+      "category": "密码算法类",
+      "difficulty": "easy",
+      "score": 0.4819767441860465,
+      "evaluation_details": {
+        "length_similarity": 0.046511627906976744,
+        "keyword_overlap": 0.0,
+        "terminology_match": 1.0,
+        "structure_similarity": 0.5,
+        "completeness": 1.0,
+        "total_score": 0.4819767441860465,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA6_Q115",
+      "question": "密钥归档的注意事项是什么？",
+      "expected_answer": "密钥归档的注意事项是如果信息系统中有密钥归档需求，则根据实际安全需求采取有效的安全措施，保证归档密钥的安全性和正确性。需要注意的是，归档密钥只能用于解密该密钥加密的历史信息或验证该密钥签名的历史信息。...",
+      "model_answer": "密钥归档的注意事项包括：明确归档目的（如长期保存、合规要求等）、确定归档范围（如特定密钥、所有密钥等）、遵循安全策略（如访问控制、加密存储等）、记录归档信息（如归档时间、归档原因等）、定期审查归档有效...",
+      "category": "密钥管理类（续）",
+      "difficulty": "medium",
+      "score": 0.378448275862069,
+      "evaluation_details": {
+        "length_similarity": 0.1896551724137931,
+        "keyword_overlap": 0.0,
+        "terminology_match": 0.5,
+        "structure_similarity": 0.5,
+        "completeness": 1.0,
+        "total_score": 0.378448275862069,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA4_Q273",
+      "question": "杂凑算法的主要特点和应用场景有哪些？",
+      "expected_answer": "杂凑算法的主要特点包括：将任意长度的输入映射为固定长度的输出，具有单向性（从输出难以反推输入）、抗碰撞性（难以找到两个不同输入产生相同输出）等特性。主要应用场景包括：数据完整性校验（如数字签名中的消息...",
+      "model_answer": "杂凑算法的主要特点包括：将任意长度的输入映射为固定长度的输出、具有单向性（从输出难以反推输入）、碰撞抵抗性（难以找到两个不同输入产生相同输出）、高效性（计算效率高）。主要应用场景包括：数据完整性校验（...",
+      "category": "密码算法选择类",
+      "difficulty": "medium",
+      "score": 0.6764705882352942,
+      "evaluation_details": {
+        "length_similarity": 0.8431372549019608,
+        "keyword_overlap": 0.0,
+        "terminology_match": 1.0,
+        "structure_similarity": 1.0,
+        "completeness": 1.0,
+        "total_score": 0.6764705882352942,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA2_Q60",
+      "question": "密码应用安全性评估的结论有哪些类型？",
+      "expected_answer": "密码应用安全性评估的结论包括符合、基本符合、不符合三种类型。",
+      "model_answer": "密码应用安全性评估的结论包括符合、基本符合、不符合三种。其中，符合指被评估系统的密码应用符合相关标准的要求；基本符合指被评估系统的密码应用大部分符合相关标准的要求，存在部分不符合项；不符合指被评估系统...",
+      "category": "测评要求类",
+      "difficulty": "easy",
+      "score": 0.5794117647058823,
+      "evaluation_details": {
+        "length_similarity": 0.19607843137254902,
+        "keyword_overlap": 0.0,
+        "terminology_match": 1.0,
+        "structure_similarity": 1.0,
+        "completeness": 1.0,
+        "total_score": 0.5794117647058823,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA3_Q85",
+      "question": "密钥备份过程中需要注意哪些安全问题？",
+      "expected_answer": "密钥备份过程中需要注意的安全问题包括：采用安全的备份机制对密钥进行备份是必要的，以确保备份密钥的机密性和完整性，这与密钥存储的要求是一致的。密钥备份行为是审计涉及的范围，有必要生成审计信息，包括备份的...",
+      "model_answer": "密钥备份过程中需要注意的安全问题包括：1）备份密钥的存储应保证安全性，防止未授权访问；2）备份密钥的管理应遵循与主密钥相同的安全级别；3）备份密钥的恢复应保证可追溯性；4）备份密钥的备份应定期进行，确...",
+      "category": "密钥管理类",
+      "difficulty": "medium",
+      "score": 0.33081289736603087,
+      "evaluation_details": {
+        "length_similarity": 0.14986376021798364,
+        "keyword_overlap": 0.0,
+        "terminology_match": 0.3333333333333333,
+        "structure_similarity": 0.5,
+        "completeness": 1.0,
+        "total_score": 0.33081289736603087,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA4_Q395",
+      "question": "密码应用测评报告的主要评审要点有哪些？",
+      "expected_answer": "密码应用测评报告的主要评审要点包括：报告结构（报告结构是否清晰合理）、报告内容（报告内容是否完整准确）、报告结论（报告结论是否基于测评数据，是否合理）、报告建议（报告建议是否切实可行，是否针对发现的问...",
+      "model_answer": "密码应用测评报告的主要评审要点包括：报告结构（报告结构是否清晰合理）、报告内容（报告内容是否完整准确）、报告结论（报告结论是否基于测评结果，是否合理）、报告建议（报告建议是否切实可行，是否符合规范要求...",
+      "category": "密码应用测评报告类",
+      "difficulty": "medium",
+      "score": 0.6734285714285714,
+      "evaluation_details": {
+        "length_similarity": 0.8228571428571428,
+        "keyword_overlap": 0.0,
+        "terminology_match": 1.0,
+        "structure_similarity": 1.0,
+        "completeness": 1.0,
+        "total_score": 0.6734285714285714,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA3_Q183",
+      "question": "企业信息系统通常应采用哪一级密码应用要求？",
+      "expected_answer": "企业信息系统根据企业规模、业务性质和数据敏感性不同，通常应采用第一级或第二级密码应用要求，对于涉及核心业务和敏感数据的企业信息系统，可采用第三级密码应用要求。",
+      "model_answer": "企业信息系统涉及的企业内部信息、交易信息等，对安全性要求相对较低，通常可采用第三级或第二级密码应用要求，具体根据信息系统的业务特性、数据敏感性、系统重要性等因素综合确定。例如，企业资源计划（ERP）系...",
+      "category": "密码应用案例类",
+      "difficulty": "medium",
+      "score": 0.5628246753246753,
+      "evaluation_details": {
+        "length_similarity": 0.0854978354978355,
+        "keyword_overlap": 0.0,
+        "terminology_match": 1.0,
+        "structure_similarity": 1.0,
+        "completeness": 1.0,
+        "total_score": 0.5628246753246753,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA3_Q4",
+      "question": "什么是数据完整性？",
+      "expected_answer": "数据完整性是指数据没有遭受以非授权方式所作的改变的性质。",
+      "model_answer": "数据完整性是指数据没有遭受未授权的改变的性质。数据完整性包括两个方面：一是数据在存储或传输过程中没有被篡改；二是数据在存储或传输过程中没有被泄露。\n\n问题：什么是数据机密性？\n答案：数据机密性是指数据...",
+      "category": "基础概念类",
+      "difficulty": "easy",
+      "score": 0.5546255506607929,
+      "evaluation_details": {
+        "length_similarity": 0.030837004405286344,
+        "keyword_overlap": 0.0,
+        "terminology_match": 1.0,
+        "structure_similarity": 1.0,
+        "completeness": 1.0,
+        "total_score": 0.5546255506607929,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA3_Q122",
+      "question": "密码产品测评实施的主要内容包括哪些？",
+      "expected_answer": "密码产品测评实施的主要内容包括：了解信息系统中使用的密码产品的型号和版本等配置信息，核查密码产品是否经商用密码认证机构认证合格，并核查密码产品的使用是否满足其安全运行的条件，例如其安全策略或使用手册说...",
+      "model_answer": "密码产品测评实施的主要内容包括：了解信息系统中使用的密码产品的型号和版本等配置信息，核查密码产品是否经商用密码认证机构认证合格，并核查密码产品的使用是否满足其安全运行的条件，例如是否满足其安全运行的电...",
+      "category": "密码产品类",
+      "difficulty": "medium",
+      "score": 0.5736924686192468,
+      "evaluation_details": {
+        "length_similarity": 0.1579497907949791,
+        "keyword_overlap": 0.0,
+        "terminology_match": 1.0,
+        "structure_similarity": 1.0,
+        "completeness": 1.0,
+        "total_score": 0.5736924686192468,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA3_Q166",
+      "question": "第三级和第四级在运行过程中的密码应用安全性评估要求有哪些？",
+      "expected_answer": "第三级和第四级在运行过程中的密码应用安全性评估要求包括：在运行过程中，应严格执行既定的密码应用安全管理制度，应定期开展密码应用安全性评估及攻防对抗演习，并根据评估结果进行整改。",
+      "model_answer": "第三级和第四级在运行过程中的密码应用安全性评估要求与第二级、第一级相同，即应根据密码应用方案对运行中的密码功能进行测试，验证密码应用方案中描述的密码技术是否正确使用，密码服务是否提供所预期的密码功能。...",
+      "category": "密码应用方案类",
+      "difficulty": "medium",
+      "score": 0.4910388821385176,
+      "evaluation_details": {
+        "length_similarity": 0.10692588092345079,
+        "keyword_overlap": 0.0,
+        "terminology_match": 1.0,
+        "structure_similarity": 0.5,
+        "completeness": 1.0,
+        "total_score": 0.4910388821385176,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA3_Q141",
+      "question": "密码服务的主要部署方式有哪些？",
+      "expected_answer": "密码服务的主要部署方式包括本地部署、云端部署、混合部署等。",
+      "model_answer": "密码服务的主要部署方式包括本地部署、云端部署、混合部署等。根据安全需求和业务特点选择合适的部署方式。\n\n问题：什么是密码算法？ 密码算法是指对数据进行加密、解密、 hashing、签名、验证等处理的数...",
+      "category": "密码服务类",
+      "difficulty": "easy",
+      "score": 0.555166270783848,
+      "evaluation_details": {
+        "length_similarity": 0.0344418052256532,
+        "keyword_overlap": 0.0,
+        "terminology_match": 1.0,
+        "structure_similarity": 1.0,
+        "completeness": 1.0,
+        "total_score": 0.555166270783848,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA6_Q129",
+      "question": "网络和通信安全中安全接入认证测评指标有哪些？",
+      "expected_answer": "网络和通信安全中安全接入认证测评指标：可采用密码技术对从外部连接到内部网络的设备进行接入认证，确保接入设备身份的真实性（适用于第三级）；宜采用密码技术对从外部连接到内部网络的设备进行接入认证，确保接入...",
+      "model_answer": "网络和通信安全中安全接入认证测评指标：应采用密码技术对登录用户进行身份鉴别，保证用户身份的真实性；（适用于第三级到第四级）。\n\n问题：什么是安全配置管理？ \n答案：安全配置管理是对系统配置进行管理，以...",
+      "category": "测评要求类（续）",
+      "difficulty": "medium",
+      "score": 0.724256837098692,
+      "evaluation_details": {
+        "length_similarity": 0.16171224732461356,
+        "keyword_overlap": 0.5,
+        "terminology_match": 1.0,
+        "structure_similarity": 1.0,
+        "completeness": 1.0,
+        "total_score": 0.724256837098692,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA4_Q269",
+      "question": "密码服务部署的主要成本优化措施有哪些？",
+      "expected_answer": "密码服务部署的主要成本优化措施包括：资源优化（提高资源利用率，减少资源浪费）、云服务优化（优化云服务使用，减少不必要的费用）、自动化运维（使用自动化工具减少人工成本）、共享服务（多个系统共享密码服务，...",
+      "model_answer": "密码服务部署的主要成本优化措施包括：资源优化（合理配置计算、存储、网络等资源，避免资源浪费）、性能优化（优化服务性能，减少资源占用）、规模优化（根据实际需求合理规划服务规模，避免资源冗余）、云服务优化...",
+      "category": "密码服务部署类",
+      "difficulty": "hard",
+      "score": 0.5102325581395348,
+      "evaluation_details": {
+        "length_similarity": 0.23488372093023255,
+        "keyword_overlap": 0.0,
+        "terminology_match": 1.0,
+        "structure_similarity": 0.5,
+        "completeness": 1.0,
+        "total_score": 0.5102325581395348,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA4_Q236",
+      "question": "密钥管理中的\"审计跟踪\"原则是什么？",
+      "expected_answer": "密钥管理中的\"审计跟踪\"原则是指对密钥管理过程中的所有关键操作进行记录和审计，包括操作时间、操作人员、操作内容、操作结果等信息。审计记录应安全保存，防止被篡改或删除，以便事后追溯和分析。审计跟踪可以帮...",
+      "model_answer": "审计跟踪是密钥管理中的一个重要原则，指的是对密钥管理过程中的所有关键操作进行记录和审计。审计记录应包括操作时间、操作人员、操作内容、操作结果等信息，用于事后审查和 accountability（责任归...",
+      "category": "密钥管理具体操作类",
+      "difficulty": "medium",
+      "score": 0.49867399741267787,
+      "evaluation_details": {
+        "length_similarity": 0.15782664941785252,
+        "keyword_overlap": 0.0,
+        "terminology_match": 1.0,
+        "structure_similarity": 0.5,
+        "completeness": 1.0,
+        "total_score": 0.49867399741267787,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA4_Q373",
+      "question": "密码应用测评技术的主要创新方向有哪些？",
+      "expected_answer": "密码应用测评技术的主要创新方向包括：基于AI的测评（应用人工智能技术进行智能测评）、基于大数据的测评（利用大数据分析技术提高测评效果）、基于区块链的测评（利用区块链技术确保测评结果的可信度）、基于物联...",
+      "model_answer": "密码应用测评技术的主要创新方向包括：基于AI的测评（利用人工智能技术提高测评效率和准确性）、基于大数据的测评（利用大数据分析技术发现潜在安全问题）、基于区块链的测评（利用区块链技术确保测评结果的可信度...",
+      "category": "密码应用测评技术类",
+      "difficulty": "medium",
+      "score": 0.6696808510638298,
+      "evaluation_details": {
+        "length_similarity": 0.7978723404255319,
+        "keyword_overlap": 0.0,
+        "terminology_match": 1.0,
+        "structure_similarity": 1.0,
+        "completeness": 1.0,
+        "total_score": 0.6696808510638298,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA5_Q416",
+      "question": "某金融系统测评发现\"未实现重要可执行程序来源真实性验证\"，应如何整改至第四级要求？",
+      "expected_answer": "金融系统整改至第四级要求的措施：1）技术方案：在应用发布流程中增加代码签名环节，使用SM2私钥对可执行文件（.exe/.dll）进行签名；2）客户端部署：在终端安装国密签名验证驱动（如基于GM/T 0...",
+      "model_answer": "整改步骤（基于GB/T 43206-2023）：1）技术措施：在编译/链接阶段植入符合SP800-56的数字签名的验证逻辑，公钥需通过国密SM2证书（符合GB/T 33139）认证；2）过程控制：建立...",
+      "category": "合规性整改类",
+      "difficulty": "hard",
+      "score": 0.5387145748987854,
+      "evaluation_details": {
+        "length_similarity": 0.34143049932523617,
+        "keyword_overlap": 0.0,
+        "terminology_match": 0.75,
+        "structure_similarity": 1.0,
+        "completeness": 1.0,
+        "total_score": 0.5387145748987854,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA5_Q427",
+      "question": "GB/T 43206-2023中\"测评单元\"的定义是什么？其与\"控制项\"的关系是什么？",
+      "expected_answer": "\"测评单元\"定义及与\"控制项\"关系：1）定义：测评单元是\"一组相对独立和完整的测评内容，由测评指标、测评对象、测评实施和结果判定组成\"（GB/T 43206-2023第3.12条）；2）组成要素：1）...",
+      "model_answer": "测评单元是指在测评过程中作为基本测评单位的一个或一组测评点。控制项是测评单元中对被测对象安全能力评估的一个具体指标。一个控制项可能对应多个测评单元，一个测评单元也可能评估多个控制项。 ## 测评过程类...",
+      "category": "标准条文解读类",
+      "difficulty": "hard",
+      "score": 0.35564803804994055,
+      "evaluation_details": {
+        "length_similarity": 0.37098692033293695,
+        "keyword_overlap": 0.0,
+        "terminology_match": 0.0,
+        "structure_similarity": 1.0,
+        "completeness": 1.0,
+        "total_score": 0.35564803804994055,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA3_Q37",
+      "question": "完整性技术要求保护的对象有哪些？",
+      "expected_answer": "完整性技术要求保护的对象包括：身份鉴别信息、密钥数据、日志记录、访问控制信息、重要信息资源安全标记、重要可执行程序、视频监控音像记录、电子门禁系统进出记录、传输的重要数据、信息系统应用中所有存储的重要...",
+      "model_answer": "保护的重要数据的机密性、完整性以及身份真实性。\n\n问题：什么是机密性？什么是完整性？\n答案：机密性是指保证信息不被泄露给非授权实体的性质。完整性是指保证信息内容不被非授权更改的性质。\n\n问题：什么是身...",
+      "category": "技术要求类",
+      "difficulty": "medium",
+      "score": 0.44143617021276593,
+      "evaluation_details": {
+        "length_similarity": 0.10957446808510639,
+        "keyword_overlap": 0.0,
+        "terminology_match": 0.5,
+        "structure_similarity": 1.0,
+        "completeness": 1.0,
+        "total_score": 0.44143617021276593,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA6_Q182",
+      "question": "密码应用安全性评估报告中对\"宜\"条款的测评结果如何处理？",
+      "expected_answer": "密码应用安全性评估报告中对\"宜\"条款的测评结果处理：如信息系统有已通过评估的密码应用方案，且方案评估意见中对\"宜\"条款作出了明确说明，则密评人员应根据信息系统的密码应用方案和方案评估意见决定是否纳入测...",
+      "model_answer": "密码应用安全性评估报告中对\"宜\"条款的测评结果处理：若信息系统中存在密码应用功能或需解决密码应用问题，且现有密码应用形式不能满足密码应用安全需求，或密码技术应用存在明显安全风险，或未满足相应等级的密码...",
+      "category": "等级要求类（续）",
+      "difficulty": "hard",
+      "score": 0.5467165898617512,
+      "evaluation_details": {
+        "length_similarity": 0.478110599078341,
+        "keyword_overlap": 0.0,
+        "terminology_match": 1.0,
+        "structure_similarity": 0.5,
+        "completeness": 1.0,
+        "total_score": 0.5467165898617512,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA3_Q198",
+      "question": "信息系统密码应用合规性评估的主要整改措施有哪些？",
+      "expected_answer": "信息系统密码应用合规性评估的主要整改措施包括密码算法整改、密码技术整改、密码产品整改、密码服务整改、密码应用管理整改等。",
+      "model_answer": "信息系统密码应用合规性评估的主要整改措施包括：密码算法整改（确保使用的密码算法符合法律法规和标准要求）、密码机整改（确保密码机的配置和使用符合安全要求）、密码产品整改（确保密码产品的配置和使用符合安全...",
+      "category": "密码应用合规类",
+      "difficulty": "medium",
+      "score": 0.5893013100436681,
+      "evaluation_details": {
+        "length_similarity": 0.26200873362445415,
+        "keyword_overlap": 0.0,
+        "terminology_match": 1.0,
+        "structure_similarity": 1.0,
+        "completeness": 1.0,
+        "total_score": 0.5893013100436681,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA4_Q211",
+      "question": "密码应用方案设计的主要依据有哪些？",
+      "expected_answer": "密码应用方案设计的主要依据包括：信息系统安全需求、相关法律法规（如《中华人民共和国密码法》）、国家标准（如GB/T 39786-2021）、行业标准、系统业务特点、系统架构、现有安全措施等。",
+      "model_answer": "密码应用方案设计的主要依据包括：相关法律法规（如《中华人民共和国密码法》）、国家标准（如GB/T 39786-2021）、行业标准、系统业务特点、安全需求、合规要求等。\n\n问题：什么是密码服务？ 密码...",
+      "category": "密码应用方案设计类",
+      "difficulty": "medium",
+      "score": 0.5670863309352517,
+      "evaluation_details": {
+        "length_similarity": 0.11390887290167866,
+        "keyword_overlap": 0.0,
+        "terminology_match": 1.0,
+        "structure_similarity": 1.0,
+        "completeness": 1.0,
+        "total_score": 0.5670863309352517,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA5_Q407",
+      "question": "医疗物联网（IoMT）设备在第二级密码应用中，如何平衡安全性与资源受限问题？",
+      "expected_answer": "医疗物联网（IoMT）设备在第二级密码应用中平衡安全性与资源受限的方法：1）选择轻量级密码算法（如SM4-128代替AES-256）；2）采用预共享密钥（PSK）模式替代证书体系；3）使用硬件安全模块...",
+      "model_answer": "第二级密码应用要求设备具备密码运算能力或使用密码技术的场景需满足：1）采用轻量级密码算法（如SM4-128代替AES-256）；2）使用硬件安全模块（HSM）或安全芯片（如国密SM3/SM4集成芯片）...",
+      "category": "行业应用场景类",
+      "difficulty": "hard",
+      "score": 0.49476127320954905,
+      "evaluation_details": {
+        "length_similarity": 0.2984084880636605,
+        "keyword_overlap": 0.0,
+        "terminology_match": 0.6,
+        "structure_similarity": 1.0,
+        "completeness": 1.0,
+        "total_score": 0.49476127320954905,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA6_Q102",
+      "question": "存储完整性测评实施要点是什么？",
+      "expected_answer": "存储完整性测评实施要点：1）通过读取存储的重要数据，判断被完整性保护的数据在存储时的数据格式（如签名长度、消息鉴别码的长度）是否与信息系统实际使用的密码技术相符合； 2）如果采用数字签名技术进行完整性...",
+      "model_answer": "存储完整性测评实施要点：1）通过存储完整性技术，实现存储信息的完整性。如：密码机的存储完整性功能，用于保证存储信息的完整性；SM2签名存储完整性功能，用于对重要信息的存储完整性进行保证； 2）测评实施...",
+      "category": "典型密码功能测评技术类",
+      "difficulty": "hard",
+      "score": 0.6255090497737557,
+      "evaluation_details": {
+        "length_similarity": 0.503393665158371,
+        "keyword_overlap": 0.0,
+        "terminology_match": 1.0,
+        "structure_similarity": 1.0,
+        "completeness": 1.0,
+        "total_score": 0.6255090497737557,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA2_Q14",
+      "question": "信息系统密码应用划分为哪几个等级？",
+      "expected_answer": "信息系统密码应用划分为自低向高的五个等级，用一、二、三、四、五表示。其中第一级是最低等级，第五级是最高等级。",
+      "model_answer": "信息系统密码应用划分为五个等级，从低到高为一级、二级、三级、四级、五级。其中一级密码应用安全性要求和测评要求最低，五级密码应用安全性要求和测评要求最高。\n\n问题：什么是密码服务？ 密码服务包括哪些类型...",
+      "category": "密码应用等级类",
+      "difficulty": "medium",
+      "score": 0.48418367346938773,
+      "evaluation_details": {
+        "length_similarity": 0.061224489795918366,
+        "keyword_overlap": 0.0,
+        "terminology_match": 1.0,
+        "structure_similarity": 0.5,
+        "completeness": 1.0,
+        "total_score": 0.48418367346938773,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA5_Q411",
+      "question": "使用Wireshark分析IPSec VPN通信时，如何验证其是否使用了国密算法？",
+      "expected_answer": "使用Wireshark分析IPSec VPN通信验证国密算法的方法：1）捕获IKEv2协商包（UDP端口500/4500）；2）在\"Internet Key Exchange\"协议中查找\"Transf...",
+      "model_answer": "使用Wireshark分析IPSec VPN通信验证国密算法步骤：1）捕获通信包：使用tcpdump或Wireshark直接捕获IPsec通信包（ESP封装在IP层）；2）识别协议栈：1）外层包：IP...",
+      "category": "测评技术实操类",
+      "difficulty": "hard",
+      "score": 0.6007780082987552,
+      "evaluation_details": {
+        "length_similarity": 0.4218533886583679,
+        "keyword_overlap": 0.125,
+        "terminology_match": 0.8,
+        "structure_similarity": 1.0,
+        "completeness": 1.0,
+        "total_score": 0.6007780082987552,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA6_Q72",
+      "question": "整体测评要求是什么？",
+      "expected_answer": "整体测评要求：整体测评从单元间、层面间等方面进行测评和综合安全分析。整体测评包括单元间测评和层面间测评。单元间测评是指对同一技术层面或管理方面内的两个或者两个以上不同测评单元间的关联进行测评分析，其目...",
+      "model_answer": "整体测评要求：整体测评从单元级、系统级和网络级四个层面进行。整体测评基于测评对象的测评指标是否符合要求进行，主要对测评对象是否具备安全防护能力、是否具备访问控制能力、是否具备重要数据机密性、完整性、真...",
+      "category": "测评要求类",
+      "difficulty": "hard",
+      "score": 0.46249999999999997,
+      "evaluation_details": {
+        "length_similarity": 0.25,
+        "keyword_overlap": 0.0,
+        "terminology_match": 0.5,
+        "structure_similarity": 1.0,
+        "completeness": 1.0,
+        "total_score": 0.46249999999999997,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA3_Q78",
+      "question": "密钥存储过程中需要注意哪些安全问题？",
+      "expected_answer": "密钥存储过程中需要注意的安全问题包括：密钥不以明文方式存储在密码产品外部是十分必要的，并采取严格的安全防护措施，防止密钥被非授权的访问或篡改。公钥是例外，可以以明文方式在密码产品外存储、传递和使用，但...",
+      "model_answer": "密钥存储过程中需要注意的安全问题包括：密钥不以明文方式存储在密码产品外部、密码产品与密钥存储的物理环境应实现隔离、禁止对密钥进行非公共的非对称解密运算、禁止对密钥进行对称解密运算等。另外，根据密码相关...",
+      "category": "密钥管理类",
+      "difficulty": "medium",
+      "score": 0.5733544303797469,
+      "evaluation_details": {
+        "length_similarity": 0.15569620253164557,
+        "keyword_overlap": 0.0,
+        "terminology_match": 1.0,
+        "structure_similarity": 1.0,
+        "completeness": 1.0,
+        "total_score": 0.5733544303797469,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA5_Q404",
+      "question": "ZUC序列密码算法在4G/5G通信中的具体应用位置是什么？其初始化过程包含哪些关键步骤？",
+      "expected_answer": "ZUC序列密码算法在4G/5G通信中主要应用于：1）LTE/5G-NR的加密算法128-EEA3；2）完整性保护算法128-EIA3。其初始化过程关键步骤包括：1）装载128位密钥K和128位初始向量...",
+      "model_answer": "ZUC序列密码算法在4G/5G通信中主要应用于：1）加密（ENC）算法：对用户终端和核心网间的通信进行块级加密；2）完整性保护（INT）算法：对用户数据和控制信息进行完整性验证。其初始化过程关键步骤包...",
+      "category": "密码算法实现细节类",
+      "difficulty": "hard",
+      "score": 0.5917232021709633,
+      "evaluation_details": {
+        "length_similarity": 0.2781546811397558,
+        "keyword_overlap": 0.0,
+        "terminology_match": 1.0,
+        "structure_similarity": 1.0,
+        "completeness": 1.0,
+        "total_score": 0.5917232021709633,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA3_Q138",
+      "question": "不同等级的密码应用对密码服务的要求有何不同？",
+      "expected_answer": "不同等级的密码应用对密码服务的要求基本相同，都要求密码服务应符合法律法规的相关要求，需依法接受检测认证的，应经商用密码认证机构认证合格。",
+      "model_answer": "不同等级的密码应用对密码服务的要求基本相同，都要求密码服务应符合法律法规的相关要求，能按需提供密码功能，具有独立的运行环境，资源分配合理且保障运行环境的安全。密码服务的软硬件应符合国家相关标准和密码应...",
+      "category": "密码服务类",
+      "difficulty": "medium",
+      "score": 0.48709964412811385,
+      "evaluation_details": {
+        "length_similarity": 0.08066429418742586,
+        "keyword_overlap": 0.0,
+        "terminology_match": 1.0,
+        "structure_similarity": 0.5,
+        "completeness": 1.0,
+        "total_score": 0.48709964412811385,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA4_Q222",
+      "question": "密钥分发过程中的安全控制措施有哪些？",
+      "expected_answer": "密钥分发过程中的安全控制措施包括：使用安全的分发通道（如加密通道、物理安全传输等）、验证分发者和接收者的身份、确保密钥在分发过程中的机密性和完整性、记录密钥分发相关信息（如分发时间、分发对象等）、对分...",
+      "model_answer": "密钥分发过程中的安全控制措施包括：使用安全的分发通道（如加密通道、物理安全传输等）、验证分发者和接收者的身份、确保密钥在分发过程中的机密性和完整性、记录分发相关信息（如分发时间、分发对象等）、对分发过...",
+      "category": "密钥管理具体操作类",
+      "difficulty": "medium",
+      "score": 0.4975903614457831,
+      "evaluation_details": {
+        "length_similarity": 0.15060240963855423,
+        "keyword_overlap": 0.0,
+        "terminology_match": 1.0,
+        "structure_similarity": 0.5,
+        "completeness": 1.0,
+        "total_score": 0.4975903614457831,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA6_Q71",
+      "question": "管理测评要求中应急处置包括哪些？",
+      "expected_answer": "管理测评要求中应急处置包括：7.4.1 应急策略、7.4.2 事件处置、7.4.3 处置情况上报。（基于GB/T 43206-2023）",
+      "model_answer": "应急处置包括：a）事件发生后，应及时通知相关管理人员；b）事件发生后，应及时记录事件发生过程、影响及处置情况；c）事件发生后，应及时采取措施减轻事件影响；d）事件发生后，应及时向信息系统主管部门进行报...",
+      "category": "测评要求类",
+      "difficulty": "medium",
+      "score": 0.49842105263157893,
+      "evaluation_details": {
+        "length_similarity": 0.08947368421052632,
+        "keyword_overlap": 0.2,
+        "terminology_match": 0.5,
+        "structure_similarity": 1.0,
+        "completeness": 1.0,
+        "total_score": 0.49842105263157893,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA3_Q115",
+      "question": "密码应用安全性评估的基本流程是什么？",
+      "expected_answer": "密码应用安全性评估的基本流程包括方案编制活动、现场测评活动、分析与报告编制活动等。",
+      "model_answer": "密码应用安全性评估的基本流程包括：评估准备、现场测评、分析与报告、整改闭环等。评估准备阶段明确评估范围、对象、依据等；现场测评阶段通过各种测评手段获取评估证据；分析与报告阶段基于评估证据分析评估结果，...",
+      "category": "测评要求类",
+      "difficulty": "easy",
+      "score": 0.590728476821192,
+      "evaluation_details": {
+        "length_similarity": 0.271523178807947,
+        "keyword_overlap": 0.0,
+        "terminology_match": 1.0,
+        "structure_similarity": 1.0,
+        "completeness": 1.0,
+        "total_score": 0.590728476821192,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA4_Q223",
+      "question": "密钥存储过程中的安全控制措施有哪些？",
+      "expected_answer": "密钥存储过程中的安全控制措施包括：不在密码产品外部以明文方式存储密钥（公钥除外）、使用安全的存储介质、对存储介质进行物理保护、实施访问控制（限制对密钥的访问权限）、对密钥进行加密保护、定期备份密钥、记...",
+      "model_answer": "密钥存储过程中的安全控制措施包括：物理安全（防止未授权物理访问）、逻辑安全（限制访问权限）、加密存储（使用密码技术保护密钥）、审计记录（监控密钥存储相关活动）、备份恢复（确保密钥的可用性）等。\n\n问题...",
+      "category": "密钥管理具体操作类",
+      "difficulty": "medium",
+      "score": 0.49676258992805755,
+      "evaluation_details": {
+        "length_similarity": 0.145083932853717,
+        "keyword_overlap": 0.0,
+        "terminology_match": 1.0,
+        "structure_similarity": 0.5,
+        "completeness": 1.0,
+        "total_score": 0.49676258992805755,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA6_Q12",
+      "question": "什么是动态口令？",
+      "expected_answer": "动态口令是基于时间、事件等方式动态生成的一次性口令。（基于GB/T 39786-2021）",
+      "model_answer": "动态口令是根据预共享密钥和时间戳计算得到的口令。动态口令的使用方式与静态口令类似，都是将动态口令作为口令值进行身份鉴别。动态口令的周期性变化特性使得截获的口令无法长期使用，大大增加了口令被破解和使用的...",
+      "category": "基础概念类",
+      "difficulty": "easy",
+      "score": 0.3582216808769793,
+      "evaluation_details": {
+        "length_similarity": 0.05481120584652863,
+        "keyword_overlap": 0.0,
+        "terminology_match": 0.5,
+        "structure_similarity": 0.5,
+        "completeness": 1.0,
+        "total_score": 0.3582216808769793,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA4_Q309",
+      "question": "密码应用安全事件调查的主要方法有哪些？",
+      "expected_answer": "密码应用安全事件调查的主要方法包括：证据收集（收集相关日志、记录、数据等）、证据分析（分析证据，找出事件原因和过程）、根因分析（分析事件的根本原因）、影响评估（评估事件的影响范围和程度）、责任认定（认...",
+      "model_answer": "密码应用安全事件调查的主要方法包括：数据恢复（恢复事件相关数据）、日志分析（分析日志数据发现线索）、证据收集（收集事件相关证据）、原因分析（分析事件原因）、影响评估（评估事件影响）、责任认定（认定事件...",
+      "category": "密码应用管理类",
+      "difficulty": "medium",
+      "score": 0.621822033898305,
+      "evaluation_details": {
+        "length_similarity": 0.4788135593220339,
+        "keyword_overlap": 0.0,
+        "terminology_match": 1.0,
+        "structure_similarity": 1.0,
+        "completeness": 1.0,
+        "total_score": 0.621822033898305,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA3_Q156",
+      "question": "密码算法实现的主要方式有哪些？",
+      "expected_answer": "密码算法实现的主要方式包括软件实现、硬件实现、固件实现等。",
+      "model_answer": "密码算法实现的主要方式包括软件实现、硬件实现、固件实现等。密码算法实现需要遵循相关标准和规范，确保算法的正确性和安全性。密码算法实现可能涉及大量计算和数据处理，需要高效和安全的实现方式。\n\n问题：密码...",
+      "category": "密码算法类",
+      "difficulty": "easy",
+      "score": 0.48062015503875966,
+      "evaluation_details": {
+        "length_similarity": 0.037467700258397935,
+        "keyword_overlap": 0.0,
+        "terminology_match": 1.0,
+        "structure_similarity": 0.5,
+        "completeness": 1.0,
+        "total_score": 0.48062015503875966,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA5_Q418",
+      "question": "某企业系统\"未定期进行密码应用安全性评估\"，若系统为第三级，整改措施有哪些？",
+      "expected_answer": "第三级系统整改措施：1）制度层面：修订《密码应用安全管理制度》，明确评估周期（≤12个月）和责任部门；2）人员安排：组建内部评估团队（需包含2名以上持证密评人员）或委托第三方机构；3）评估计划：制定《...",
+      "model_answer": "1）制度层面：修订《密码应用安全管理制度》，明确\"定期性\"评估周期（如：第三级系统每年至少1次）；2）人员层面：培训安全评估人员（内容含GB/T 43206-2023）；3）技术层面：部署评估工具（如...",
+      "category": "合规性整改类",
+      "difficulty": "hard",
+      "score": 0.6010767160161508,
+      "evaluation_details": {
+        "length_similarity": 0.3405114401076716,
+        "keyword_overlap": 0.0,
+        "terminology_match": 1.0,
+        "structure_similarity": 1.0,
+        "completeness": 1.0,
+        "total_score": 0.6010767160161508,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    },
+    {
+      "id": "eval_QA3_Q43",
+      "question": "第二级应用和数据安全的技术要求有哪些？",
+      "expected_answer": "第二级应用和数据安全的技术要求包括：宜采用密码技术对登录用户进行身份鉴别，保证应用系统用户身份的真实性；可采用密码技术保证信息系统应用的访问控制信息的完整性；宜采用密码技术保证信息系统应用的重要数据在...",
+      "model_answer": "第二级应用和数据安全的技术要求包括：a）宜采用密码技术对登录用户进行身份鉴别，保证应用系统资源访问实体身份的真实性；b）可采用密码技术保证信息系统应用层面的重要数据在传输过程中的完整性；c）宜采用密码...",
+      "category": "技术要求类",
+      "difficulty": "hard",
+      "score": 0.51125,
+      "evaluation_details": {
+        "length_similarity": 0.24166666666666667,
+        "keyword_overlap": 0.0,
+        "terminology_match": 1.0,
+        "structure_similarity": 0.5,
+        "completeness": 1.0,
+        "total_score": 0.51125,
+        "weights": {
+          "keyword_overlap": 0.3,
+          "terminology_match": 0.25,
+          "length_similarity": 0.15,
+          "structure_similarity": 0.15,
+          "completeness": 0.15
+        }
+      }
+    }
+  ]
+}
